@@ -1,7 +1,7 @@
 # Личный проект «YetiCave»
 
 * Студент: [Анна](https://up.htmlacademy.ru/php/10/user/1101403).
-* Наставник: [Олег Мифле].
+* Наставник: [Олег Мифле](https://htmlacademy.ru/profile/id496565).
 
 ---
 
