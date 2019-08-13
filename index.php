@@ -130,8 +130,8 @@ function PriceFormat(float $price): string
                                 <span class="lot__amount">Стартовая цена</span>
                                 <span class="lot__cost">
                                     <?php  
-                                    $price=PriceFormat($item['price']); 
-                                    print($price);
+                                    $price=PriceFormat($item['price']);
+                                    echo($price);
                                     ?>
                                 </span>
                             </div>
