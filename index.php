@@ -43,6 +43,16 @@ $cards = [
         'url' => 'img/lot-6.jpg'
     ]   
 ];
+
+function price_format($price) 
+{
+    $result = '';
+    $result_price = ceil($price);
+    $result_price = number_format($result_price, 0, '.', ' ');
+    $result = $result_price . ' ₽';
+
+    return $result;
+}
 ?>
 <!DOCTYPE html>
 <html lang="ru">
@@ -118,7 +128,13 @@ $cards = [
                         <div class="lot__state">
                             <div class="lot__rate">
                                 <span class="lot__amount">Стартовая цена</span>
-                                <span class="lot__cost"><?=($item['price']);?><b class="rub">р</b></span>
+                                <span class="lot__cost">
+                                    <?php 
+                                    $price=$item['price']; 
+                                    $price=price_format($price); 
+                                    print($price);
+                                    ?>
+                                </span>
                             </div>
                             <div class="lot__timer timer">
                                 12:23
