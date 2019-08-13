@@ -1,7 +1,7 @@
 <?php
-$is_auth = rand(0, 1);
+$isAuth = rand(0, 1);
 
-$user_name = 'Анна';
+$userName = 'Анна';
 $categories = [
     'Доски и лыжи', 'Крепления', 'Ботинки', 'Одежда', 'Инструменты', 'Разное'
 ]; 
@@ -43,6 +43,16 @@ $cards = [
         'url' => 'img/lot-6.jpg'
     ]   
 ];
+
+function priceFormat(float $price): string 
+{
+    $result = '';
+    $resultPrice = ceil($price);
+    $resultPrice = number_format($resultPrice, 0, '.', ' ');
+    $result = $resultPrice . ' ₽';
+
+    return $result;
+}
 ?>
 <!DOCTYPE html>
 <html lang="ru">
@@ -69,9 +79,9 @@ $cards = [
 
         <nav class="user-menu">
 
-        <?php if ($is_auth === 1): ?>
+        <?php if ($isAuth === 1): ?>
             <div class="user-menu__logged">
-                <p><?=$user_name;?></p>
+                <p><?=$userName;?></p>
                 <a class="user-menu__bets" href="pages/my-bets.html">Мои ставки</a>
                 <a class="user-menu__logout" href="#">Выход</a>
             </div>
@@ -118,7 +128,12 @@ $cards = [
                         <div class="lot__state">
                             <div class="lot__rate">
                                 <span class="lot__amount">Стартовая цена</span>
-                                <span class="lot__cost"><?=($item['price']);?><b class="rub">р</b></span>
+                                <span class="lot__cost">
+                                    <?php  
+                                    $price = priceFormat($item['price']);
+                                    echo($price);
+                                    ?>
+                                </span>
                             </div>
                             <div class="lot__timer timer">
                                 12:23
