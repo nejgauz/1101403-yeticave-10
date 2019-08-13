@@ -44,7 +44,7 @@ $cards = [
     ]   
 ];
 
-function price_format(float $price): string 
+function PriceFormat(float $price): string 
 {
     $result = '';
     $result_price = ceil($price);
@@ -131,7 +131,7 @@ function price_format(float $price): string
                                 <span class="lot__cost">
                                     <?php 
                                     $price=$item['price']; 
-                                    $price=price_format($price); 
+                                    $price=PriceFormat($price); 
                                     print($price);
                                     ?>
                                 </span>
