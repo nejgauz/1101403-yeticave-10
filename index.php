@@ -1,7 +1,7 @@
 <?php
-$is_auth = rand(0, 1);
+$isAuth = rand(0, 1);
 
-$user_name = 'Анна';
+$userName = 'Анна';
 $categories = [
     'Доски и лыжи', 'Крепления', 'Ботинки', 'Одежда', 'Инструменты', 'Разное'
 ]; 
@@ -44,12 +44,12 @@ $cards = [
     ]   
 ];
 
-function PriceFormat(float $price): string 
+function priceFormat(float $price): string 
 {
     $result = '';
-    $result_price = ceil($price);
-    $result_price = number_format($result_price, 0, '.', ' ');
-    $result = $result_price . ' ₽';
+    $resultPrice = ceil($price);
+    $resultPrice = number_format($resultPrice, 0, '.', ' ');
+    $result = $resultPrice . ' ₽';
 
     return $result;
 }
@@ -79,9 +79,9 @@ function PriceFormat(float $price): string
 
         <nav class="user-menu">
 
-        <?php if ($is_auth === 1): ?>
+        <?php if ($isAuth === 1): ?>
             <div class="user-menu__logged">
-                <p><?=$user_name;?></p>
+                <p><?=$userName;?></p>
                 <a class="user-menu__bets" href="pages/my-bets.html">Мои ставки</a>
                 <a class="user-menu__logout" href="#">Выход</a>
             </div>
@@ -130,7 +130,7 @@ function PriceFormat(float $price): string
                                 <span class="lot__amount">Стартовая цена</span>
                                 <span class="lot__cost">
                                     <?php  
-                                    $price=PriceFormat($item['price']);
+                                    $price = priceFormat($item['price']);
                                     echo($price);
                                     ?>
                                 </span>
