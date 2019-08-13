@@ -129,9 +129,8 @@ function PriceFormat(float $price): string
                             <div class="lot__rate">
                                 <span class="lot__amount">Стартовая цена</span>
                                 <span class="lot__cost">
-                                    <?php 
-                                    $price=$item['price']; 
-                                    $price=PriceFormat($price); 
+                                    <?php  
+                                    $price=PriceFormat($item['price']); 
                                     print($price);
                                     ?>
                                 </span>
