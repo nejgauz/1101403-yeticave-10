@@ -44,7 +44,7 @@ $cards = [
     ]   
 ];
 
-function price_format($price) 
+function price_format(float $price): string 
 {
     $result = '';
     $result_price = ceil($price);
