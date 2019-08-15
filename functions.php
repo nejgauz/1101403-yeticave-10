@@ -27,8 +27,9 @@ function timeCounter(string $endDate): array
     $dateFuture = date_create($endDate);
     $timeRest = date_diff($dateFuture, $dateNow);
     $hoursRest = date_interval_format($timeRest, '%H');
-    $minRest = date_interval_format($timeRest, '%M');
+    $minRest = date_interval_format($timeRest, '%I');
+    $daysRest = date_interval_format($timeRest, '%D');
 
-    return ['hours' => $hoursRest, 'mins' => $minRest];
+    return ['hours' => $hoursRest, 'mins' => $minRest, 'days' => $daysRest];
 
 }

@@ -35,7 +35,7 @@
                         <?php
                         $time = timeCounter($item['time']);
                         $timeStr = $time['hours'] . ':' . $time['mins'];
-                        if ($time['hours'] < 1): ?>
+                        if ($time['hours'] < 1 && $time['days'] == 0): ?>
                             <div class="lot__timer timer timer--finishing">
                                 <?=$timeStr;?>
                             </div>
