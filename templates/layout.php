@@ -25,7 +25,7 @@
 
                 <?php if ($isAuth === 1): ?>
                     <div class="user-menu__logged">
-                        <p><?=$userName;?></p>
+                        <p><?=strip_tags($userName);?></p>
                         <a class="user-menu__bets" href="pages/my-bets.html">Мои ставки</a>
                         <a class="user-menu__logout" href="#">Выход</a>
                     </div>
@@ -54,7 +54,7 @@
         <ul class="nav__list container">
             <?php foreach ($categories as $value): ?>
                 <li class="nav__item">
-                    <a href="pages/all-lots.html"><?=$value;?></a>
+                    <a href="pages/all-lots.html"><?=strip_tags($value);?></a>
                 </li>
             <?php endforeach;?>
         </ul>
