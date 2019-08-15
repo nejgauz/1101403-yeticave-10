@@ -32,9 +32,18 @@
                                     ?>
                                 </span>
                         </div>
-                        <div class="lot__timer timer">
-                            12:23
-                        </div>
+                        <?php
+                        $time = timeCounter($item['time']);
+                        $timeStr = $time[0] . ':' . $time[1];
+                        if ($time[0] < 1): ?>
+                            <div class="lot__timer timer timer--finishing">
+                                <?=$timeStr;?>
+                            </div>
+                        <?php else: ?>
+                            <div class="lot__timer timer">
+                                <?=$timeStr;?>
+                            </div>
+                        <?php endif; ?>
                     </div>
                 </div>
             </li>
