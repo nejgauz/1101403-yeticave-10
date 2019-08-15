@@ -8,7 +8,7 @@ $cards = [
         'category' => 'Доски и лыжи',
         'price' => '10999',
         'url' => 'img/lot-1.jpg',
-        'time' => '2019-09-01'
+        'time' => '2019-08-16'
     ],
     [
         'name' => 'DC Ply Mens 2016/2017 Snowboard',
