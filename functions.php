@@ -15,7 +15,7 @@ function priceFormat(float $price): string
 }
 
 /**
- * Принимает дату в будущем в формате "ГГГГ-ММ-ДД" и возвращает время до этой даты в виде массива ['ЧЧ','ММ']
+ * Принимает дату в будущем в формате "ГГГГ-ММ-ДД" и возвращает время до этой даты в виде ассициативного массива
  * @param $endDate будущая дата в формате "ГГГГ-ММ-ДД"
  * @return array массив вида ['ЧЧ','ММ']
  */
@@ -29,6 +29,6 @@ function timeCounter($endDate): array
     $hoursRest = date_interval_format($timeRest, '%H');
     $minRest = date_interval_format($timeRest, '%M');
 
-    return [$hoursRest, $minRest];
+    return ['hours' => $hoursRest, 'mins' => $minRest];
 
 }
