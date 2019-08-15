@@ -4,10 +4,11 @@ $userName = 'Анна';
 
 require_once('functions.php');
 require_once('data.php');
+require_once('helpers.php');
 
-$pageContent = includeTemplate('main.php', ['cards' => $cards, 'categories' => $categories]);
+$pageContent = include_template('main.php', ['cards' => $cards, 'categories' => $categories]);
 
-$layoutContent = includeTemplate('layout.php', [
+$layoutContent = include_template('layout.php', [
     'content' => $pageContent,
     'categories' => $categories,
     'isAuth' => $isAuth,
