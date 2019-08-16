@@ -14,3 +14,22 @@ function priceFormat(float $price): string
     return $resultPrice;
 }
 
+/**
+ * Принимает дату в будущем в формате "ГГГГ-ММ-ДД" и возвращает время до этой даты в виде ассициативного массива
+ * @param string $endDate будущая дата в формате "ГГГГ-ММ-ДД"
+ * @return array массив вида ['ЧЧ','ММ']
+ */
+function timeCounter(string $endDate): array
+{
+    date_default_timezone_set('Europe/Moscow');
+
+    $dateNow = date_create('now');
+    $dateFuture = date_create($endDate);
+    $timeRest = date_diff($dateFuture, $dateNow);
+    $hoursRest = date_interval_format($timeRest, '%H');
+    $minRest = date_interval_format($timeRest, '%I');
+    $daysRest = date_interval_format($timeRest, '%D');
+
+    return ['hours' => $hoursRest, 'mins' => $minRest, 'days' => $daysRest];
+
+}
