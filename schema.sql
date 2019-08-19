@@ -38,16 +38,6 @@ CREATE TABLE categories (
     name       CHAR(255) NOT NULL UNIQUE,
     symb_code  CHAR(255) NOT NULL
 );
-CREATE TABLE us_lots (
-    id         INT AUTO_INCREMENT PRIMARY KEY,
-    user_id    CHAR(255) NOT NULL,
-    lot_id     CHAR(255) NOT NULL
-);
-CREATE TABLE us_bids (
-    id         INT AUTO_INCREMENT PRIMARY KEY,
-    user_id    CHAR(255) NOT NULL,
-    bid_id     CHAR(255) NOT NULL
-);
 CREATE UNIQUE INDEX u_email ON users(email);
 CREATE UNIQUE INDEX u_name ON users(name);
 CREATE UNIQUE INDEX u_cont ON users(contact);
