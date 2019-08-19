@@ -28,20 +28,17 @@ CREATE TABLE users (
     bid_id     CHAR(255) NOT NULL,
     dt_reg     TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     email      CHAR(255) UNIQUE,
-    name       CHAR(255) UNIQUE,
+    name       CHAR(255),
     password   CHAR(255),
     avat_path  INT,
-    contact   INT UNIQUE
+    contact   INT
 );
 CREATE TABLE categories (
     id         INT AUTO_INCREMENT PRIMARY KEY,
-    name       CHAR(255) NOT NULL UNIQUE,
+    name       CHAR(255) NOT NULL,
     symb_code  CHAR(255) NOT NULL
 );
 CREATE UNIQUE INDEX u_email ON users(email);
-CREATE UNIQUE INDEX u_name ON users(name);
-CREATE UNIQUE INDEX u_cont ON users(contact);
-CREATE UNIQUE INDEX cat ON categories(name);
 CREATE INDEX bid ON bids(price);
 CREATE INDEX title ON lots(title);
 CREATE INDEX step ON lots(step);
