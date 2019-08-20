@@ -16,7 +16,7 @@ CREATE TABLE lots (
     win_id     CHAR(255),
     dt_create  TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     title      CHAR(255),
-    descr      TEXT,
+    descr      TEXT(65535),
     image_path CHAR(255),
     st_price   INT,
     dt_end     TIMESTAMP,
@@ -29,7 +29,7 @@ CREATE TABLE users (
     name       CHAR(255),
     password   CHAR(255),
     avat_path  INT,
-    contact    INT
+    contact    CHAR(255)
 );
 CREATE TABLE categories (
     id         INT AUTO_INCREMENT PRIMARY KEY,

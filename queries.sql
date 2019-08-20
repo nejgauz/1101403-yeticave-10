@@ -1,6 +1,6 @@
 USE yeticave;
 INSERT INTO categories (name, symb_code)
-VALUES ('Доски и лыжи', 'boards')
+VALUES ('Доски и лыжи', 'boards');
 INSERT INTO categories (name, symb_code)
 VALUES ('Крепления', 'attachment');
 INSERT INTO categories (name, symb_code)
@@ -13,30 +13,40 @@ INSERT INTO categories (name, symb_code)
 VALUES ('Разное', 'other');
 
 INSERT INTO users (dt_reg, email, name, password, avat_path, contact)
-VALUES ('1564991241', 'rich67@gmail.com', 'Ричард', '123456', NULL, '+7(911)318-10-17');
+VALUES ('2019-08-05', 'rich67@gmail.com', 'Ричард', '123456', NULL, '89113181017');
 INSERT INTO users (dt_reg, email, name, password, avat_path, contact)
-VALUES ('1563134421', 'melody@mail.com', 'Алиса', 'qr8j0', NULL, '+7(921)516-28-05');
+VALUES ('2019-07-14', 'melody@mail.com', 'Алиса', 'qr8j0', NULL, '89215162805');
 INSERT INTO users (dt_reg, email, name, password, avat_path, contact)
-VALUES ('1560864000', 'meloman@mail.com', 'Игорь', 'hg098j', NULL, '+7(920)387-24-16');
+VALUES ('2019-06-18', 'meloman@mail.com', 'Игорь', 'hg098j', NULL, '89203872416');
 
 INSERT INTO lots (user_id, cat_id, win_id, dt_create, title, descr, image_path, st_price, dt_end, step)
-VALUES ('1', '1', NULL, '1565784921', '2014 Rossignol District Snowboard', NULL, 'img/lot-1.jpg', '10999', '1565902800', '500');
+VALUES ('1', '1', NULL, '2019-08-10', '2014 Rossignol District Snowboard', NULL, 'img/lot-1.jpg', '10999', '2019-08-16', '500');
 INSERT INTO lots (user_id, cat_id, win_id, dt_create, title, descr, image_path, st_price, dt_end, step)
-VALUES ('2', '1', NULL, '1563726000', 'DC Ply Mens 2016/2017 Snowboard', NULL, 'img/lot-2.jpg', '159999', '1566745200', '1000');
+VALUES ('2', '1', NULL, '2019-07-30', 'DC Ply Mens 2016/2017 Snowboard', NULL, 'img/lot-2.jpg', '159999', '2019-08-25', '1000');
 INSERT INTO lots (user_id, cat_id, win_id, dt_create, title, descr, image_path, st_price, dt_end, step)
-VALUES ('3', '2', NULL, '1561814400', 'Крепления Union Contact Pro 2015 года размер L/XL', NULL, 'img/lot-3.jpg', '8000', '1567112400', '700');
+VALUES ('3', '2', NULL, '2019-06-21', 'Крепления Union Contact Pro 2015 года размер L/XL', NULL, 'img/lot-3.jpg', '8000', '2019-08-30', '700');
 INSERT INTO lots (user_id, cat_id, win_id, dt_create, title, descr, image_path, st_price, dt_end, step)
-VALUES ('3', '3', NULL, '1564672500', 'Ботинки для сноуборда DC Mutiny Charocal', NULL, 'img/lot-4.jpg', '10999', '1569078000', '400');
+VALUES ('3', '3', NULL, '2019-08-01', 'Ботинки для сноуборда DC Mutiny Charocal', NULL, 'img/lot-4.jpg', '10999', '2019-09-21', '400');
 INSERT INTO lots (user_id, cat_id, win_id, dt_create, title, descr, image_path, st_price, dt_end, step)
-VALUES ('1', '4', NULL, '1565449200', 'Куртка для сноуборда DC Mutiny Charocal', NULL, 'img/lot-5.jpg', '7500', '1566853200', '100');
+VALUES ('1', '4', NULL, '2019-08-06', 'Куртка для сноуборда DC Mutiny Charocal', NULL, 'img/lot-5.jpg', '7500', '2019-08-27', '100');
 INSERT INTO lots (user_id, cat_id, win_id, dt_create, title, descr, image_path, st_price, dt_end, step)
-VALUES ('1', '6', NULL, '1565089200', 'Маска Oakley Canopy', NULL, 'img/lot-6.jpg', '5400', '1567458000', '300');
+VALUES ('1', '6', NULL, '2019-08-08', 'Маска Oakley Canopy', NULL, 'img/lot-6.jpg', '5400', '2019-09-03', '300');
 
 INSERT INTO bids (user_id, lot_id, dt_create, price)
-VALUES ('1', '2', NOW(), 164999);
+VALUES ('1', '2', NOW(), '164999');
 INSERT INTO bids (user_id, lot_id, dt_create, price)
-VALUES ('2', '5', NOW(), 8500);
+VALUES ('2', '5', NOW(), '8500');
 INSERT INTO bids (user_id, lot_id, dt_create, price)
-VALUES ('3', '6', NOW(), 5700);
+VALUES ('3', '6', NOW(), '5700');
+INSERT INTO bids (user_id, lot_id, dt_create, price)
+VALUES ('3', '2', NOW(), '170999');
 
+SELECT name FROM categories;
+
+SELECT title, st_price, image_path, price, c.name FROM lots l JOIN categories c ON l.cat_id=c.id
+JOIN bids b ON l.id = b.lot_id WHERE win_id IS NULL ORDER BY price DESC;
+
+SELECT title, name FROM lots l JOIN categories c ON l.cat_id = c.id WHERE l.id = '1';
+UPDATE lots SET title = '2015 Rossignol District Snowboard' WHERE id = '1';
+SELECT price FROM bids WHERE user_id = '3' ORDER BY dt_create ASC;
 
