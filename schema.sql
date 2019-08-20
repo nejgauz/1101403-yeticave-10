@@ -13,7 +13,7 @@ CREATE TABLE lots (
     id         INT AUTO_INCREMENT PRIMARY KEY,
     user_id    CHAR(255) NOT NULL,
     cat_id     CHAR(255) NOT NULL,
-    win_id     CHAR(255) NOT NULL,
+    win_id     CHAR(255),
     dt_create  TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     title      CHAR(255),
     descr      TEXT,
@@ -24,14 +24,12 @@ CREATE TABLE lots (
 );
 CREATE TABLE users (
     id         INT AUTO_INCREMENT PRIMARY KEY,
-    lot_id     CHAR(255) NOT NULL,
-    bid_id     CHAR(255) NOT NULL,
     dt_reg     TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     email      CHAR(255) UNIQUE,
     name       CHAR(255),
     password   CHAR(255),
     avat_path  INT,
-    contact   INT
+    contact    INT
 );
 CREATE TABLE categories (
     id         INT AUTO_INCREMENT PRIMARY KEY,
