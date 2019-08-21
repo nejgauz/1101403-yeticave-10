@@ -3,8 +3,9 @@ $isAuth = rand(0, 1);
 $userName = 'Анна';
 
 require_once('functions.php');
-require_once('data.php');
 require_once('helpers.php');
+
+$connection = mysqli_connect('localhost', 'root', '', 'yeticave');
 
 $pageContent = include_template('main.php', ['cards' => $cards, 'categories' => $categories]);
 
