@@ -28,7 +28,7 @@ CREATE TABLE users (
     email      CHAR(255) UNIQUE,
     name       CHAR(255),
     password   CHAR(255),
-    avat_path  INT,
+    avat_path  CHAR(255),
     contact    CHAR(255)
 );
 CREATE TABLE categories (
