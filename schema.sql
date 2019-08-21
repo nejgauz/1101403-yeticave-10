@@ -4,16 +4,16 @@ CREATE DATABASE yeticave
 USE yeticave;
 CREATE TABLE bids (
     id         INT AUTO_INCREMENT PRIMARY KEY,
-    user_id    CHAR(255) NOT NULL,
-    lot_id     CHAR(255) NOT NULL,
+    user_id    INT NOT NULL,
+    lot_id     INT NOT NULL,
     dt_create  TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     price      INT
 );
 CREATE TABLE lots (
     id         INT AUTO_INCREMENT PRIMARY KEY,
-    user_id    CHAR(255) NOT NULL,
-    cat_id     CHAR(255) NOT NULL,
-    win_id     CHAR(255),
+    user_id    INT NOT NULL,
+    cat_id     INT NOT NULL,
+    win_id     INT DEFAULT NULL,
     dt_create  TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     title      CHAR(255),
     descr      TEXT(65535),
