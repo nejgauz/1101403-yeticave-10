@@ -43,11 +43,11 @@ function errorFilter(string $mistake, $con)
 {
     if ($mistake === 'connect') {
         $error = mysqli_connect_error();
-        $pageContent = include_template('error.php', $error);
+        $pageContent = include_template('error.php', ['error' => $error]);
         echo $pageContent;
-    } else {
+    } else if ($mistake === 'request') {
         $error = mysqli_error($con);
-        $pageContent = include_template('error.php', $error);
+        $pageContent = include_template('error.php', ['error' => $error]);
         echo $pageContent;
     }
 }

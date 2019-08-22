@@ -31,6 +31,8 @@ INSERT INTO lots (user_id, cat_id, win_id, dt_create, title, descr, image_path, 
 VALUES (1, 4, NULL, '2019-08-06', 'Куртка для сноуборда DC Mutiny Charocal', NULL, 'img/lot-5.jpg', 7500, '2019-08-27', 100);
 INSERT INTO lots (user_id, cat_id, win_id, dt_create, title, descr, image_path, st_price, dt_end, step)
 VALUES (1, 6, NULL, '2019-08-08', 'Маска Oakley Canopy', NULL, 'img/lot-6.jpg', 5400, '2019-09-03', 300);
+INSERT INTO lots (user_id, cat_id, win_id, dt_create, title, descr, image_path, st_price, dt_end, step)
+VALUES (1, 1, NULL, NOW(), 'Snowboard Burton FW18', NULL, 'img/lot-7.jpg', 32340, '2019-10-30', 500);
 
 INSERT INTO bids (user_id, lot_id, dt_create, price)
 VALUES (1, 2, NOW(), 164999);
