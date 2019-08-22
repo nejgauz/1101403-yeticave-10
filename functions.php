@@ -33,3 +33,21 @@ function timeCounter(string $endDate): array
     return ['hours' => $hoursRest, 'mins' => $minRest, 'days' => $daysRest];
 
 }
+
+/**
+ * Обрабатывает ошибки подключения к БД и показывает страницу с ее типом
+ * @param string $mistake вид ошибки: 'connect' (ошибка подключения) или 'request' (ошибка запроса)
+ * @param $con ресурс соединения
+ */
+function errorFilter(string $mistake, $con)
+{
+    if ($mistake === 'connect') {
+        $error = mysqli_connect_error();
+        $pageContent = include_template('error.php', $error);
+        echo $pageContent;
+    } else {
+        $error = mysqli_error($con);
+        $pageContent = include_template('error.php', $error);
+        echo $pageContent;
+    }
+}
