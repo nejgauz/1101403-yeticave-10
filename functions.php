@@ -54,25 +54,22 @@ function errorFilter(string $mistake, $con = null)
  * Обрабатывает запросы на чтение из БД
  * @param string $sql текст запроса к БД
  * @param $con ресурс соединения
- * @return array двумерный ассоциативный массив с результатами запроса к БД или текст ошибки
+ * @return array двумерный ассоциативный массив с результатами запроса к БД
  */
-function readFromDatabase(string $sql, $con)
+function readFromDatabase(string $sql, $con): array
 {
     $data = mysqli_query($con, $sql);
-    if (!$data) {
-        return errorFilter('request', $con);
-    } else {
-        $data = mysqli_fetch_all($data, MYSQLI_ASSOC);
-        return $data;
-    }
+    $data = mysqli_fetch_all($data, MYSQLI_ASSOC);
+
+    return $data;
 }
 
 /**
  * Возвращает список категорий по запросу
  * @param $connection ресурс соединения
- * @return array возвращает двумерный массив категорий или текст ошибки
+ * @return array возвращает двумерный массив категорий
  */
-function getCategories($connection)
+function getCategories($connection): array
 {
     $request = "SELECT `name`, symb_code FROM categories";
     $categories = readFromDatabase($request, $connection);
@@ -83,9 +80,9 @@ function getCategories($connection)
 /**
  * Возвращает список лотов по запросу
  * @param $connection ресурс соединения
- * @return array возвращает двумерный массив лотов или текст ошибки
+ * @return array возвращает двумерный массив лотов
  */
-function getCards($connection)
+function getCards($connection): array
 {
     $request = "SELECT title AS name, st_price AS price, image_path AS url, c.name AS category, dt_end AS `time`
     FROM lots AS l
@@ -100,16 +97,12 @@ function getCards($connection)
 
 /**
  * Подключается к базе и задает кодировку
- * @return возвращает ресурс соединения или текст ошибки
+ * @return возвращает ресурс соединения
  */
 function getConnect()
 {
     $connection = mysqli_connect('127.0.0.1', 'root', '', 'yeticave');
-    if (!$connection) {
-        $result = errorFilter('connect', null);
-    } else {
-        mysqli_set_charset($connection, 'utf8');
-        $result = $connection;
-    }
-    return $result;
+    mysqli_set_charset($connection, 'utf8');
+
+    return $connection;
 }
