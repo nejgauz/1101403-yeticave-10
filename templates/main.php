@@ -4,7 +4,7 @@
     <ul class="promo__list">
         <?php foreach ($categories as $value): ?>
             <li class="promo__item promo__item--boards">
-                <a class="promo__link" href="pages/all-lots.html"><?=strip_tags($value);?></a>
+                <a class="promo__link" href="pages/all-lots.html"><?=strip_tags($value['name']);?></a>
             </li>
         <?php endforeach; ?>
     </ul>

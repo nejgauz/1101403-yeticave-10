@@ -52,6 +52,13 @@ JOIN
 ON max_bid.lot_id = l.id
 WHERE win_id is NULL;
 
+SELECT title, st_price, image_path, c.name AS category_name
+FROM lots AS l
+LEFT JOIN categories AS c
+ON c.id = l.cat_id
+WHERE win_id IS NULL AND dt_end > NOW()
+ORDER BY l.dt_create DESC LIMIT 9;
+
 SELECT title, name FROM lots l JOIN categories c ON l.cat_id = c.id WHERE l.id = '1';
 UPDATE lots SET title = '2015 Rossignol District Snowboard' WHERE id = '1';
 SELECT price FROM bids WHERE user_id = '3' ORDER BY dt_create ASC;

@@ -1,11 +1,16 @@
 <?php
-$isAuth = rand(0, 1);
-$userName = 'Анна';
+require_once('init.php');
 
-require_once('functions.php');
-require_once('helpers.php');
+$sql1 = "SELECT title AS name, st_price AS price, image_path AS url, c.name AS category, dt_end AS 'time'
+FROM lots AS l
+LEFT JOIN categories AS c
+ON c.id = l.cat_id
+WHERE win_id IS NULL AND dt_end > NOW()
+ORDER BY l.dt_create DESC LIMIT 9";
+$cards = readFromDatabase($sql1, $connection);
 
-$connection = mysqli_connect('localhost', 'root', '', 'yeticave');
+$sql2 = "SELECT name FROM categories";
+$categories = readFromDatabase($sql2, $connection);
 
 $pageContent = include_template('main.php', ['cards' => $cards, 'categories' => $categories]);
 
