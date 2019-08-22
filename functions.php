@@ -51,3 +51,24 @@ function errorFilter(string $mistake, $con)
         echo $pageContent;
     }
 }
+
+/**
+ * Обрабатывает запросы на чтение из БД
+ * @param string $sql текст запроса к БД
+ * @param $con ресурс соединения
+ * @return array двумерный ассоциативный массив с результатами запроса к БД
+ */
+function readFromDatabase(string $sql, $con): array
+{
+    if (!$con) {
+        errorFilter('connect', NULL);
+    } else {
+        $data = mysqli_query($con, $sql);
+        if (!$data) {
+            errorFilter('request', $con);
+        } else {
+            $data = mysqli_fetch_all($data, MYSQLI_ASSOC);
+            return $data;
+        }
+    }
+}
