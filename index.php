@@ -2,18 +2,29 @@
 $isAuth = rand(0, 1);
 $userName = 'Анна';
 
-require_once('functions.php');
-require_once('data.php');
-require_once('helpers.php');
+require_once('init.php');
 
-$pageContent = include_template('main.php', ['cards' => $cards, 'categories' => $categories]);
+if ($con) {
+    $cards = getCards($con);
+    $categories = getCategories($con);
+    $pageContent = include_template('main.php', ['cards' => $cards, 'categories' => $categories]);
+    $layoutContent = include_template('layout.php', [
+        'content' => $pageContent,
+        'categories' => $categories,
+        'isAuth' => $isAuth,
+        'userName' => $userName,
+        'title' => 'YetiCave - Главная страница'
+    ]);
+    echo $layoutContent;
+} else {
+    $error = errorFilter('connect', $con);
+    $pageContent = include_template('error.php', ['error' => $error]);
+    echo $pageContent;
+}
 
-$layoutContent = include_template('layout.php', [
-    'content' => $pageContent,
-    'categories' => $categories,
-    'isAuth' => $isAuth,
-    'userName' => $userName,
-    'title' => 'YetiCave - Главная страница'
-]);
 
-echo $layoutContent;
+
+
+
+
+
