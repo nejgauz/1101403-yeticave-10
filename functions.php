@@ -95,14 +95,3 @@ function getCards($connection): array
     return $cards;
 }
 
-/**
- * Подключается к базе и задает кодировку
- * @return возвращает ресурс соединения
- */
-function getConnect()
-{
-    $connection = mysqli_connect('127.0.0.1', 'root', '', 'yeticave');
-    mysqli_set_charset($connection, 'utf8');
-
-    return $connection;
-}

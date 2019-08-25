@@ -2,10 +2,8 @@
 $isAuth = rand(0, 1);
 $userName = 'Анна';
 
-require_once('functions.php');
-require_once('helpers.php');
+require_once('init.php');
 
-$con = getConnect();
 if ($con) {
     $cards = getCards($con);
     $categories = getCategories($con);
