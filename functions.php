@@ -84,7 +84,7 @@ function getCategories($connection): array
  */
 function getCards($connection): array
 {
-    $request = "SELECT title AS name, st_price AS price, image_path AS url, c.name AS category, dt_end AS `time`
+    $request = "SELECT l.id, title AS name, st_price AS price, image_path AS url, c.name AS category, dt_end AS `time`
     FROM lots AS l
     LEFT JOIN categories AS c
     ON c.id = l.cat_id
@@ -94,4 +94,37 @@ function getCards($connection): array
 
     return $cards;
 }
+
+/**
+ * Возвращает данные по id запрашиваемого лота
+ * @param $id - id необходимого лота
+ * @param $connection ресурс соединения
+ * @return array ассоциативный массив с данными лота
+ */
+function getCard($connection, $id): array
+{
+    $request = "SELECT l.id, title AS `name`, image_path AS url, c.name AS category, descr AS description, dt_end AS `time`, step, st_price
+    FROM lots AS l
+    LEFT JOIN categories AS c ON c.id = l.cat_id
+    WHERE l.id = " . $id;
+    $card = readFromDatabase($request, $connection);
+
+    return $card;
+}
+
+/**
+ * Возвращает максимальную ставку, если она есть
+ * @param $id - id необходимого лота
+ * @param $connection ресурс соединения
+ * @return возвращает массив с максимальной ставкой
+ */
+function getMaxBid($connection, $id): array
+{
+    $request = "SELECT MAX(price) as max_price FROM bids WHERE lot_id = " . $id;
+    $bidArray = mysqli_query($connection, $request);
+    $maxBid = mysqli_fetch_assoc($bidArray);
+
+    return $maxBid;
+}
+
 
