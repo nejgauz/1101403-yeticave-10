@@ -44,7 +44,7 @@
         </div>
     </header>
 
-    <main class="container">
+    <main class=<?=$class;?>>
         <?=$content;?>
     </main>
 </div>
@@ -56,7 +56,7 @@
                 <li class="nav__item">
                     <a href="pages/all-lots.html"><?=strip_tags($value['name']);?></a>
                 </li>
-            <?php endforeach;?>
+            <?php endforeach; ?>
         </ul>
     </nav>
     <div class="main-footer__bottom container">
