@@ -128,16 +128,3 @@ function getMaxBid($connection, $id): array
 }
 
 
-/**
- * Функция, проверяющая есть ли id в базе
- * @param $connection ресурс соединения
- * @return bool возвращает true или false в зависимости от существования id в БД
- */
-function isIdExist($connection): bool
-{
-    $id = intval($_GET['lot_id']);
-    $request = 'SELECT id FROM lots WHERE id = ' . $id;
-    $result = readFromDatabase($request, $connection);
-
-    return !empty($result);
-}

@@ -5,8 +5,7 @@ $userName = 'Анна';
 require_once('init.php');
 
 if ($con) {
-    if (isset($_GET['lot_id']) && is_numeric($_GET['lot_id']) && isIdExist($con)) {
-        $card = getCard($con, $_GET['lot_id']);
+    if (isset($_GET['lot_id']) && is_numeric($_GET['lot_id']) && !empty($card = getCard($con, $_GET['lot_id']))) {
         $categories = getCategories($con);
         $pageContent = include_template('lot_card.php', ['card' => $card, 'categories' => $categories, 'connection' => $con]);
         $layoutContent = include_template('layout.php', [
