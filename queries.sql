@@ -42,6 +42,14 @@ INSERT INTO bids (user_id, lot_id, dt_create, price)
 VALUES (3, 6, NOW(), 5700);
 INSERT INTO bids (user_id, lot_id, dt_create, price)
 VALUES (3, 2, NOW(), 170999);
+INSERT INTO bids (user_id, lot_id, dt_create, price)
+VALUES (2, 1, NOW(), 11999);
+INSERT INTO bids (user_id, lot_id, dt_create, price)
+VALUES (1, 3, NOW(), 9400);
+INSERT INTO bids (user_id, lot_id, dt_create, price)
+VALUES (1, 4, NOW(), 11799);
+INSERT INTO bids (user_id, lot_id, dt_create, price)
+VALUES (2, 7, NOW(), 33500);
 
 SELECT name FROM categories;
 

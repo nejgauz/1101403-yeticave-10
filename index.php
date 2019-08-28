@@ -13,7 +13,8 @@ if ($con) {
         'categories' => $categories,
         'isAuth' => $isAuth,
         'userName' => $userName,
-        'title' => 'YetiCave - Главная страница'
+        'title' => 'YetiCave - Главная страница',
+        'class' => "container"
     ]);
     echo $layoutContent;
 } else {
