@@ -127,4 +127,15 @@ function getMaxBid($connection, $id): array
     return $maxBid;
 }
 
+/**
+ * Возвращает массив с id всех лотов
+ * @param $connection ресурс соединения
+ * @return одномерный массив с id всех имеющихся лотов
+ */
+function getIds($connection): array
+{
+    $request = 'SELECT id FROM lots';
+    $ids = readFromDatabase($request, $connection);
 
+    return $ids;
+}
