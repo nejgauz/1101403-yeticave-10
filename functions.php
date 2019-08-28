@@ -127,15 +127,17 @@ function getMaxBid($connection, $id): array
     return $maxBid;
 }
 
-/**
- * Возвращает массив с id всех лотов
- * @param $connection ресурс соединения
- * @return одномерный массив с id всех имеющихся лотов
- */
-function getIds($connection): array
-{
-    $request = 'SELECT id FROM lots';
-    $ids = readFromDatabase($request, $connection);
 
-    return $ids;
+/**
+ * Функция, проверяющая есть ли id в базе
+ * @param $connection ресурс соединения
+ * @return bool возвращает true или false в зависимости от существования id в БД
+ */
+function isIdExist($connection): bool
+{
+    $id = intval($_GET['lot_id']);
+    $request = 'SELECT id FROM lots WHERE id = ' . $id;
+    $result = readFromDatabase($request, $connection);
+
+    return isset($result[0]);
 }
