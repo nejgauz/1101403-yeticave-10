@@ -20,6 +20,7 @@ if ($con) {
         echo $layoutContent;
     } else {
         http_response_code(404);
+        exit('404 NOT FOUND');
     }
 } else {
     $error = errorFilter('connect', $con);
