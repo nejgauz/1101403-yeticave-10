@@ -139,5 +139,5 @@ function isIdExist($connection): bool
     $request = 'SELECT id FROM lots WHERE id = ' . $id;
     $result = readFromDatabase($request, $connection);
 
-    return isset($result[0]);
+    return !empty($result);
 }
