@@ -34,17 +34,22 @@
                         <span class="lot-item__cost">
                             <?php
                             $maxBid = getMaxBid($connection , $card[0]['id']);
+                            $maxBid = $maxBid['max_price'];
                             $curPrice = $card[0]['st_price'];
                             if ($curPrice > $maxBid) {
+                                $maxPrice = $curPrice;
                                 echo priceFormat($curPrice);
                             } else {
-                                echo priceFormat($maxBid['max_price']);
+                                $maxPrice = $maxBid;
+                                echo priceFormat($maxBid);
                             }
                             ?>
                         </span>
                     </div>
                     <div class="lot-item__min-cost">
-                        Мин. ставка <span><?=$card[0]['step'];?> р</span>
+                        Мин. ставка <span>
+                            <?php $minBid = $maxPrice + $card[0]['step']; echo $minBid; ?> р
+                        </span>
                     </div>
                 </div>
             </div>
