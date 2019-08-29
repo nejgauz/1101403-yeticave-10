@@ -48,7 +48,7 @@
                     </div>
                     <div class="lot-item__min-cost">
                         Мин. ставка <span>
-                            <?php $minBid = $maxPrice + $card[0]['step']; echo $minBid; ?> р
+                            <?php $minBid = $maxPrice + $card[0]['step']; echo priceFormat($minBid); ?>
                         </span>
                     </div>
                 </div>
