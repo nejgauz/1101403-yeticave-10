@@ -14,7 +14,8 @@ if ($con) {
         'isAuth' => $isAuth,
         'userName' => $userName,
         'title' => 'YetiCave - Главная страница',
-        'class' => "container"
+        'class' => "container",
+        'isMain' => true
     ]);
     echo $layoutContent;
 } else {
