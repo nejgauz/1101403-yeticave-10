@@ -19,12 +19,9 @@
             <label for="category">Категория <sup>*</sup></label>
             <select id="category" name="category">
                 <option>Выберите категорию</option>
-                <option>Доски и лыжи</option>
-                <option>Крепления</option>
-                <option>Ботинки</option>
-                <option>Одежда</option>
-                <option>Инструменты</option>
-                <option>Разное</option>
+                <?php foreach ($categories as $value): ?>
+                    <option><?=strip_tags($value['name']);?></option>
+                <?php endforeach; ?>
             </select>
             <span class="form__error">Выберите категорию</span>
         </div>
