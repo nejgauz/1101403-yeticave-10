@@ -71,7 +71,7 @@ function readFromDatabase(string $sql, $con): array
  */
 function getCategories($connection): array
 {
-    $request = "SELECT `name`, symb_code FROM categories";
+    $request = "SELECT * FROM categories";
     $categories = readFromDatabase($request, $connection);
 
     return $categories;
@@ -127,4 +127,27 @@ function getMaxBid($connection, $id): array
     return $maxBid;
 }
 
+/**
+ * Добавляет новый лот в БД
+ * @param $connection ресурс соединения
+ * @param array $lot массив с данными лота
+ */
+function insertLotInDb($connection, array $lot)
+{
+    $request = "INSERT INTO lots (dt_create, cat_id, title, descr, image_path, st_price, dt_end, step)
+    VALUES (NOW(), '" . $lot['category'] . "', '" . $lot['lot-name'] . "', '" . $lot['message'] . "', '" . $lot['path'] . "', '" .  $lot['lot-rate'] . "', '" . $lot['lot-date'] . "', '" . $lot['lot-step'] . "')";
+    $result = mysqli_query($connection, $request);
+
+    return $result;
+}
+
+/**
+ * Подставляет в форму значения, которые уже были заполнены юзером
+ * @param $name имя поля в форме
+ * @return возвращает заполненные значения либо пустые строки, если поля не были заполнены
+ */
+function getPostVal($name)
+{
+    return $_POST['$name'] ?? "";
+}
 

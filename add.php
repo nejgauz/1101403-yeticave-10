@@ -17,7 +17,23 @@ if ($con) {
         'isMain' => false,
         'isAdd' => true
     ]);
-    echo $layoutContent;
+    if ($_SERVER['REQUEST_METHOD'] != 'POST') {
+        echo $layoutContent;
+    } else {
+        $lot = $_POST;
+
+        $filename = 'uploads/' . uniqid() . '.jpg';
+        $lot['path'] = $filename;
+        move_uploaded_file($_FILES['image']['tmp_name'], $filename);
+        if (insertLotInDb($con, $lot)) {
+            $lot_id = mysqli_insert_id($con);
+            header("Location: lot.php?lot_id=" . $lot_id);
+        } else {
+            $error = errorFilter('request', $con);
+            $pageContent = include_template('error.php', ['error' => $error]);
+            echo $pageContent;
+        }
+    }
 } else {
     $error = errorFilter('connect', $con);
     $pageContent = include_template('error.php', ['error' => $error]);

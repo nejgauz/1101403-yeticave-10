@@ -11,7 +11,7 @@ CREATE TABLE bids (
 );
 CREATE TABLE lots (
     id         INT AUTO_INCREMENT PRIMARY KEY,
-    user_id    INT NOT NULL,
+    user_id    INT DEFAULT NULL,
     cat_id     INT NOT NULL,
     win_id     INT DEFAULT NULL,
     dt_create  TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
