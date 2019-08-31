@@ -1,4 +1,7 @@
 <?php
+$isAuth = rand(0, 1);
+$userName = 'Анна';
+$errors = [];
 
 require_once('functions.php');
 require_once('helpers.php');

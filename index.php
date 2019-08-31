@@ -1,7 +1,4 @@
 <?php
-$isAuth = rand(0, 1);
-$userName = 'Анна';
-
 require_once('init.php');
 
 if ($con) {
