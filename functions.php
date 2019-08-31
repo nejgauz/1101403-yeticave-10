@@ -134,8 +134,8 @@ function getMaxBid($connection, $id): array
  */
 function insertLotInDb($connection, array $lot)
 {
-    $request = "INSERT INTO lots (dt_create, cat_id, title, descr, image_path, st_price, dt_end, step)
-    VALUES (NOW(), '" . $lot['category'] . "', '" . $lot['lot-name'] . "', '" . $lot['message'] . "', '" . $lot['path'] . "', '" .  $lot['lot-rate'] . "', '" . $lot['lot-date'] . "', '" . $lot['lot-step'] . "')";
+    $request = "INSERT INTO lots (user_id, dt_create, cat_id, title, descr, image_path, st_price, dt_end, step)
+    VALUES (1, NOW(), '" . $lot['category'] . "', '" . $lot['lot-name'] . "', '" . $lot['message'] . "', '" . $lot['path'] . "', '" .  $lot['lot-rate'] . "', '" . $lot['lot-date'] . "', '" . $lot['lot-step'] . "')";
     $result = mysqli_query($connection, $request);
 
     return $result;
@@ -146,8 +146,99 @@ function insertLotInDb($connection, array $lot)
  * @param $name имя поля в форме
  * @return возвращает заполненные значения либо пустые строки, если поля не были заполнены
  */
-function getPostVal($name)
+function getPostVal($name): string
 {
-    return $_POST['$name'] ?? "";
+    return $_POST[$name] ?? "";
 }
 
+/**
+ * Проверяет, заполнено ли поле
+ * @param $field имя поля, которое нужно проверить на заполненность
+ * @return string $result возвращает текст ошибки или пустую строку
+ */
+function isFieldEmpty($field): string
+{
+    if (empty($_POST[$field]) or $_POST[$field] == 'Выберите категорию') {
+        $result = 'Поле необходимо заполнить';
+    } else {
+        $result = '';
+    }
+    return $result;
+}
+
+/**
+ * Проверяет, правильно ли указана цена
+ * @param $price цена лота
+ * @return string $result возвращает текст ошибки или пустую строку
+ */
+function validatePrice($price): string
+{
+    if (!empty($_POST[$price]) & $_POST[$price] < 0) {
+        $result = 'Цена должна быть больше нуля';
+    } else {
+        $result = '';
+    }
+    return $result;
+}
+
+/**
+ * Проверяет, является ли тип файла подходящим для формы лота
+ * @param $path путь к файлу
+ * @return string $result возвращает текст ошибки или пустую строку
+ */
+function validateImg($path): string
+{
+    if (mime_content_type($path) !='image/png' or mime_content_type($path) !='image/jpeg') {
+        $result = 'Загрузите, пожалуйста, файл в формате jpg, jpeg или png';
+    } else {
+        $result = '';
+    }
+    return $result;
+}
+
+/**
+ * Проверяет формат даты и что она не в прошлом
+ * @param $name название поля даты
+ * @return string $result возвращает текст ошибки или пустую строку
+ */
+function validateData($date): string
+{
+    if (!is_date_valid($_POST[$date])) {
+        $result = 'Неправильный формат даты. Введите в формате \'ГГГГ-ММ-ДД\'';
+    } elseif (strtotime($_POST[$date]) < strtotime('+1 day')) {
+        $result = 'Дата окончания торгов должна быть больше текущей хотя бы на один день';
+    } else {
+        $result = '';
+    }
+    return $result;
+}
+
+/**
+ * Проверяет, чтобы шаг ставки был больше нуля и целое число
+ * @step название поля шага ставки
+ * @return string $result возвращает текст ошибки или пустую строку
+ */
+function validateStep($step): string
+{
+    if ($_POST[$step] < 0) {
+        $result = 'Шаг ставки должен быть больше нуля';
+    } elseif (!is_int($_POST[$step])) {
+        $result = 'Шаг ставки должен быть целым числом';
+    } else {
+        $result = '';
+    }
+    return $result;
+}
+
+/**
+ * Возвращает строку с классом ошибки, если ошибки есть в массиве
+ * @param array $errors массив с ошибками
+ * @param string $name название тега, по которому нужно искать ошибки
+ */
+function errorClass(array $errors, string $name) {
+    if (isset($errors[$name])) {
+        echo 'form__item--invalid';
+    } else {
+        echo '';
+    }
+}
