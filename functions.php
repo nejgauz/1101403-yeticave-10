@@ -222,7 +222,7 @@ function validateStep($step): string
 {
     if ($_POST[$step] < 0) {
         $result = 'Шаг ставки должен быть больше нуля';
-    } elseif (!is_int($_POST[$step])) {
+    } elseif (!intval($_POST[$step])) {
         $result = 'Шаг ставки должен быть целым числом';
     } else {
         $result = '';
