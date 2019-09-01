@@ -34,7 +34,7 @@
     <div class="form__item form__item--file" <?=errorClass($errors, 'image');?>>
         <label>Изображение <sup>*</sup></label>
         <div class="form__input-file">
-            <input class="visually-hidden" type="file" name="image" id="lot-img" value="">
+            <input class="visually-hidden" type="file" name="image" id="lot-img" value="<?=getPostVal('path');?>">
             <label for="lot-img">
                 Добавить
             </label>
