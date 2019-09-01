@@ -146,7 +146,7 @@ function insertLotInDb($connection, array $lot)
  * @param $name имя поля в форме
  * @return возвращает заполненные значения либо пустые строки, если поля не были заполнены
  */
-function getPostVal($name): string
+function getPostVal(string $name): string
 {
     return $_POST[$name] ?? "";
 }
