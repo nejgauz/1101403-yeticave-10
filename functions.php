@@ -158,7 +158,7 @@ function getPostVal(string $name): string
  */
 function isFieldEmpty($field): string
 {
-    if (empty($_POST[$field]) or $_POST[$field] == 'Выберите категорию') {
+    if (empty($field) or $field == 'Выберите категорию') {
         $result = 'Поле необходимо заполнить';
     } else {
         $result = '';
@@ -173,7 +173,7 @@ function isFieldEmpty($field): string
  */
 function validatePrice($price): string
 {
-    if (!empty($_POST[$price]) & $_POST[$price] < 0) {
+    if (!empty($price) && $price < 0) {
         $result = 'Цена должна быть больше нуля';
     } else {
         $result = '';
@@ -208,9 +208,9 @@ function validateImg($path): string
  */
 function validateData($date): string
 {
-    if (!is_date_valid($_POST[$date])) {
+    if (!is_date_valid($date)) {
         $result = 'Неправильный формат даты. Введите в формате \'ГГГГ-ММ-ДД\'';
-    } elseif (strtotime($_POST[$date]) < strtotime('+1 day')) {
+    } elseif (strtotime($date) < strtotime('+1 day')) {
         $result = 'Дата окончания торгов должна быть больше текущей хотя бы на один день';
     } else {
         $result = '';
@@ -225,9 +225,9 @@ function validateData($date): string
  */
 function validateStep($step): string
 {
-    if ($_POST[$step] < 0) {
+    if ($step < 0) {
         $result = 'Шаг ставки должен быть больше нуля';
-    } elseif (!intval($_POST[$step])) {
+    } elseif (!intval($step)) {
         $result = 'Шаг ставки должен быть целым числом';
     } else {
         $result = '';
@@ -259,25 +259,25 @@ function validateLotForm(array $lot): array
     $requiredFields = $lot;
     foreach ($requiredFields as $field => $value) {
         if (isFieldEmpty($field)) {
-            $errors[$field] = isFieldEmpty($field);
+            $errors[$field] = isFieldEmpty($lot[$field]);
             unset($requiredFields[$field]);
         }
     }
     $rules = [
-        'lot-rate' => function () {
-            return validatePrice('lot-rate');
+        'lot-rate' => function ($lot) {
+            return validatePrice($lot['lot-rate']);
         },
-        'lot-date' => function () {
-            return validateData('lot-date');
+        'lot-date' => function ($lot) {
+            return validateData($lot['lot-date']);
         },
-        'lot-step' => function () {
-            return validateStep('lot-step');
+        'lot-step' => function ($lot) {
+            return validateStep($lot['lot-step']);
         }
     ];
     foreach ($requiredFields as $field => $value) {
         if (isset($rules[$field])) {
             $rule = $rules[$field];
-            $errors[$field] = $rule();
+            $errors[$field] = $rule($lot);
         }
     }
     $errors = array_filter($errors);
