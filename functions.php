@@ -173,7 +173,7 @@ function isFieldEmpty($field): string
  */
 function validatePrice($price): string
 {
-    if ($price < 0) {
+    if (empty($price) or $price < 0) {
         $result = 'Цена должна быть больше нуля';
     } elseif (!floatval($price)) {
         $result = 'Цена должна быть числом';
@@ -228,7 +228,7 @@ function validateData($date): string
  */
 function validateStep($step): string
 {
-    if ($step < 0) {
+    if (empty($step) or $step < 0) {
         $result = 'Шаг ставки должен быть больше нуля';
     } elseif (!intval($step)) {
         $result = 'Шаг ставки должен быть целым числом';
