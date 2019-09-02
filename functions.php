@@ -173,11 +173,14 @@ function isFieldEmpty($field): string
  */
 function validatePrice($price): string
 {
-    if (!empty($price) && $price < 0) {
+    if ($price < 0) {
         $result = 'Цена должна быть больше нуля';
+    } elseif (!floatval($price)) {
+        $result = 'Цена должна быть числом';
     } else {
         $result = '';
     }
+
     return $result;
 }
 
