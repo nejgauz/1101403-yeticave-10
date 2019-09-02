@@ -31,13 +31,14 @@
         <textarea id="message" name="message" placeholder="Напишите описание лота"><?=getPostVal('message');?></textarea>
         <span class="form__error"><?=$errors['message'] ?? '';?></span>
     </div>
-    <div class="form__item form__item--file" <?=errorClass($errors, 'image');?>>
+    <div class="form__item form__item--file <?=errorClass($errors, 'image');?>">
         <label>Изображение <sup>*</sup></label>
         <div class="form__input-file">
             <input class="visually-hidden" type="file" name="image" id="lot-img" value="<?=getPostVal('path');?>">
             <label for="lot-img">
                 Добавить
             </label>
+            <span class="form__error"><?=$errors['image'] ?? '';?></span>
         </div>
     </div>
     <div class="form__container-three">
