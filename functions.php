@@ -188,11 +188,16 @@ function validatePrice($price): string
  */
 function validateImg($path): string
 {
-    if (mime_content_type($path) !='image/png' or mime_content_type($path) !='image/jpeg') {
-        $result = 'Загрузите, пожалуйста, файл в формате jpg, jpeg или png';
+    if (!empty($path)) {
+        if (mime_content_type($path) !='image/png' && mime_content_type($path) !='image/jpeg') {
+            $result = 'Загрузите, пожалуйста, файл в формате jpg, jpeg или png';
+        } else {
+            $result = '';
+        }
     } else {
-        $result = '';
+        $result = 'Изображение не выбрано';
     }
+
     return $result;
 }
 
@@ -241,4 +246,41 @@ function errorClass(array $errors, string $name) {
     } else {
         echo '';
     }
+}
+
+/**
+ * Функция проводит необходимые проверки для валидации формы добавления лота
+ * @param array $lot массив с данными из отправленной формы
+ * @return array $errors - массив с ошибками
+ */
+function validateLotForm(array $lot): array
+{
+    $errors = [];
+    $requiredFields = $lot;
+    foreach ($requiredFields as $field => $value) {
+        if (isFieldEmpty($field)) {
+            $errors[$field] = isFieldEmpty($field);
+            unset($requiredFields[$field]);
+        }
+    }
+    $rules = [
+        'lot-rate' => function () {
+            return validatePrice('lot-rate');
+        },
+        'lot-date' => function () {
+            return validateData('lot-date');
+        },
+        'lot-step' => function () {
+            return validateStep('lot-step');
+        }
+    ];
+    foreach ($requiredFields as $field => $value) {
+        if (isset($rules[$field])) {
+            $rule = $rules[$field];
+            $errors[$field] = $rule();
+        }
+    }
+    $errors = array_filter($errors);
+
+    return $errors;
 }
