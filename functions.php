@@ -71,7 +71,7 @@ function readFromDatabase(string $sql, $con): array
  */
 function getCategories($connection): array
 {
-    $request = "SELECT `name`, symb_code FROM categories";
+    $request = "SELECT * FROM categories";
     $categories = readFromDatabase($request, $connection);
 
     return $categories;
@@ -127,4 +127,163 @@ function getMaxBid($connection, $id): array
     return $maxBid;
 }
 
+/**
+ * Добавляет новый лот в БД
+ * @param $connection ресурс соединения
+ * @param array $lot массив с данными лота
+ */
+function insertLotInDb($connection, array $lot)
+{
+    $request = "INSERT INTO lots (user_id, dt_create, cat_id, title, descr, image_path, st_price, dt_end, step)
+    VALUES (1, NOW(), '" . $lot['category'] . "', '" . $lot['lot-name'] . "', '" . $lot['message'] . "', '" . $lot['path'] . "', '" .  $lot['lot-rate'] . "', '" . $lot['lot-date'] . "', '" . $lot['lot-step'] . "')";
+    $result = mysqli_query($connection, $request);
 
+    return $result;
+}
+
+/**
+ * Подставляет в форму значения, которые уже были заполнены юзером
+ * @param $name имя поля в форме
+ * @return возвращает заполненные значения либо пустые строки, если поля не были заполнены
+ */
+function getPostVal(string $name): string
+{
+    return $_POST[$name] ?? "";
+}
+
+/**
+ * Проверяет, заполнено ли поле
+ * @param $field имя поля, которое нужно проверить на заполненность
+ * @return string $result возвращает текст ошибки или пустую строку
+ */
+function isFieldEmpty($field): string
+{
+    if (empty($field) or $field == 'Выберите категорию') {
+        $result = 'Поле необходимо заполнить';
+    } else {
+        $result = '';
+    }
+    return $result;
+}
+
+/**
+ * Проверяет, правильно ли указана цена
+ * @param $price цена лота
+ * @return string $result возвращает текст ошибки или пустую строку
+ */
+function validatePrice($price): string
+{
+    if (empty($price) or $price < 0) {
+        $result = 'Цена должна быть больше нуля';
+    } elseif (!floatval($price)) {
+        $result = 'Цена должна быть числом';
+    } else {
+        $result = '';
+    }
+
+    return $result;
+}
+
+/**
+ * Проверяет, является ли тип файла подходящим для формы лота
+ * @param $path путь к файлу
+ * @return string $result возвращает текст ошибки или пустую строку
+ */
+function validateImg($path): string
+{
+    if (!empty($path)) {
+        if (mime_content_type($path) !='image/png' && mime_content_type($path) !='image/jpeg') {
+            $result = 'Загрузите, пожалуйста, файл в формате jpg, jpeg или png';
+        } else {
+            $result = '';
+        }
+    } else {
+        $result = 'Изображение не выбрано';
+    }
+
+    return $result;
+}
+
+/**
+ * Проверяет формат даты и что она не в прошлом
+ * @param $name название поля даты
+ * @return string $result возвращает текст ошибки или пустую строку
+ */
+function validateData($date): string
+{
+    if (!is_date_valid($date)) {
+        $result = 'Неправильный формат даты. Введите в формате \'ГГГГ-ММ-ДД\'';
+    } elseif (strtotime($date) < strtotime('+1 day')) {
+        $result = 'Дата окончания торгов должна быть больше текущей хотя бы на один день';
+    } else {
+        $result = '';
+    }
+    return $result;
+}
+
+/**
+ * Проверяет, чтобы шаг ставки был больше нуля и целое число
+ * @step название поля шага ставки
+ * @return string $result возвращает текст ошибки или пустую строку
+ */
+function validateStep($step): string
+{
+    if (empty($step) or $step < 0) {
+        $result = 'Шаг ставки должен быть больше нуля';
+    } elseif (!intval($step)) {
+        $result = 'Шаг ставки должен быть целым числом';
+    } else {
+        $result = '';
+    }
+    return $result;
+}
+
+/**
+ * Возвращает строку с классом ошибки, если ошибки есть в массиве
+ * @param array $errors массив с ошибками
+ * @param string $name название тега, по которому нужно искать ошибки
+ */
+function errorClass(array $errors, string $name) {
+    if (isset($errors[$name])) {
+        echo 'form__item--invalid';
+    } else {
+        echo '';
+    }
+}
+
+/**
+ * Функция проводит необходимые проверки для валидации формы добавления лота
+ * @param array $lot массив с данными из отправленной формы
+ * @return array $errors - массив с ошибками
+ */
+function validateLotForm(array $lot): array
+{
+    $errors = [];
+    $requiredFields = $lot;
+    foreach ($requiredFields as $field => $value) {
+        if (isFieldEmpty($field)) {
+            $errors[$field] = isFieldEmpty($lot[$field]);
+            unset($requiredFields[$field]);
+        }
+    }
+    $rules = [
+        'lot-rate' => function ($lot) {
+            return validatePrice($lot['lot-rate']);
+        },
+        'lot-date' => function ($lot) {
+            return validateData($lot['lot-date']);
+        },
+        'lot-step' => function ($lot) {
+            return validateStep($lot['lot-step']);
+        }
+    ];
+    foreach ($requiredFields as $field => $value) {
+        if (isset($rules[$field])) {
+            $rule = $rules[$field];
+            $errors[$field] = $rule($lot);
+        }
+    }
+    $errors = array_filter($errors);
+
+    return $errors;
+}

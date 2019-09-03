@@ -1,7 +1,4 @@
 <?php
-$isAuth = rand(0, 1);
-$userName = 'Анна';
-
 require_once('init.php');
 
 if ($con) {
@@ -14,7 +11,9 @@ if ($con) {
         'isAuth' => $isAuth,
         'userName' => $userName,
         'title' => 'YetiCave - Главная страница',
-        'class' => "container"
+        'class' => "container",
+        'isMain' => true,
+        'isAdd' => false
     ]);
     echo $layoutContent;
 } else {
