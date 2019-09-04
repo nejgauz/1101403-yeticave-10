@@ -315,10 +315,10 @@ function validateUser(array $user): array
  * @connection ресурс соединения
  * @param array $user массив с данными юзера
  */
-function insertUserInDb($connection, array $user)
+function insertUserInDb($connection, array $user): bool
 {
     $request = "INSERT INTO users (dt_reg, email, `name`, password, avat_path, `contact`)
-    VALUES (NOW(), '" . $user['email'] . "', '" . $user['name'] . "', '" . $user['password'] . "', NULL, '" . $user['contact'] . "')";
+    VALUES (NOW(), '" . $user['email'] . "', '" . $user['name'] . "', '" . $user['password'] . "', NULL, '" . $user['message'] . "')";
     $result = mysqli_query($connection, $request);
 
     return $result;
@@ -333,8 +333,7 @@ function insertUserInDb($connection, array $user)
 function isEmailExist($connection, $email): bool
 {
     $request = "SELECT * FROM users WHERE email = '" . $email . "'";
-    $array = mysqli_query($connection, $request);
-    $result = mysqli_fetch_all($array, MYSQLI_ASSOC);
+    $result = readFromDatabase($request, $connection);
     if ($result) {
         $answer = true;
     } else {

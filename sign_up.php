@@ -48,7 +48,7 @@ if (!empty($errors)) {
     exit();
 } else {
     if (insertUserInDb($con, $user)) {
-        header('Location: index.php');
+        header("Location: index.php");
         exit();
     } else {
         $error = errorFilter('request', $con);
