@@ -260,10 +260,10 @@ function validateLotForm(array $lot): array
 {
     $errors = [];
     $requiredFields = $lot;
-    foreach ($requiredFields as $field => $value) {
-        if (isFieldEmpty($field)) {
-            $errors[$field] = isFieldEmpty($lot[$field]);
-            unset($requiredFields[$field]);
+    foreach ($requiredFields as $key => $value) {
+        if (isFieldEmpty($value)) {
+            $errors[$key] = isFieldEmpty($value);
+            unset($requiredFields[$key]);
         }
     }
     $rules = [
@@ -286,4 +286,60 @@ function validateLotForm(array $lot): array
     $errors = array_filter($errors);
 
     return $errors;
+}
+
+/**
+ * Функция проводит необходимые проверки для валидации формы регистрации юзера
+ * @param array $user массив с данными из отправленной формы
+ * @return array $errors - массив с ошибками
+ */
+function validateUser(array $user): array
+{
+    $errors = [];
+    foreach ($user as $key => $value) {
+        if (isFieldEmpty($value)) {
+            $errors[$key] = isFieldEmpty($value);
+        }
+    }
+    if (!filter_var($user['email'], FILTER_VALIDATE_EMAIL)) {
+        $errors['email'] = 'Пожалуйста, введите корректный адрес почты';
+    }
+
+    $errors = array_filter($errors);
+
+    return $errors;
+}
+
+/**
+ * Вносит данные юзера в базу данных
+ * @connection ресурс соединения
+ * @param array $user массив с данными юзера
+ */
+function insertUserInDb($connection, array $user)
+{
+    $request = "INSERT INTO users (dt_reg, email, `name`, password, avat_path, `contact`)
+    VALUES (NOW(), '" . $user['email'] . "', '" . $user['name'] . "', '" . $user['password'] . "', NULL, '" . $user['contact'] . "')";
+    $result = mysqli_query($connection, $request);
+
+    return $result;
+}
+
+/**
+ * Функция проверяет, есть ли в БД пользователь с указанным имейлом
+ * @connection ресурс соединения
+ * @param $email имейл пользователя
+ * @return bool $answer нашелся или нет пользователь с таким адресом
+ */
+function isEmailExist($connection, $email): bool
+{
+    $request = "SELECT * FROM users WHERE email = '" . $email . "'";
+    $array = mysqli_query($connection, $request);
+    $result = mysqli_fetch_all($array, MYSQLI_ASSOC);
+    if ($result) {
+        $answer = true;
+    } else {
+        $answer = false;
+    }
+
+    return $answer;
 }
