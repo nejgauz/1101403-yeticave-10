@@ -17,8 +17,6 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
         'isAuth' => $isAuth,
         'userName' => $userName,
         'title' => 'Добавление лота',
-        'class' => null,
-        'isMain' => false,
         'isAdd' => true
     ]);
     echo $layoutContent;
@@ -37,6 +35,7 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
         if (insertLotInDb($con, $lot)) {
             $lot_id = mysqli_insert_id($con);
             header("Location: lot.php?lot_id=" . $lot_id);
+            exit();
         } else {
             $error = errorFilter('request', $con);
             $pageContent = include_template('error.php', ['error' => $error]);
@@ -51,8 +50,6 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
             'isAuth' => $isAuth,
             'userName' => $userName,
             'title' => 'Добавление лота',
-            'class' => null,
-            'isMain' => false,
             'isAdd' => true
         ]);
         echo $layoutContent;

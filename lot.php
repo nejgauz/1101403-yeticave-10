@@ -11,9 +11,6 @@ if ($con) {
             'isAuth' => $isAuth,
             'userName' => $userName,
             'title' => $card[0]['name'],
-            'class' => null,
-            'isMain' => false,
-            'isAdd' => false
         ]);
         echo $layoutContent;
     } else {

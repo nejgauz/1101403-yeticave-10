@@ -5,7 +5,7 @@
     <title><?=$title;?></title>
     <link href="../css/normalize.min.css" rel="stylesheet">
     <link href="../css/style.css" rel="stylesheet">
-    <?php if ($isAdd): echo '<link href="../css/flatpickr.min.css" rel="stylesheet">'; endif; ?>
+    <?php if (isset($isAdd)): echo '<link href="../css/flatpickr.min.css" rel="stylesheet">'; endif; ?>
 </head>
 <body>
 <div class="page-wrapper">
@@ -13,7 +13,7 @@
     <header class="main-header">
         <div class="main-header__container container">
             <h1 class="visually-hidden">YetiCave</h1>
-            <a class="main-header__logo" <?php if (!$isMain): echo 'href = "index.php"'; endif; ?>>
+            <a class="main-header__logo" <?php if (!isset($isMain)): echo 'href = "index.php"'; endif; ?>>
                 <img src="../img/logo.svg" width="160" height="39" alt="Логотип компании YetiCave">
             </a>
             <form class="main-header__search" method="get" action="https://echo.htmlacademy.ru" autocomplete="off">
@@ -33,7 +33,7 @@
                 <?php else: ?>
                     <ul class="user-menu__list">
                         <li class="user-menu__item">
-                            <a href="#">Регистрация</a>
+                            <a href="sign_up.php">Регистрация</a>
                         </li>
                         <li class="user-menu__item">
                             <a href="#">Вход</a>
@@ -45,7 +45,7 @@
         </div>
     </header>
 
-    <main class=<?=$class;?>>
+    <main class=<?php if (isset($isMain)): echo 'container'; endif; ?>>
         <?=$content;?>
     </main>
 </div>
@@ -102,7 +102,9 @@
     </div>
 </footer>
 
-<script src="flatpickr.js"></script>
-<script src="script.js"></script>
-</body>
-</html>
+<?php if (!isset($isSign)): ?>
+    <script src="flatpickr.js"></script>
+    <script src="script.js"></script>
+    </body>
+    </html>
+<?php endif; ?>
