@@ -28,7 +28,7 @@ $user = $_POST;
 if ($user['password']) {
     $user['password'] = password_hash($user['password'], PASSWORD_DEFAULT);
 }
-$errors = validateUser($user);
+$errors = validateUser($errors, $user);
 if (isEmailExist($con, $user['email'])) {
     $errors['email'] = 'Пользователь с таким паролем уже существует';
 }
