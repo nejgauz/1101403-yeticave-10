@@ -290,12 +290,13 @@ function validateLotForm(array $lot): array
 
 /**
  * Функция проводит необходимые проверки для валидации формы регистрации юзера
+ * @param array $errors массив с ошибками
  * @param array $user массив с данными из отправленной формы
  * @return array $errors - массив с ошибками
  */
-function validateUser(array $user): array
+function validateUser(array $errors, array $user): array
 {
-    $errors = [];
+    $errors = $errors;
     foreach ($user as $key => $value) {
         if (isFieldEmpty($value)) {
             $errors[$key] = isFieldEmpty($value);
@@ -326,7 +327,7 @@ function insertUserInDb($connection, array $user): bool
 
 /**
  * Функция проверяет, есть ли в БД пользователь с указанным имейлом
- * @connection ресурс соединения
+ * @param $connection ресурс соединения
  * @param $email имейл пользователя
  * @return bool $answer нашелся или нет пользователь с таким адресом
  */
@@ -341,4 +342,19 @@ function isEmailExist($connection, $email): bool
     }
 
     return $answer;
+}
+
+/**
+ * Функция возвращает из ДБ хэш пароля по имейлу
+ * @param $connection ресурс соединения
+ * @param $email имейл пользователя
+ * @return string $hash хэш пароля из ДБ
+ */
+function getPasswordHash($connection, $email): string
+{
+    $request = "SELECT `password` FROM users WHERE email = '" . $email. "'";
+    $result = readFromDatabase($request, $connection);
+    $hash = $result[0]['password'];
+
+    return $hash;
 }
