@@ -24,14 +24,16 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
 }
 
 $user = $_POST;
+$errors = validateUser($errors, $user);
 if (isEmailExist($con, $user['email'])) {
-    if (!password_verify($user['password'], getPasswordHash($con, $user['email']))) {
+    $regUser = getUserInfo($con, $user['email']);
+    $hash = $regUser['password'];
+    if (!password_verify($user['password'], $hash)) {
         $errors['password'] = 'Вы ввели неверный пароль';
     }
 } else {
     $errors['email'] = 'Адрес почты не зарегистрирован';
 }
-$errors = validateUser($errors, $user);
 
 if (!empty($errors)) {
     $pageContent = include_template('login_page.php',
@@ -46,6 +48,8 @@ if (!empty($errors)) {
     echo $layoutContent;
     exit();
 } else {
+    $_SESSION['email'] = $regUser['email'];
+    $_SESSION['name'] = $regUser['name'];
     header("Location:/");
     exit();
 }

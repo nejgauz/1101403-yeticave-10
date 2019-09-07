@@ -350,11 +350,19 @@ function isEmailExist($connection, $email): bool
  * @param $email имейл пользователя
  * @return string $hash хэш пароля из ДБ
  */
-function getPasswordHash($connection, $email): string
-{
-    $request = "SELECT `password` FROM users WHERE email = '" . $email. "'";
-    $result = readFromDatabase($request, $connection);
-    $hash = $result[0]['password'];
 
-    return $hash;
+
+/**
+ * Функция возвращает из ДБ информацию о пользователе
+ * @param $connection ресурс соединения
+ * @param string $email имейл пользователя
+ * @return array $result массив с информацией о пользователе
+ */
+function getUserInfo($connection, string $email): array
+{
+    $request = "SELECT * FROM users WHERE email = '" . $email. "'";
+    $result = readFromDatabase($request, $connection);
+    $result = $result[0];
+
+    return $result;
 }
