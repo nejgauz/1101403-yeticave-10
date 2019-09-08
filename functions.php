@@ -297,15 +297,15 @@ function validateLotForm(array $lot): array
 function validateUser(array $errors, array $user): array
 {
     $errors = $errors;
+    if (!filter_var($user['email'], FILTER_VALIDATE_EMAIL)) {
+        $errors['email'] = 'Пожалуйста, введите корректный адрес почты';
+        $errors['password'] = 'Пароль неверный';
+    }
     foreach ($user as $key => $value) {
         if (isFieldEmpty($value)) {
             $errors[$key] = isFieldEmpty($value);
         }
     }
-    if (!filter_var($user['email'], FILTER_VALIDATE_EMAIL)) {
-        $errors['email'] = 'Пожалуйста, введите корректный адрес почты';
-    }
-
     $errors = array_filter($errors);
 
     return $errors;
@@ -318,8 +318,8 @@ function validateUser(array $errors, array $user): array
  */
 function insertUserInDb($connection, array $user): bool
 {
-    $request = "INSERT INTO users (dt_reg, email, `name`, password, avat_path, `contact`)
-    VALUES (NOW(), '" . $user['email'] . "', '" . $user['name'] . "', '" . $user['password'] . "', NULL, '" . $user['message'] . "')";
+    $request = "INSERT INTO users (dt_reg, user_id, email, `name`, password, avat_path, `contact`)
+    VALUES (NOW(), '" . $user['id'] . "', '" . $user['email'] . "', '" . $user['name'] . "', '" . $user['password'] . "', NULL, '" . $user['message'] . "')";
     $result = mysqli_query($connection, $request);
 
     return $result;
