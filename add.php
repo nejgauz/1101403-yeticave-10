@@ -14,8 +14,6 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     $layoutContent = include_template('layout.php', [
         'content' => $pageContent,
         'categories' => $categories,
-        'isAuth' => $isAuth,
-        'userName' => $userName,
         'title' => 'Добавление лота',
         'isAdd' => true
     ]);
@@ -46,8 +44,6 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
         $pageContent = include_template('add_lot.php', ['categories' => $categories, 'connection' => $con, 'errors' => $errors]);
         $layoutContent = include_template('layout.php', [
             'content' => $pageContent,
-            'categories' => $categories,
-            'isAuth' => $isAuth,
             'userName' => $userName,
             'title' => 'Добавление лота',
             'isAdd' => true

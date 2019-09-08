@@ -15,8 +15,6 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     $layoutContent = include_template('layout.php', [
         'content' => $pageContent,
         'categories' => $categories,
-        'isAuth' => $isAuth,
-        'userName' => $userName,
         'title' => 'Вход'
     ]);
     echo $layoutContent;
@@ -41,8 +39,6 @@ if (!empty($errors)) {
     $layoutContent = include_template('layout.php', [
         'content' => $pageContent,
         'categories' => $categories,
-        'isAuth' => $isAuth,
-        'userName' => $userName,
         'title' => 'Вход'
     ]);
     echo $layoutContent;
