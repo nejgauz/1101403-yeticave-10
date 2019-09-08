@@ -34,6 +34,7 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
         $errors['image'] = validateImg($_FILES['image']['tmp_name']);
     }
     if (empty($errors)) {
+        $lot['user_id'] = $_SESSION['id'];
         if (insertLotInDb($con, $lot)) {
             $lot_id = mysqli_insert_id($con);
             header("Location: lot.php?lot_id=" . $lot_id);

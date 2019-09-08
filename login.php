@@ -22,7 +22,6 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
 }
 
 $user = $_POST;
-$errors = validateUser($errors, $user);
 if (isEmailExist($con, $user['email'])) {
     $regUser = getUserInfo($con, $user['email']);
     $hash = $regUser['password'];
@@ -32,6 +31,7 @@ if (isEmailExist($con, $user['email'])) {
 } else {
     $errors['email'] = 'Адрес почты не зарегистрирован';
 }
+$errors = validateUser($errors, $user);
 
 if (!empty($errors)) {
     $pageContent = include_template('login_page.php',
@@ -44,6 +44,7 @@ if (!empty($errors)) {
     echo $layoutContent;
     exit();
 } else {
+    $_SESSION['id'] = $regUser['id'];
     $_SESSION['email'] = $regUser['email'];
     $_SESSION['name'] = $regUser['name'];
     header("Location:/");
