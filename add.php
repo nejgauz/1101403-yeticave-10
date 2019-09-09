@@ -1,5 +1,9 @@
 <?php
 require_once('init.php');
+if (!isset($_SESSION['name'])) {
+    http_response_code(403);
+    exit();
+}
 
 if (!$con) {
     $error = errorFilter('connect', $con);
@@ -14,8 +18,6 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     $layoutContent = include_template('layout.php', [
         'content' => $pageContent,
         'categories' => $categories,
-        'isAuth' => $isAuth,
-        'userName' => $userName,
         'title' => 'Добавление лота',
         'isAdd' => true
     ]);
@@ -32,6 +34,7 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
         $errors['image'] = validateImg($_FILES['image']['tmp_name']);
     }
     if (empty($errors)) {
+        $lot['user_id'] = $_SESSION['id'];
         if (insertLotInDb($con, $lot)) {
             $lot_id = mysqli_insert_id($con);
             header("Location: lot.php?lot_id=" . $lot_id);
@@ -46,8 +49,6 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
         $pageContent = include_template('add_lot.php', ['categories' => $categories, 'connection' => $con, 'errors' => $errors]);
         $layoutContent = include_template('layout.php', [
             'content' => $pageContent,
-            'categories' => $categories,
-            'isAuth' => $isAuth,
             'userName' => $userName,
             'title' => 'Добавление лота',
             'isAdd' => true

@@ -8,8 +8,6 @@ if ($con) {
         $layoutContent = include_template('layout.php', [
             'content' => $pageContent,
             'categories' => $categories,
-            'isAuth' => $isAuth,
-            'userName' => $userName,
             'title' => $card[0]['name'],
         ]);
         echo $layoutContent;

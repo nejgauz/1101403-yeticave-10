@@ -1,6 +1,11 @@
 <?php
 require_once('init.php');
 
+if (isset($_SESSION['name'])) {
+    http_response_code(403);
+    exit();
+}
+
 if (!$con) {
     $error = errorFilter('connect', $con);
     $pageContent = include_template('error.php', ['error' => $error]);
@@ -15,8 +20,6 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     $layoutContent = include_template('layout.php', [
         'content' => $pageContent,
         'categories' => $categories,
-        'isAuth' => $isAuth,
-        'userName' => $userName,
         'title' => 'Регистрация',
         'isSign' => true
     ]);
@@ -28,7 +31,7 @@ $user = $_POST;
 if ($user['password']) {
     $user['password'] = password_hash($user['password'], PASSWORD_DEFAULT);
 }
-$errors = validateUser($user);
+$errors = validateUser($errors, $user);
 if (isEmailExist($con, $user['email'])) {
     $errors['email'] = 'Пользователь с таким паролем уже существует';
 }
@@ -39,8 +42,6 @@ if (!empty($errors)) {
     $layoutContent = include_template('layout.php', [
         'content' => $pageContent,
         'categories' => $categories,
-        'isAuth' => $isAuth,
-        'userName' => $userName,
         'title' => 'Регистрация',
         'isSign' => true
     ]);

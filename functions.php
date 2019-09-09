@@ -290,21 +290,22 @@ function validateLotForm(array $lot): array
 
 /**
  * Функция проводит необходимые проверки для валидации формы регистрации юзера
+ * @param array $errors массив с ошибками
  * @param array $user массив с данными из отправленной формы
  * @return array $errors - массив с ошибками
  */
-function validateUser(array $user): array
+function validateUser(array $errors, array $user): array
 {
-    $errors = [];
+    $errors = $errors;
+    if (!filter_var($user['email'], FILTER_VALIDATE_EMAIL)) {
+        $errors['email'] = 'Пожалуйста, введите корректный адрес почты';
+        $errors['password'] = 'Пароль неверный';
+    }
     foreach ($user as $key => $value) {
         if (isFieldEmpty($value)) {
             $errors[$key] = isFieldEmpty($value);
         }
     }
-    if (!filter_var($user['email'], FILTER_VALIDATE_EMAIL)) {
-        $errors['email'] = 'Пожалуйста, введите корректный адрес почты';
-    }
-
     $errors = array_filter($errors);
 
     return $errors;
@@ -317,8 +318,8 @@ function validateUser(array $user): array
  */
 function insertUserInDb($connection, array $user): bool
 {
-    $request = "INSERT INTO users (dt_reg, email, `name`, password, avat_path, `contact`)
-    VALUES (NOW(), '" . $user['email'] . "', '" . $user['name'] . "', '" . $user['password'] . "', NULL, '" . $user['message'] . "')";
+    $request = "INSERT INTO users (dt_reg, user_id, email, `name`, password, avat_path, `contact`)
+    VALUES (NOW(), '" . $user['id'] . "', '" . $user['email'] . "', '" . $user['name'] . "', '" . $user['password'] . "', NULL, '" . $user['message'] . "')";
     $result = mysqli_query($connection, $request);
 
     return $result;
@@ -326,7 +327,7 @@ function insertUserInDb($connection, array $user): bool
 
 /**
  * Функция проверяет, есть ли в БД пользователь с указанным имейлом
- * @connection ресурс соединения
+ * @param $connection ресурс соединения
  * @param $email имейл пользователя
  * @return bool $answer нашелся или нет пользователь с таким адресом
  */
@@ -341,4 +342,27 @@ function isEmailExist($connection, $email): bool
     }
 
     return $answer;
+}
+
+/**
+ * Функция возвращает из ДБ хэш пароля по имейлу
+ * @param $connection ресурс соединения
+ * @param $email имейл пользователя
+ * @return string $hash хэш пароля из ДБ
+ */
+
+
+/**
+ * Функция возвращает из ДБ информацию о пользователе
+ * @param $connection ресурс соединения
+ * @param string $email имейл пользователя
+ * @return array $result массив с информацией о пользователе
+ */
+function getUserInfo($connection, string $email): array
+{
+    $request = "SELECT * FROM users WHERE email = '" . $email. "'";
+    $result = readFromDatabase($request, $connection);
+    $result = $result[0];
+
+    return $result;
 }
