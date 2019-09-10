@@ -12,13 +12,21 @@ $categories = getCategories($con);
 if ($_SERVER['REQUEST_METHOD'] == 'GET') {
     $request = trim($_GET['search']);
     if (!empty($request)) {
-        $cards = getSearchResults($con, $request);
-        if ($cards) {
+        $allCards = getSearchResults($con, $request);
+        if ($allCards) {
+            $itemsNumber = count($allCards);
+            $curPage = $_GET['page'] ?? 1;
+            $itemsLimit = 9;
+            $pagesNumber = ceil($itemsNumber/$itemsLimit);
+            $offset = ($curPage - 1) * $itemsLimit;
+            $cards = getSearchResults($con, $request, $itemsLimit, $offset);
             $pageContent = include_template('search_result.php', [
                 'categories' => $categories,
                 'connection' => $con,
                 'cards' => $cards,
-                'request' => $request
+                'request' => $request,
+                'pagesNumber' => $pagesNumber,
+                'curPage' => $curPage
             ]);
             $layoutContent = include_template('layout.php', [
                 'content' => $pageContent,
