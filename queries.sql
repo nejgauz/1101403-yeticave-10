@@ -51,6 +51,21 @@ VALUES (1, 4, NOW(), 11799);
 INSERT INTO bids (user_id, lot_id, dt_create, price)
 VALUES (2, 7, NOW(), 33500);
 
+INSERT INTO stop_words SET value = 'и';
+INSERT INTO stop_words SET value = 'или';
+INSERT INTO stop_words SET value = 'у';
+INSERT INTO stop_words SET value = 'в';
+INSERT INTO stop_words SET value = 'на';
+INSERT INTO stop_words SET value = 'из';
+INSERT INTO stop_words SET value = 'под';
+INSERT INTO stop_words SET value = 'около';
+INSERT INTO stop_words SET value = 'он';
+INSERT INTO stop_words SET value = 'оно';
+INSERT INTO stop_words SET value = 'она';
+INSERT INTO stop_words SET value = 'они';
+INSERT INTO stop_words SET value = 'то';
+INSERT INTO stop_words SET value = 'что'; 
+
 SELECT name FROM categories;
 
 SELECT l.id, title, st_price, image_path, categories.name as category_name, max_bid.max_price as curren_price
