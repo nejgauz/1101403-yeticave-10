@@ -41,3 +41,4 @@ CREATE INDEX bid ON bids(price);
 CREATE INDEX title ON lots(title);
 CREATE INDEX step ON lots(step);
 CREATE INDEX descr ON lots(descr);
+CREATE FULLTEXT INDEX lot_search ON lots(title, descr);
