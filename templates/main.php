@@ -30,7 +30,7 @@
                                     $price = priceFormat($item['price']);
                                     echo $price;
                                     ?>
-                                </span>
+                            </span>
                         </div>
                         <?php
                         $time = timeCounter($item['time']);

@@ -344,16 +344,9 @@ function isEmailExist($connection, $email): bool
     return $answer;
 }
 
-/**
- * Функция возвращает из ДБ хэш пароля по имейлу
- * @param $connection ресурс соединения
- * @param $email имейл пользователя
- * @return string $hash хэш пароля из ДБ
- */
-
 
 /**
- * Функция возвращает из ДБ информацию о пользователе
+ * Функция возвращает из БД информацию о пользователе
  * @param $connection ресурс соединения
  * @param string $email имейл пользователя
  * @return array $result массив с информацией о пользователе
@@ -365,4 +358,23 @@ function getUserInfo($connection, string $email): array
     $result = $result[0];
 
     return $result;
+}
+
+/**
+ * Функция возвращает из БД массив с карточками, в которых описание или название подходит поисковому запросу
+ * @param $connection ресурс соединения
+ * @param string $word слово, по которому производится поиск
+ * @return array $cards массив с карточками лотов
+ */
+function getSearchResults($connection, string $word): array
+{
+
+    $request = "SELECT title, st_price, image_path, dt_end, c.name AS category_name
+    FROM lots AS l
+    LEFT JOIN categories AS c
+    ON c.id = l.cat_id WHERE win_id IS NULL AND dt_end > NOW()
+    AND MATCH (title, descr) AGAINST ('" . $word . "') ORDER BY l.dt_create DESC LIMIT 9";
+    $cards = readFromDatabase($request, $connection);
+
+    return $cards;
 }
