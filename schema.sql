@@ -36,6 +36,9 @@ CREATE TABLE categories (
     name       CHAR(255) NOT NULL,
     symb_code  CHAR(255) NOT NULL
 );
+CREATE TABLE stop_words (
+    value      CHAR(255)
+);
 CREATE UNIQUE INDEX u_email ON users(email);
 CREATE INDEX bid ON bids(price);
 CREATE INDEX title ON lots(title);
