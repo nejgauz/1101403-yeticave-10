@@ -21,7 +21,7 @@
             <div class="lot-item__state">
                 <?php $timeClass = 'lot-item__timer timer';
                 $time = timeCounter($card[0]['time']);
-                $timeStr = $time['hours'] . ':' . $time['mins'];
+                $timeStr = $time['days'] . ':' . $time['hours'] . ':' . $time['mins'];
                 if ($time['hours'] < 1 && $time['days'] == 0) {
                     $timeClass .= ' timer--finishing';
                 } ?>
@@ -53,7 +53,7 @@
                     </div>
                 </div>
                 <?php if (isset($_SESSION['name'])): ?>
-                    <form class="lot-item__form" action="https://echo.htmlacademy.ru" method="post" autocomplete="off">
+                    <form class="lot-item__form" action="lot.php" method="post" autocomplete="off">
                         <p class="lot-item__form-item form__item form__item--invalid">
                             <label for="cost">Ваша ставка</label>
                             <input id="cost" type="text" name="cost" placeholder="12 000">

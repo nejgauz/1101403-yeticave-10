@@ -4,7 +4,8 @@ require_once('init.php');
 if ($con) {
     $cards = getCards($con);
     $categories = getCategories($con);
-    $pageContent = include_template('main.php', ['cards' => $cards, 'categories' => $categories]);
+    $items = include_template('items.php', ['cards' => $cards]);
+    $pageContent = include_template('main.php', ['items' => $items, 'categories' => $categories]);
     $layoutContent = include_template('layout.php', [
         'content' => $pageContent,
         'categories' => $categories,

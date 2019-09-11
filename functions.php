@@ -84,7 +84,7 @@ function getCategories($connection): array
  */
 function getCards($connection): array
 {
-    $request = "SELECT l.id, title AS name, st_price AS price, image_path AS url, c.name AS category, dt_end AS `time`
+    $request = "SELECT l.id, title, st_price, image_path, dt_end, c.name AS category_name 
     FROM lots AS l
     LEFT JOIN categories AS c
     ON c.id = l.cat_id
@@ -94,6 +94,7 @@ function getCards($connection): array
 
     return $cards;
 }
+
 
 /**
  * Возвращает данные по id запрашиваемого лота
@@ -380,3 +381,6 @@ function getSearchResults($connection, string $word , int $limit = 9, int $offse
 
     return $cards;
 }
+
+
+

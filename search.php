@@ -20,10 +20,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET') {
             $pagesNumber = ceil($itemsNumber/$itemsLimit);
             $offset = ($curPage - 1) * $itemsLimit;
             $cards = getSearchResults($con, $request, $itemsLimit, $offset);
+            $items = include_template('items.php', ['cards' => $cards]);
             $pageContent = include_template('search_result.php', [
                 'categories' => $categories,
                 'connection' => $con,
-                'cards' => $cards,
+                'items' => $items,
                 'request' => $request,
                 'pagesNumber' => $pagesNumber,
                 'curPage' => $curPage
