@@ -1,8 +1,6 @@
-<main>
-    <div class="promo">
-        <h2 class="promo__title">Ошибка:</h2>
-        <article>
-            <p class="promo__text"><?=$error;?></p>
-        </article>
-    </div>
-</main>
+<section class="lot-item container">
+    <h2>Ошибка:</h2>
+    <article>
+        <p><?=$error;?></p>
+    </article>
+</section>
