@@ -109,6 +109,7 @@ function getCard($connection, $id): array
     LEFT JOIN categories AS c ON c.id = l.cat_id
     WHERE l.id = " . $id;
     $card = readFromDatabase($request, $connection);
+    $card = $card[0];
 
     return $card;
 }
@@ -117,13 +118,14 @@ function getCard($connection, $id): array
  * Возвращает максимальную ставку, если она есть
  * @param $id - id необходимого лота
  * @param $connection ресурс соединения
- * @return возвращает массив с максимальной ставкой
+ * @return $maxBid возвращает максимальную ставку
  */
-function getMaxBid($connection, $id): array
+function getMaxBid($connection, $id)
 {
     $request = "SELECT MAX(price) as max_price FROM bids WHERE lot_id = " . $id;
     $bidArray = mysqli_query($connection, $request);
     $maxBid = mysqli_fetch_assoc($bidArray);
+    $maxBid = $maxBid['max_price'];
 
     return $maxBid;
 }
@@ -159,7 +161,7 @@ function getPostVal(string $name): string
  */
 function isFieldEmpty($field): string
 {
-    if (empty($field) or $field == 'Выберите категорию') {
+    if (empty($field) or $field === 'Выберите категорию') {
         $result = 'Поле необходимо заполнить';
     } else {
         $result = '';
@@ -345,7 +347,6 @@ function isEmailExist($connection, $email): bool
     return $answer;
 }
 
-
 /**
  * Функция возвращает из БД информацию о пользователе
  * @param $connection ресурс соединения
@@ -382,5 +383,101 @@ function getSearchResults($connection, string $word , int $limit = 9, int $offse
     return $cards;
 }
 
+/**
+ * Функция проверяет заполнение формы ставки и возвращает массив с ошибками
+ * @param array $bid массив ставки
+ * @param $minBid минимальная возможная ставка
+ * @return array $errors массив с ошибками
+ */
+function validateBid($bid, $minBid): array
+{
+    $errors['cost'] = isFieldEmpty($bid);
+    if (!intval($bid['cost']) or $bid['cost'] < 0) {
+        $errors['cost'] = 'Ставка должна быть целым положительным числом';
+        return $errors;
+    }
+    if ($bid['cost'] < $minBid) {
+        $errors['cost'] = 'Ставка должна быть не меньше минимальной';
+    }
+    $errors = array_filter($errors);
 
+    return $errors;
+}
 
+/**
+ * Функция вносит данные о сделанной ставке
+ * @param $connection ресурс соединения
+ * @param $bid ставка
+ * @return bool $result получилось или нет внести в базу
+ */
+function insertBidInDb($connection, $bid)
+{
+    $request = "INSERT INTO bids (dt_create, user_id, lot_id, price)
+    VALUES (NOW(), " . $bid['user_id'] . ", " . $bid['lot_id'] . ", " . $bid['cost'] . ")";
+    $result = mysqli_query($connection, $request);
+
+    return $result;
+}
+
+/**
+ * Функция возвращает максимальную цену
+ * @param $curPrice текущая цена
+ * @param $maxBid максимальная ставка
+ * @return $maxPrice максимальная цена
+ */
+function getMaxPrice($curPrice, $maxBid)
+{
+    if ($curPrice > $maxBid) {
+        $maxPrice = $curPrice;
+    } else {
+        $maxPrice = $maxBid;
+    }
+
+    return $maxPrice;
+}
+
+/**
+ * Функция возвращает массив со всеми ставками по данному лоту
+ * @param $connection ресурс соединения
+ * @param $id id лота
+ * @return array $bids двумерный массив со всеми ставками
+ */
+function getBids($connection, $id): array
+{
+    $request = "SELECT u.name as user_name, lot_id, dt_create, price FROM bids as b 
+    LEFT JOIN users as u ON b.user_id = u.id WHERE lot_id = " . $id . " ORDER BY dt_create DESC";
+    $bids = readFromDatabase($request, $connection);
+
+    return $bids;
+}
+
+/**
+ * Функция, возвращающая время, когда была сделана ставка в человеческом виде
+ * @param $time время для преобразования
+ * @return $result строка с отформатированным временем
+ */
+function bidTime($time): string
+{
+    date_default_timezone_set('Europe/Moscow');
+
+    $dateNow = date_create('now');
+    $datePast = date_create($time);
+    $timeInterval = date_diff($datePast, $dateNow);
+    $hours = date_interval_format($timeInterval, '%h');
+    $mins = date_interval_format($timeInterval, '%i');
+    $days = date_interval_format($timeInterval, '%d');
+
+    if ($days >= 1) {
+        $result = date_interval_format($timeInterval, '%D.%M.%Y') . 'в' . date_interval_format($timeInterval, '%H:%I');
+    } else {
+        if ($hours < 1) {
+            $result = $mins . ' ' . get_noun_plural_form($mins, 'минута', 'минуты', 'минут') . ' назад';
+        } elseif ($hours >= 1 && $hours < 2) {
+            $result = 'Час назад';
+        } else {
+            $result = $hours . ' ' . get_noun_plural_form($hours, 'час', 'часа', 'часов') . ' назад';
+        }
+    }
+
+    return $result;
+}
