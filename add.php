@@ -49,14 +49,19 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
         } else {
             $error = errorFilter('request', $con);
             $pageContent = include_template('error.php', ['error' => $error]);
-            echo $pageContent;
+            $layoutContent = include_template('layout.php', [
+                'content' => $pageContent,
+                'categories' => $categories,
+                'title' => 'Ошибка',
+            ]);
+            echo $layoutContent;
         }
     } else {
         $categories = getCategories($con);
         $pageContent = include_template('add_lot.php', ['categories' => $categories, 'connection' => $con, 'errors' => $errors]);
         $layoutContent = include_template('layout.php', [
             'content' => $pageContent,
-            'userName' => $userName,
+            'categories' => $categories,
             'title' => 'Добавление лота',
             'isAdd' => true
         ]);

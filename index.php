@@ -9,8 +9,6 @@ if ($con) {
     $layoutContent = include_template('layout.php', [
         'content' => $pageContent,
         'categories' => $categories,
-        'isAuth' => $isAuth,
-        'userName' => $userName,
         'title' => 'YetiCave - Главная страница',
         'isMain' => true
     ]);
