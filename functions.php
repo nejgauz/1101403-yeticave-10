@@ -321,8 +321,8 @@ function validateUser(array $errors, array $user): array
  */
 function insertUserInDb($connection, array $user): bool
 {
-    $request = "INSERT INTO users (dt_reg, user_id, email, `name`, password, avat_path, `contact`)
-    VALUES (NOW(), '" . $user['id'] . "', '" . $user['email'] . "', '" . $user['name'] . "', '" . $user['password'] . "', NULL, '" . $user['message'] . "')";
+    $request = "INSERT INTO users (dt_reg, email, `name`, password, avat_path, `contact`)
+    VALUES (NOW(), '" . $user['email'] . "', '" . $user['name'] . "', '" . $user['password'] . "', NULL, '" . $user['message'] . "')";
     $result = mysqli_query($connection, $request);
 
     return $result;
@@ -467,8 +467,10 @@ function bidTime($time): string
     $mins = date_interval_format($timeInterval, '%i');
     $days = date_interval_format($timeInterval, '%d');
 
-    if ($days >= 1) {
-        $result = date_interval_format($timeInterval, '%D.%M.%Y') . 'в' . date_interval_format($timeInterval, '%H:%I');
+    if ($days >=1 && $days < 2) {
+        $result = 'Вчера, в ' . date('H:i', strtotime($time));
+    } elseif ($days >= 2) {
+        $result = date('d.m.Y', strtotime($time)) . ' в ' . date('H:i', strtotime($time));
     } else {
         if ($hours < 1) {
             $result = $mins . ' ' . get_noun_plural_form($mins, 'минута', 'минуты', 'минут') . ' назад';
@@ -480,4 +482,62 @@ function bidTime($time): string
     }
 
     return $result;
+}
+
+/**
+ * Функция, по id юзера возвращает массив с данными по всем его ставкам
+ * @param $connection ресурс соединения
+ * @param $id id пользователя
+ * @return array $bids двумерный массив со ставками
+ */
+function getUserBids($connection, $id): array
+{
+    $request = "SELECT l.image_path as image, b.lot_id, l.title as lot_title, c.name as category, dt_end, b.price, b.dt_create, win_id as winner, l.user_id as lot_owner
+    FROM bids b LEFT JOIN lots l ON b.lot_id = l.id 
+    JOIN categories c ON l.cat_id = c.id
+    JOIN users u ON l.user_id = u.id
+    WHERE b.user_id = " . $id . " ORDER BY dt_end DESC";
+    $bids = readFromDatabase($request, $connection);
+
+
+    return $bids;
+}
+
+/**
+ * Функция проверяет, нужен ли класс окончания времени
+ * @param array $time массив времени окончания ставки
+ * @return string строку с классом или пустую строку
+ */
+function timeClass(array $time): string
+{
+    if ($time['hours'] < 1 && $time['days'] == 0) {
+        $timeClass = ' timer--finishing';
+        return $timeClass;
+    }
+    return '';
+}
+
+/**
+ * Функция возвращает класс для ставки
+ * @param array $bid массив с данными ставки
+ * @para, $user_id
+ * @return array $class массив с классами
+ */
+function bidClass(array $bid, $user_id): array
+{
+    $class = [];
+    $time = timeCounter($bid['dt_end']);
+    if ($bid['winner'] === $user_id) {
+        $class['item'] = 'rates__item--win';
+        $class['timer'] = 'timer--win';
+        $class['text'] = 'Ставка выиграла';
+    } elseif (strtotime($bid['dt_end']) < strtotime('today') ) {
+        $class['item'] = 'rates__item--end';
+        $class['timer'] = 'timer--end';
+        $class['text'] = 'Торги окончены';
+    } else {
+        $class['timer'] = timeClass($time);
+    }
+
+    return $class;
 }
