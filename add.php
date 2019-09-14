@@ -1,10 +1,5 @@
 <?php
 require_once('init.php');
-if (!isset($_SESSION['name'])) {
-    http_response_code(403);
-    exit();
-}
-
 if (!$con) {
     $error = errorFilter('connect', $con);
     $pageContent = include_template('error.php', ['error' => $error]);
@@ -12,8 +7,20 @@ if (!$con) {
     exit();
 }
 
+$categories = getCategories($con);
+if (!isset($_SESSION['name'])) {
+    http_response_code(403);
+    $pageContent = include_template('http_error.php', ['categories' => $categories, 'error' => '403 Доступ запрещен', 'text' => 'У вас нет прав для просмотра этой страницы.']);
+    $layoutContent = include_template('layout.php', [
+        'content' => $pageContent,
+        'categories' => $categories,
+        'title' => 'Ошибка 403'
+    ]);
+    echo $layoutContent;
+    exit();
+}
+
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-    $categories = getCategories($con);
     $pageContent = include_template('add_lot.php', ['categories' => $categories, 'connection' => $con, 'errors' => $errors]);
     $layoutContent = include_template('layout.php', [
         'content' => $pageContent,
@@ -42,14 +49,19 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
         } else {
             $error = errorFilter('request', $con);
             $pageContent = include_template('error.php', ['error' => $error]);
-            echo $pageContent;
+            $layoutContent = include_template('layout.php', [
+                'content' => $pageContent,
+                'categories' => $categories,
+                'title' => 'Ошибка',
+            ]);
+            echo $layoutContent;
         }
     } else {
         $categories = getCategories($con);
         $pageContent = include_template('add_lot.php', ['categories' => $categories, 'connection' => $con, 'errors' => $errors]);
         $layoutContent = include_template('layout.php', [
             'content' => $pageContent,
-            'userName' => $userName,
+            'categories' => $categories,
             'title' => 'Добавление лота',
             'isAdd' => true
         ]);

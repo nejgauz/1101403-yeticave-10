@@ -1,6 +1,4 @@
 <?php
-$isAuth = rand(0, 1);
-$userName = 'Анна';
 $errors = [];
 session_start();
 

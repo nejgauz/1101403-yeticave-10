@@ -84,7 +84,7 @@ function getCategories($connection): array
  */
 function getCards($connection): array
 {
-    $request = "SELECT l.id, title AS name, st_price AS price, image_path AS url, c.name AS category, dt_end AS `time`
+    $request = "SELECT l.id, title, st_price, image_path, dt_end, c.name AS category_name 
     FROM lots AS l
     LEFT JOIN categories AS c
     ON c.id = l.cat_id
@@ -94,6 +94,7 @@ function getCards($connection): array
 
     return $cards;
 }
+
 
 /**
  * Возвращает данные по id запрашиваемого лота
@@ -108,6 +109,7 @@ function getCard($connection, $id): array
     LEFT JOIN categories AS c ON c.id = l.cat_id
     WHERE l.id = " . $id;
     $card = readFromDatabase($request, $connection);
+    $card = $card[0];
 
     return $card;
 }
@@ -116,13 +118,14 @@ function getCard($connection, $id): array
  * Возвращает максимальную ставку, если она есть
  * @param $id - id необходимого лота
  * @param $connection ресурс соединения
- * @return возвращает массив с максимальной ставкой
+ * @return $maxBid возвращает максимальную ставку
  */
-function getMaxBid($connection, $id): array
+function getMaxBid($connection, $id)
 {
     $request = "SELECT MAX(price) as max_price FROM bids WHERE lot_id = " . $id;
     $bidArray = mysqli_query($connection, $request);
     $maxBid = mysqli_fetch_assoc($bidArray);
+    $maxBid = $maxBid['max_price'];
 
     return $maxBid;
 }
@@ -158,7 +161,7 @@ function getPostVal(string $name): string
  */
 function isFieldEmpty($field): string
 {
-    if (empty($field) or $field == 'Выберите категорию') {
+    if (empty($field) or $field === 'Выберите категорию') {
         $result = 'Поле необходимо заполнить';
     } else {
         $result = '';
@@ -318,8 +321,8 @@ function validateUser(array $errors, array $user): array
  */
 function insertUserInDb($connection, array $user): bool
 {
-    $request = "INSERT INTO users (dt_reg, user_id, email, `name`, password, avat_path, `contact`)
-    VALUES (NOW(), '" . $user['id'] . "', '" . $user['email'] . "', '" . $user['name'] . "', '" . $user['password'] . "', NULL, '" . $user['message'] . "')";
+    $request = "INSERT INTO users (dt_reg, email, `name`, password, avat_path, `contact`)
+    VALUES (NOW(), '" . $user['email'] . "', '" . $user['name'] . "', '" . $user['password'] . "', NULL, '" . $user['message'] . "')";
     $result = mysqli_query($connection, $request);
 
     return $result;
@@ -343,7 +346,6 @@ function isEmailExist($connection, $email): bool
 
     return $answer;
 }
-
 
 /**
  * Функция возвращает из БД информацию о пользователе
@@ -379,4 +381,163 @@ function getSearchResults($connection, string $word , int $limit = 9, int $offse
     $cards = readFromDatabase($request, $connection);
 
     return $cards;
+}
+
+/**
+ * Функция проверяет заполнение формы ставки и возвращает массив с ошибками
+ * @param array $bid массив ставки
+ * @param $minBid минимальная возможная ставка
+ * @return array $errors массив с ошибками
+ */
+function validateBid($bid, $minBid): array
+{
+    $errors['cost'] = isFieldEmpty($bid);
+    if (!intval($bid['cost']) or $bid['cost'] < 0) {
+        $errors['cost'] = 'Ставка должна быть целым положительным числом';
+        return $errors;
+    }
+    if ($bid['cost'] < $minBid) {
+        $errors['cost'] = 'Ставка должна быть не меньше минимальной';
+    }
+    $errors = array_filter($errors);
+
+    return $errors;
+}
+
+/**
+ * Функция вносит данные о сделанной ставке
+ * @param $connection ресурс соединения
+ * @param $bid ставка
+ * @return bool $result получилось или нет внести в базу
+ */
+function insertBidInDb($connection, $bid)
+{
+    $request = "INSERT INTO bids (dt_create, user_id, lot_id, price)
+    VALUES (NOW(), " . $bid['user_id'] . ", " . $bid['lot_id'] . ", " . $bid['cost'] . ")";
+    $result = mysqli_query($connection, $request);
+
+    return $result;
+}
+
+/**
+ * Функция возвращает максимальную цену
+ * @param $curPrice текущая цена
+ * @param $maxBid максимальная ставка
+ * @return $maxPrice максимальная цена
+ */
+function getMaxPrice($curPrice, $maxBid)
+{
+    if ($curPrice > $maxBid) {
+        $maxPrice = $curPrice;
+    } else {
+        $maxPrice = $maxBid;
+    }
+
+    return $maxPrice;
+}
+
+/**
+ * Функция возвращает массив со всеми ставками по данному лоту
+ * @param $connection ресурс соединения
+ * @param $id id лота
+ * @return array $bids двумерный массив со всеми ставками
+ */
+function getBids($connection, $id): array
+{
+    $request = "SELECT u.name as user_name, lot_id, dt_create, price FROM bids as b 
+    LEFT JOIN users as u ON b.user_id = u.id WHERE lot_id = " . $id . " ORDER BY dt_create DESC";
+    $bids = readFromDatabase($request, $connection);
+
+    return $bids;
+}
+
+/**
+ * Функция, возвращающая время, когда была сделана ставка в человеческом виде
+ * @param $time время для преобразования
+ * @return $result строка с отформатированным временем
+ */
+function bidTime($time): string
+{
+    date_default_timezone_set('Europe/Moscow');
+
+    $dateNow = date_create('now');
+    $datePast = date_create($time);
+    $timeInterval = date_diff($datePast, $dateNow);
+    $hours = date_interval_format($timeInterval, '%h');
+    $mins = date_interval_format($timeInterval, '%i');
+    $days = date_interval_format($timeInterval, '%d');
+
+    if ($days >=1 && $days < 2) {
+        $result = 'Вчера, в ' . date('H:i', strtotime($time));
+    } elseif ($days >= 2) {
+        $result = date('d.m.Y', strtotime($time)) . ' в ' . date('H:i', strtotime($time));
+    } else {
+        if ($hours < 1) {
+            $result = $mins . ' ' . get_noun_plural_form($mins, 'минута', 'минуты', 'минут') . ' назад';
+        } elseif ($hours >= 1 && $hours < 2) {
+            $result = 'Час назад';
+        } else {
+            $result = $hours . ' ' . get_noun_plural_form($hours, 'час', 'часа', 'часов') . ' назад';
+        }
+    }
+
+    return $result;
+}
+
+/**
+ * Функция, по id юзера возвращает массив с данными по всем его ставкам
+ * @param $connection ресурс соединения
+ * @param $id id пользователя
+ * @return array $bids двумерный массив со ставками
+ */
+function getUserBids($connection, $id): array
+{
+    $request = "SELECT l.image_path as image, b.lot_id, l.title as lot_title, c.name as category, dt_end, b.price, b.dt_create, win_id as winner, l.user_id as lot_owner
+    FROM bids b LEFT JOIN lots l ON b.lot_id = l.id 
+    JOIN categories c ON l.cat_id = c.id
+    JOIN users u ON l.user_id = u.id
+    WHERE b.user_id = " . $id . " ORDER BY dt_end DESC";
+    $bids = readFromDatabase($request, $connection);
+
+
+    return $bids;
+}
+
+/**
+ * Функция проверяет, нужен ли класс окончания времени
+ * @param array $time массив времени окончания ставки
+ * @return string строку с классом или пустую строку
+ */
+function timeClass(array $time): string
+{
+    if ($time['hours'] < 1 && $time['days'] == 0) {
+        $timeClass = ' timer--finishing';
+        return $timeClass;
+    }
+    return '';
+}
+
+/**
+ * Функция возвращает класс для ставки
+ * @param array $bid массив с данными ставки
+ * @para, $user_id
+ * @return array $class массив с классами
+ */
+function bidClass(array $bid, $user_id): array
+{
+    $class = [];
+    $time = timeCounter($bid['dt_end']);
+    if ($bid['winner'] === $user_id) {
+        $class['item'] = 'rates__item--win';
+        $class['timer'] = 'timer--win';
+        $class['text'] = 'Ставка выиграла';
+    } elseif (strtotime($bid['dt_end']) < strtotime('today') ) {
+        $class['item'] = 'rates__item--end';
+        $class['timer'] = 'timer--end';
+        $class['text'] = 'Торги окончены';
+    } else {
+        $class['timer'] = timeClass($time);
+    }
+
+    return $class;
 }

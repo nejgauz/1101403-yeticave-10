@@ -37,6 +37,7 @@ CREATE TABLE categories (
     symb_code  CHAR(255) NOT NULL
 );
 CREATE TABLE stop_words (
+    id         INT AUTO_INCREMENT PRIMARY KEY,
     value      CHAR(255)
 );
 CREATE UNIQUE INDEX u_email ON users(email);

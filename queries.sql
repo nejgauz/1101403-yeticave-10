@@ -15,24 +15,24 @@ VALUES ('Разное', 'other');
 INSERT INTO users (dt_reg, email, name, password, avat_path, contact)
 VALUES ('2019-08-05', 'rich67@gmail.com', 'Ричард', '123456', NULL, '89113181017');
 INSERT INTO users (dt_reg, email, name, password, avat_path, contact)
-VALUES ('2019-07-14', 'melody@mail.com', 'Алиса', 'qr8j0', NULL, '89215162805');
+VALUES ('2019-07-14', 'melody@mail.com', 'Алиса', 'одуванчик', NULL, '89215162805');
 INSERT INTO users (dt_reg, email, name, password, avat_path, contact)
-VALUES ('2019-06-18', 'meloman@mail.com', 'Игорь', 'hg098j', NULL, '89203872416');
+VALUES ('2019-06-18', 'meloman@mail.com', 'Игорь', 'туса', NULL, '89203872416');
 
 INSERT INTO lots (user_id, cat_id, win_id, dt_create, title, descr, image_path, st_price, dt_end, step)
-VALUES (1, 1, NULL, '2019-08-10', '2014 Rossignol District Snowboard', NULL, 'img/lot-1.jpg', 10999, '2019-08-16', 500);
+VALUES (5, 1, NULL, '2019-08-10', '2014 Rossignol District Snowboard', NULL, 'img/lot-1.jpg', 10999, '2019-08-16', 500);
 INSERT INTO lots (user_id, cat_id, win_id, dt_create, title, descr, image_path, st_price, dt_end, step)
-VALUES (2, 1, NULL, '2019-07-30', 'DC Ply Mens 2016/2017 Snowboard', NULL, 'img/lot-2.jpg', 159999, '2019-08-25', 1000);
+VALUES (6, 1, NULL, '2019-07-30', 'DC Ply Mens 2016/2017 Snowboard', NULL, 'img/lot-2.jpg', 159999, '2019-08-25', 1000);
 INSERT INTO lots (user_id, cat_id, win_id, dt_create, title, descr, image_path, st_price, dt_end, step)
-VALUES (3, 2, NULL, '2019-06-21', 'Крепления Union Contact Pro 2015 года размер L/XL', NULL, 'img/lot-3.jpg', 8000, '2019-08-30', 700);
+VALUES (5, 2, NULL, '2019-06-21', 'Крепления Union Contact Pro 2015 года размер L/XL', NULL, 'img/lot-3.jpg', 8000, '2019-08-30', 700);
 INSERT INTO lots (user_id, cat_id, win_id, dt_create, title, descr, image_path, st_price, dt_end, step)
-VALUES (3, 3, NULL, '2019-08-01', 'Ботинки для сноуборда DC Mutiny Charocal', NULL, 'img/lot-4.jpg', 10999, '2019-09-21', 400);
+VALUES (5, 3, NULL, '2019-08-01', 'Ботинки для сноуборда DC Mutiny Charocal', NULL, 'img/lot-4.jpg', 10999, '2019-09-21', 400);
 INSERT INTO lots (user_id, cat_id, win_id, dt_create, title, descr, image_path, st_price, dt_end, step)
-VALUES (1, 4, NULL, '2019-08-06', 'Куртка для сноуборда DC Mutiny Charocal', NULL, 'img/lot-5.jpg', 7500, '2019-08-27', 100);
+VALUES (6, 4, NULL, '2019-08-06', 'Куртка для сноуборда DC Mutiny Charocal', NULL, 'img/lot-5.jpg', 7500, '2019-08-27', 100);
 INSERT INTO lots (user_id, cat_id, win_id, dt_create, title, descr, image_path, st_price, dt_end, step)
-VALUES (1, 6, NULL, '2019-08-08', 'Маска Oakley Canopy', NULL, 'img/lot-6.jpg', 5400, '2019-09-03', 300);
+VALUES (6, 6, NULL, '2019-08-08', 'Маска Oakley Canopy', NULL, 'img/lot-6.jpg', 5400, '2019-09-03', 300);
 INSERT INTO lots (user_id, cat_id, win_id, dt_create, title, descr, image_path, st_price, dt_end, step)
-VALUES (1, 1, NULL, NOW(), 'Snowboard Burton FW18', NULL, 'img/lot-7.jpg', 32340, '2019-10-30', 500);
+VALUES (5, 1, NULL, NOW(), 'Snowboard Burton FW18', NULL, 'img/lot-7.jpg', 32340, '2019-10-30', 500);
 
 INSERT INTO bids (user_id, lot_id, dt_create, price)
 VALUES (1, 2, NOW(), 164999);
@@ -64,7 +64,7 @@ INSERT INTO stop_words SET value = 'оно';
 INSERT INTO stop_words SET value = 'она';
 INSERT INTO stop_words SET value = 'они';
 INSERT INTO stop_words SET value = 'то';
-INSERT INTO stop_words SET value = 'что'; 
+INSERT INTO stop_words SET value = 'что';
 
 SELECT name FROM categories;
 
