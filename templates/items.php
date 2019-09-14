@@ -16,18 +16,10 @@
                         ?>
                     </span>
                 </div>
-                <?php
-                $time = timeCounter($item['dt_end']);
-                $timeStr = $time['days'] . ':' . $time['hours'] . ':' . $time['mins'];
-                if ($time['hours'] < 1 && $time['days'] == 0): ?>
-                    <div class="lot__timer timer timer--finishing">
+                <?php $time = timeCounter($item['dt_end']); $timeStr = $time['days'] . ':' . $time['hours'] . ':' . $time['mins']; ?>
+                    <div class="lot__timer timer <?=timeClass($time);?>">
                         <?=$timeStr;?>
                     </div>
-                <?php else: ?>
-                    <div class="lot__timer timer">
-                        <?=$timeStr;?>
-                    </div>
-                <?php endif; ?>
             </div>
         </div>
     </li>

@@ -19,13 +19,8 @@
         </div>
         <div class="lot-item__right">
             <div class="lot-item__state">
-                <?php $timeClass = 'lot-item__timer timer';
-                $time = timeCounter($card['time']);
-                $timeStr = $time['hours'] . ':' . $time['mins'];
-                if ($time['hours'] < 1 && $time['days'] == 0) {
-                    $timeClass .= ' timer--finishing';
-                } ?>
-                <div class="<?=$timeClass;?>">
+                <?php $time = timeCounter($card['time']); $timeStr = $time['hours'] . ':' . $time['mins']; ?>
+                <div class="lot-item__timer timer <?=timeClass($time);?>">
                     <?=$timeStr;?>
                 </div>
                 <div class="lot-item__cost-state">
