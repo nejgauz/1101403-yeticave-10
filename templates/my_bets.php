@@ -18,7 +18,7 @@
                         <img src="<?=$bid['image'];?>" width="54" height="40" alt="<?=$bid['category'];?>">
                     </div>
                     <div>
-                        <h3 class="rates__title"><a href="lot.html"><?=$bid['lot_title'];?></a></h3>
+                        <h3 class="rates__title"><a href="lot.php?lot_id=<?=$bid['lot_id'];?>"><?=$bid['lot_title'];?></a></h3>
                         <?php if ($class['timer'] === 'timer--win'): echo "<p>" . $bid['contact'] . "<p>"; endif;?>
                     </div>
                 </td>
