@@ -9,6 +9,6 @@ if (!$con) {
 }
 
 $categories = getCategories($con);
-if (isset($_GET['lot_id']) && is_numeric($_GET['lot_id'])) {
+if (isset($_GET['category'])) {
 
 }

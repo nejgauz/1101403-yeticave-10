@@ -370,7 +370,7 @@ function getUserInfo($connection, string $email): array
  * @param int $limit по сколько карточек результатов запрашивать из БД
  * @param int $offset нужно ли смещение в выборке результатов
  */
-function getSearchResults($connection, string $word , int $limit = 9, int $offset = 0): array
+function getSearchResults($connection, string $word, int $limit = 9, int $offset = 0): array
 {
 
     $request = "SELECT title, st_price, image_path, dt_end, c.name AS category_name
