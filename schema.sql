@@ -46,3 +46,4 @@ CREATE INDEX title ON lots(title);
 CREATE INDEX step ON lots(step);
 CREATE INDEX descr ON lots(descr);
 CREATE FULLTEXT INDEX lot_search ON lots(title, descr);
+CREATE FULLTEXT INDEX category ON categories(`name`);

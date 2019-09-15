@@ -9,7 +9,7 @@
 </nav>
 <div class="container">
     <section class="lots">
-        <h2>Результаты поиска по запросу «<span><?=strip_tags($request);?></span>»</h2>
+        <h2><?=$header;?> «<span><?=strip_tags($request);?></span>»</h2>
         <ul class="lots__list">
             <?=$items;?>
         </ul>

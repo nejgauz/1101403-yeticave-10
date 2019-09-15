@@ -366,18 +366,19 @@ function getUserInfo($connection, string $email): array
  * Функция возвращает из БД массив с карточками, в которых описание или название подходит поисковому запросу
  * @param $connection ресурс соединения
  * @param string $word слово, по которому производится поиск
- * @return array $cards массив с карточками лотов
+ * @param string $fields поле или поля, по которым искать
  * @param int $limit по сколько карточек результатов запрашивать из БД
  * @param int $offset нужно ли смещение в выборке результатов
+ * @return array $cards массив с карточками лотов
  */
-function getSearchResults($connection, string $word, int $limit = 9, int $offset = 0): array
+function getSearchResults($connection, string $word, string $fields, int $limit = 9, int $offset = 0): array
 {
 
-    $request = "SELECT title, st_price, image_path, dt_end, c.name AS category_name
+    $request = "SELECT title, st_price, image_path, dt_end, c.name AS category_name, l.id
     FROM lots AS l
     LEFT JOIN categories AS c
     ON c.id = l.cat_id WHERE win_id IS NULL AND dt_end > NOW()
-    AND MATCH (title, descr) AGAINST ('" . $word . "') ORDER BY l.dt_create DESC LIMIT " . $limit . " OFFSET " . $offset;
+    AND MATCH (" . $fields . ") AGAINST ('" . $word . "') ORDER BY l.dt_create DESC LIMIT " . $limit . " OFFSET " . $offset;
     $cards = readFromDatabase($request, $connection);
 
     return $cards;
