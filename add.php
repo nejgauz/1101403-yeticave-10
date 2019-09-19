@@ -10,7 +10,11 @@ if (!$con) {
 $categories = getCategories($con);
 if (!isset($_SESSION['name'])) {
     http_response_code(403);
-    $pageContent = include_template('http_error.php', ['categories' => $categories, 'error' => '403 Доступ запрещен', 'text' => 'У вас нет прав для просмотра этой страницы.']);
+    $pageContent = include_template('http_error.php', [
+        'categories' => $categories,
+        'error' => '403 Доступ запрещен',
+        'text' => 'У вас нет прав для просмотра этой страницы.'
+    ]);
     $layoutContent = include_template('layout.php', [
         'content' => $pageContent,
         'categories' => $categories,
@@ -21,7 +25,8 @@ if (!isset($_SESSION['name'])) {
 }
 
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-    $pageContent = include_template('add_lot.php', ['categories' => $categories, 'connection' => $con, 'errors' => $errors]);
+    $pageContent = include_template('add_lot.php',
+        ['categories' => $categories, 'connection' => $con, 'errors' => $errors]);
     $layoutContent = include_template('layout.php', [
         'content' => $pageContent,
         'categories' => $categories,
@@ -58,7 +63,8 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
         }
     } else {
         $categories = getCategories($con);
-        $pageContent = include_template('add_lot.php', ['categories' => $categories, 'connection' => $con, 'errors' => $errors]);
+        $pageContent = include_template('add_lot.php',
+            ['categories' => $categories, 'connection' => $con, 'errors' => $errors]);
         $layoutContent = include_template('layout.php', [
             'content' => $pageContent,
             'categories' => $categories,

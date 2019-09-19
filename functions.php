@@ -44,8 +44,10 @@ function errorFilter(string $mistake, $con = null)
 {
     if ($mistake === 'connect') {
         $error = mysqli_connect_error();
-    } else if ($mistake === 'request') {
-        $error = mysqli_error($con);
+    } else {
+        if ($mistake === 'request') {
+            $error = mysqli_error($con);
+        }
     }
     return $error;
 }
@@ -138,7 +140,7 @@ function getMaxBid($connection, $id)
 function insertLotInDb($connection, array $lot)
 {
     $request = "INSERT INTO lots (user_id, dt_create, cat_id, title, descr, image_path, st_price, dt_end, step)
-    VALUES (1, NOW(), '" . $lot['category'] . "', '" . $lot['lot-name'] . "', '" . $lot['message'] . "', '" . $lot['path'] . "', '" .  $lot['lot-rate'] . "', '" . $lot['lot-date'] . "', '" . $lot['lot-step'] . "')";
+    VALUES (1, NOW(), '" . $lot['category'] . "', '" . $lot['lot-name'] . "', '" . $lot['message'] . "', '" . $lot['path'] . "', '" . $lot['lot-rate'] . "', '" . $lot['lot-date'] . "', '" . $lot['lot-step'] . "')";
     $result = mysqli_query($connection, $request);
 
     return $result;
@@ -195,7 +197,7 @@ function validatePrice($price): string
 function validateImg($path): string
 {
     if (!empty($path)) {
-        if (mime_content_type($path) !='image/png' && mime_content_type($path) !='image/jpeg') {
+        if (mime_content_type($path) != 'image/png' && mime_content_type($path) != 'image/jpeg') {
             $result = 'Загрузите, пожалуйста, файл в формате jpg, jpeg или png';
         } else {
             $result = '';
@@ -246,7 +248,8 @@ function validateStep($step): string
  * @param array $errors массив с ошибками
  * @param string $name название тега, по которому нужно искать ошибки
  */
-function errorClass(array $errors, string $name) {
+function errorClass(array $errors, string $name)
+{
     if (isset($errors[$name])) {
         echo 'form__item--invalid';
     } else {
@@ -355,7 +358,7 @@ function isEmailExist($connection, $email): bool
  */
 function getUserInfo($connection, string $email): array
 {
-    $request = "SELECT * FROM users WHERE email = '" . $email. "'";
+    $request = "SELECT * FROM users WHERE email = '" . $email . "'";
     $result = readFromDatabase($request, $connection);
     $result = $result[0];
 
@@ -468,7 +471,7 @@ function bidTime($time): string
     $mins = date_interval_format($timeInterval, '%i');
     $days = date_interval_format($timeInterval, '%d');
 
-    if ($days >=1 && $days < 2) {
+    if ($days >= 1 && $days < 2) {
         $result = 'Вчера, в ' . date('H:i', strtotime($time));
     } elseif ($days >= 2) {
         $result = date('d.m.Y', strtotime($time)) . ' в ' . date('H:i', strtotime($time));
@@ -532,7 +535,7 @@ function bidClass(array $bid, $user_id): array
         $class['item'] = 'rates__item--win';
         $class['timer'] = 'timer--win';
         $class['text'] = 'Ставка выиграла';
-    } elseif (strtotime($bid['dt_end']) < strtotime('today') ) {
+    } elseif (strtotime($bid['dt_end']) < strtotime('today')) {
         $class['item'] = 'rates__item--end';
         $class['timer'] = 'timer--end';
         $class['text'] = 'Торги окончены';
