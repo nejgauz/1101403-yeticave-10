@@ -621,9 +621,10 @@ function sendWinEmail(array $winData): bool
     $email = $winData[0]['email'];
     $lot = $winData[0]['lot_id'];
     $title = $winData[0]['title'];
-    $transport = new Swift_SmtpTransport('mailtrap.io', 25);
-    $transport->setUsername('aca44e4b3f6a07');
-    $transport->setPassword('6b7ce30ee9303d');
+
+    $transport = new Swift_SmtpTransport('smtp.mailtrap.io', 25);
+    $transport->setUsername('832f83bcd7e474');
+    $transport->setPassword('91ff248f22ca37');
 
     $message = new Swift_Message("Ваша ставка победила");
     $message->setTo([$email => $userName]);
