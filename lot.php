@@ -68,7 +68,11 @@ if (isset($_GET['lot_id']) && is_numeric($_GET['lot_id']) && !empty($card = getC
     }
 } else {
     http_response_code(404);
-    $pageContent = include_template('http_error.php', ['categories' => $categories, 'error' => '404 Страница не найдена', 'text' => 'Данной страницы не существует на сайте.']);
+    $pageContent = include_template('http_error.php', [
+        'categories' => $categories,
+        'error' => '404 Страница не найдена',
+        'text' => 'Данной страницы не существует на сайте.'
+    ]);
     $layoutContent = include_template('layout.php', [
         'content' => $pageContent,
         'categories' => $categories,

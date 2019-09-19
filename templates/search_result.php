@@ -2,14 +2,14 @@
     <ul class="nav__list container">
         <?php foreach ($categories as $value): ?>
             <li class="nav__item">
-                <a href="all-lots.html"><?=strip_tags($value['name']);?></a>
+                <a href="search_category.php?category=<?=$value['name'];?>"><?=strip_tags($value['name']);?></a>
             </li>
         <? endforeach; ?>
     </ul>
 </nav>
 <div class="container">
     <section class="lots">
-        <h2>Результаты поиска по запросу «<span><?=strip_tags($request);?></span>»</h2>
+        <h2><?=$header;?> «<span><?=strip_tags($request);?></span>»</h2>
         <ul class="lots__list">
             <?=$items;?>
         </ul>

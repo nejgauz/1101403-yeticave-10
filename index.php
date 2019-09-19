@@ -1,5 +1,6 @@
 <?php
 require_once('init.php');
+require_once('getwinner.php');
 
 if ($con) {
     $cards = getCards($con);

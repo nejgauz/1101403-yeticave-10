@@ -1,0 +1,14 @@
+{
+    "name": "anna/1101403-yeticave-10",
+    "description": "website for internet auction",
+    "type": "project",
+    "authors": [
+        {
+            "name": "Анна",
+            "email": "shesterikofff@mail.ru"
+        }
+    ],
+    "require": {
+        "swiftmailer/swiftmailer": "^6.2"
+    }
+}

@@ -366,18 +366,19 @@ function getUserInfo($connection, string $email): array
  * Функция возвращает из БД массив с карточками, в которых описание или название подходит поисковому запросу
  * @param $connection ресурс соединения
  * @param string $word слово, по которому производится поиск
- * @return array $cards массив с карточками лотов
+ * @param string $fields поле или поля, по которым искать
  * @param int $limit по сколько карточек результатов запрашивать из БД
  * @param int $offset нужно ли смещение в выборке результатов
+ * @return array $cards массив с карточками лотов
  */
-function getSearchResults($connection, string $word , int $limit = 9, int $offset = 0): array
+function getSearchResults($connection, string $word, string $fields, int $limit = 9, int $offset = 0): array
 {
 
-    $request = "SELECT title, st_price, image_path, dt_end, c.name AS category_name
+    $request = "SELECT title, st_price, image_path, dt_end, c.name AS category_name, l.id
     FROM lots AS l
     LEFT JOIN categories AS c
     ON c.id = l.cat_id WHERE win_id IS NULL AND dt_end > NOW()
-    AND MATCH (title, descr) AGAINST ('" . $word . "') ORDER BY l.dt_create DESC LIMIT " . $limit . " OFFSET " . $offset;
+    AND MATCH (" . $fields . ") AGAINST ('" . $word . "') ORDER BY l.dt_create DESC LIMIT " . $limit . " OFFSET " . $offset;
     $cards = readFromDatabase($request, $connection);
 
     return $cards;
@@ -473,7 +474,7 @@ function bidTime($time): string
         $result = date('d.m.Y', strtotime($time)) . ' в ' . date('H:i', strtotime($time));
     } else {
         if ($hours < 1) {
-            $result = $mins . ' ' . get_noun_plural_form($mins, 'минута', 'минуты', 'минут') . ' назад';
+            $result = $mins . ' ' . get_noun_plural_form($mins, 'минуту', 'минуты', 'минут') . ' назад';
         } elseif ($hours >= 1 && $hours < 2) {
             $result = 'Час назад';
         } else {
@@ -540,4 +541,104 @@ function bidClass(array $bid, $user_id): array
     }
 
     return $class;
+}
+
+/**
+ * Функция находит в БД все лоты без победителя, дата истечения которых меньше или равна текущей дате
+ * @param $connection ресурс соединения
+ * @return array $lots id лотов без победителя
+ */
+function getLotsWithoutWinner($connection): array
+{
+    $request = "SELECT id FROM lots WHERE win_id IS NULL and dt_end <= CURRENT_DATE()";
+    $lots = readFromDatabase($request, $connection);
+
+    return $lots;
+}
+
+/**
+ * Функция возвращает id владельца последней ставки по id лота
+ * @param $connection ресурс соединения
+ * @param $id id лота
+ * @return int $winner id юзера, который сделал последнюю ставку по данному лоту
+ */
+function getLastBid($connection, $id)
+{
+    $request = "SELECT user_id FROM bids WHERE lot_id = " . $id . " ORDER BY dt_create DESC LIMIT 1";
+    $winner = readFromDatabase($request, $connection);
+    if (!empty($winner[0])) {
+        $winner = $winner[0]['user_id'];
+    } else {
+        $winner = null;
+    }
+
+    return $winner;
+}
+
+/**
+ * Функция записывает в БД id победителя
+ * @param $connection ресурс соединения
+ * @param $lot id лота
+ * @param $winner id победителя
+ * @return $result получилось или нет обновить информацию в БД
+ */
+function insertWinnerInDB($connection, $lot, $winner)
+{
+    $request = "UPDATE lots SET win_id = " . $winner . " WHERE id = " . $lot;
+    $result = mysqli_query($connection, $request);
+
+    return $result;
+}
+
+/**
+ * Функция возвращает массив с данными о победителе торгов
+ * @param $connection ресурс соединения
+ * @param $winner id победителя
+ * @return $winData ассоциативный массив, содеражащий: `name` - имя победителя, email - почту победителя, lot_id - id лота, который он выиграл,
+ * title - название выигранного лота
+ */
+function getWinData($connection, $winner): array
+{
+    $request = "SELECT email, u.name, l.id as lot_id, l.title FROM users u
+    JOIN lots l ON l.win_id = u.id
+    WHERE u.id = " . $winner;
+    $winData = readFromDatabase($request, $connection);
+
+    return $winData;
+}
+
+/**
+ * Функция отправляет письмо победителю
+ * @param $winData ассоциативный массив, где name - имя победителя, email - почта, $lot_id - id выигранного лота, title - название выигранного лота
+ * @param $email - почта победителя
+ * @param $lot_id - id выигранного лота
+ * @param $title - название выигранного лота
+ * @return true или false получилось или нет отправить письмо
+ */
+function sendWinEmail(array $winData): bool
+{
+    $userName = $winData[0]['name'];
+    $email = $winData[0]['email'];
+    $lot = $winData[0]['lot_id'];
+    $title = $winData[0]['title'];
+
+    $transport = new Swift_SmtpTransport('smtp.mailtrap.io', 25);
+    $transport->setUsername('832f83bcd7e474');
+    $transport->setPassword('91ff248f22ca37');
+
+    $message = new Swift_Message("Ваша ставка победила");
+    $message->setTo([$email => $userName]);
+    $emailBody = include_template('email.php', [
+        'userName' => $userName,
+        'lot_id' => $lot,
+        'title' => $title
+    ]);
+    $message->addPart($emailBody, 'text/html');
+    $message->setFrom(['keks@phpdemo.ru' => 'Yeticave']);
+
+    $mailer = new Swift_Mailer($transport);
+    if ($mailer->send($message)) {
+        return true;
+    }
+    return false;
 }
