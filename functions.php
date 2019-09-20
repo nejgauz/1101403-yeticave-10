@@ -603,7 +603,9 @@ function insertWinnerInDB($connection, $lot, $winner)
  * Функция возвращает массив с данными о победителе торгов
  * @param $connection ресурс соединения
  * @param $winner id победителя
- * @return $winData ассоциативный массив, содеражащий: `name` - имя победителя, email - почту победителя, lot_id - id лота, который он выиграл,
+ * @return $winData ассоциативный массив, содеражащий:
+ * `name` - имя победителя, email - почту победителя,
+ * lot_id - id лота, который он выиграл,
  * title - название выигранного лота
  */
 function getWinData($connection, $winner): array
@@ -618,10 +620,8 @@ function getWinData($connection, $winner): array
 
 /**
  * Функция отправляет письмо победителю
- * @param $winData ассоциативный массив, где name - имя победителя, email - почта, $lot_id - id выигранного лота, title - название выигранного лота
- * @param $email - почта победителя
- * @param $lot_id - id выигранного лота
- * @param $title - название выигранного лота
+ * @param $winData ассоциативный массив, где name - имя победителя,
+ * email - почта, $lot_id - id выигранного лота, title - название выигранного лота
  * @return true или false получилось или нет отправить письмо
  */
 function sendWinEmail(array $winData): bool
