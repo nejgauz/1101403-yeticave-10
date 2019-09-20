@@ -106,7 +106,7 @@ function getCards($connection): array
  */
 function getCard($connection, $id): array
 {
-    $request = "SELECT l.id, title AS `name`, image_path AS url, c.name AS category, descr AS description, dt_end AS `time`, step, st_price
+    $request = "SELECT l.id, title AS `name`, image_path AS url, c.name AS category, descr AS description, dt_end AS `time`, step, st_price, user_id
     FROM lots AS l
     LEFT JOIN categories AS c ON c.id = l.cat_id
     WHERE l.id = " . $id;
@@ -569,7 +569,7 @@ function getLotsWithoutWinner($connection): array
  * Функция возвращает id владельца последней ставки по id лота
  * @param $connection ресурс соединения
  * @param $id id лота
- * @return int $winner id юзера, который сделал последнюю ставку по данному лоту
+ * @return $winner id юзера, который сделал последнюю ставку по данному лоту
  */
 function getLastBid($connection, $id)
 {

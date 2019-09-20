@@ -37,7 +37,7 @@
                         </span>
                     </div>
                 </div>
-                <?php if (isset($_SESSION['name'])): ?>
+                <?php if (isset($_SESSION['name']) && (strtotime($card['time']) > strtotime('now')) && ($card['user_id'] !== $_SESSION['id']) && (getLastBid($con, $card['id']) !== $_SESSION['id'])): ?>
                     <form class="lot-item__form" action="<?php echo 'lot.php?lot_id=' . $_GET['lot_id']; ?>"
                           method="post" autocomplete="off">
                         <p class="lot-item__form-item form__item <?= errorClass($errors, 'cost'); ?>">
@@ -51,20 +51,18 @@
                     </form>
                 <?php endif; ?>
             </div>
-            <?php if (isset($_SESSION['name'])): ?>
-                <div class="history">
-                    <h3>История ставок (<span><?= count($bids); ?></span>)</h3>
-                    <table class="history__list">
-                        <?php foreach ($bids as $bid): ?>
-                            <tr class="history__item">
-                                <td class="history__name"><?= $bid['user_name']; ?></td>
-                                <td class="history__price"><?= priceFormat($bid['price']); ?></td>
-                                <td class="history__time"><?= bidTime($bid['dt_create']); ?></td>
-                            </tr>
-                        <?php endforeach; ?>
-                    </table>
-                </div>
-            <?php endif; ?>
+            <div class="history">
+                <h3>История ставок (<span><?= count($bids); ?></span>)</h3>
+                <table class="history__list">
+                    <?php foreach ($bids as $bid): ?>
+                        <tr class="history__item">
+                            <td class="history__name"><?= $bid['user_name']; ?></td>
+                            <td class="history__price"><?= priceFormat($bid['price']); ?></td>
+                            <td class="history__time"><?= bidTime($bid['dt_create']); ?></td>
+                        </tr>
+                    <?php endforeach; ?>
+                </table>
+            </div>
         </div>
     </div>
 </section>

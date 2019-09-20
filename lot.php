@@ -23,7 +23,8 @@ if (isset($_GET['lot_id']) && is_numeric($_GET['lot_id']) && !empty($card = getC
             'maxPrice' => $maxPrice,
             'minBid' => $minBid,
             'errors' => [],
-            'bids' => $bids
+            'bids' => $bids,
+            'con' => $con
         ]);
         $layoutContent = include_template('layout.php', [
             'content' => $pageContent,
@@ -42,7 +43,8 @@ if (isset($_GET['lot_id']) && is_numeric($_GET['lot_id']) && !empty($card = getC
             'maxPrice' => $maxPrice,
             'minBid' => $minBid,
             'errors' => $errors,
-            'bids' => $bids
+            'bids' => $bids,
+            'con' => $con
         ]);
         $layoutContent = include_template('layout.php', [
             'content' => $pageContent,
