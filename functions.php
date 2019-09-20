@@ -626,10 +626,11 @@ function getWinData($connection, $winner): array
  */
 function sendWinEmail(array $winData): bool
 {
-    $userName = $winData[0]['name'];
-    $email = $winData[0]['email'];
-    $lot = $winData[0]['lot_id'];
-    $title = $winData[0]['title'];
+    $winData = $winData[0];
+    $userName = $winData['name'];
+    $email = $winData['email'];
+    $lot = $winData['lot_id'];
+    $title = $winData['title'];
 
     $transport = new Swift_SmtpTransport('smtp.mailtrap.io', 25);
     $transport->setUsername('832f83bcd7e474');
