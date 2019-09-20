@@ -14,7 +14,7 @@
         <div class="form__item <?= errorClass($errors, 'lot-name'); ?>">
             <label for="lot-name">Наименование <sup>*</sup></label>
             <input id="lot-name" type="text" name="lot-name" placeholder="Введите наименование лота"
-                   value="<?= getPostVal('lot-name'); ?>">
+                   value="<?= strip_tags(getPostVal('lot-name')); ?>">
             <span class="form__error"><?= $errors['lot-name'] ?? ''; ?></span>
         </div>
         <div class="form__item <?= errorClass($errors, 'category'); ?>">
@@ -31,13 +31,13 @@
     <div class="form__item form__item--wide <?= errorClass($errors, 'message'); ?>">
         <label for="message">Описание <sup>*</sup></label>
         <textarea id="message" name="message"
-                  placeholder="Напишите описание лота"><?= getPostVal('message'); ?></textarea>
+                  placeholder="Напишите описание лота"><?= strip_tags(getPostVal('message')); ?></textarea>
         <span class="form__error"><?= $errors['message'] ?? ''; ?></span>
     </div>
     <div class="form__item form__item--file <?= errorClass($errors, 'image'); ?>">
         <label>Изображение <sup>*</sup></label>
         <div class="form__input-file">
-            <input class="visually-hidden" type="file" name="image" id="lot-img" value="<?= getPostVal('path'); ?>">
+            <input class="visually-hidden" type="file" name="image" id="lot-img" value="<?= strip_tags(getPostVal('path')); ?>">
             <label for="lot-img">
                 Добавить
             </label>
@@ -47,18 +47,18 @@
     <div class="form__container-three">
         <div class="form__item form__item--small <?= errorClass($errors, 'lot-rate'); ?>">
             <label for="lot-rate">Начальная цена <sup>*</sup></label>
-            <input id="lot-rate" type="text" name="lot-rate" placeholder="0" value="<?= getPostVal('lot-rate'); ?>">
+            <input id="lot-rate" type="text" name="lot-rate" placeholder="0" value="<?= strip_tags(getPostVal('lot-rate')); ?>">
             <span class="form__error"><?= $errors['lot-rate'] ?? ''; ?></span>
         </div>
         <div class="form__item form__item--small <?= errorClass($errors, 'lot-step'); ?>">
             <label for="lot-step">Шаг ставки <sup>*</sup></label>
-            <input id="lot-step" type="text" name="lot-step" placeholder="0" value="<?= getPostVal('lot-step'); ?>">
+            <input id="lot-step" type="text" name="lot-step" placeholder="0" value="<?= strip_tags(getPostVal('lot-step')); ?>">
             <span class="form__error"><?= $errors['lot-step'] ?? ''; ?></span>
         </div>
         <div class="form__item <?= errorClass($errors, 'lot-date'); ?>">
             <label for="lot-date">Дата окончания торгов <sup>*</sup></label>
             <input class="form__input-date" id="lot-date" type="text" name="lot-date"
-                   placeholder="Введите дату в формате ГГГГ-ММ-ДД" value="<?= getPostVal('lot-date'); ?>">
+                   placeholder="Введите дату в формате ГГГГ-ММ-ДД" value="<?= strip_tags(getPostVal('lot-date')); ?>">
             <span class="form__error"><?= $errors['lot-date'] ?? ''; ?></span>
         </div>
     </div>

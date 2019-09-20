@@ -8,14 +8,14 @@
     </ul>
 </nav>
 <section class="lot-item container">
-    <h2><?= $card['name']; ?></h2>
+    <h2><?= strip_tags($card['name']); ?></h2>
     <div class="lot-item__content">
         <div class="lot-item__left">
             <div class="lot-item__image">
-                <img src="../<?= $card['url']; ?>" width="730" height="548" alt="Сноуборд">
+                <img src="../<?= $card['url']; ?>" width="730" height="548" alt="<?= strip_tags($card['name']); ?>">
             </div>
-            <p class="lot-item__category">Категория: <span><?= $card['category']; ?></span></p>
-            <p class="lot-item__description"><?= $card['description']; ?></p>
+            <p class="lot-item__category">Категория: <span><?= strip_tags($card['category']); ?></span></p>
+            <p class="lot-item__description"><?= strip_tags($card['description']); ?></p>
         </div>
         <div class="lot-item__right">
             <div class="lot-item__state">
@@ -44,7 +44,7 @@
                             <label for="cost">Ваша ставка</label>
                             <input id="cost" type="text" name="cost"
                                    placeholder="<?= substr_replace(priceFormat($minBid), '', -3); ?>"
-                                   value="<?= getPostVal('cost'); ?>">
+                                   value="<?= strip_tags(getPostVal('cost')); ?>">
                             <span class="form__error"><?= $errors['cost'] ?? ''; ?></span>
                         </p>
                         <button type="submit" class="button">Сделать ставку</button>
@@ -56,7 +56,7 @@
                 <table class="history__list">
                     <?php foreach ($bids as $bid): ?>
                         <tr class="history__item">
-                            <td class="history__name"><?= $bid['user_name']; ?></td>
+                            <td class="history__name"><?= strip_tags($bid['user_name']); ?></td>
                             <td class="history__price"><?= priceFormat($bid['price']); ?></td>
                             <td class="history__time"><?= bidTime($bid['dt_create']); ?></td>
                         </tr>
