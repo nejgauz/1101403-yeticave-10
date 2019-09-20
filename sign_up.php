@@ -33,7 +33,7 @@ if ($user['password']) {
 }
 $errors = validateUser($errors, $user);
 if (isEmailExist($con, $user['email'])) {
-    $errors['email'] = 'Пользователь с таким паролем уже существует';
+    $errors['email'] = 'Этот адрес почты уже занят';
 }
 if (!empty($errors)) {
     $categories = getCategories($con);

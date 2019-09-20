@@ -43,10 +43,10 @@ if (!empty($errors)) {
     ]);
     echo $layoutContent;
     exit();
-} else {
-    $_SESSION['id'] = $regUser['id'];
-    $_SESSION['email'] = $regUser['email'];
-    $_SESSION['name'] = $regUser['name'];
-    header("Location:/");
-    exit();
 }
+$_SESSION['id'] = $regUser['id'];
+$_SESSION['email'] = $regUser['email'];
+$_SESSION['name'] = $regUser['name'];
+header("Location:/");
+exit();
+
