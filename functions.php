@@ -111,7 +111,7 @@ function getCard($connection, $id): array
     LEFT JOIN categories AS c ON c.id = l.cat_id
     WHERE l.id = " . $id;
     $card = readFromDatabase($request, $connection);
-    $card = $card[0];
+
 
     return $card;
 }
@@ -496,13 +496,19 @@ function bidTime($time): string
  */
 function getUserBids($connection, $id): array
 {
-    $request = "SELECT l.image_path as image, b.lot_id, l.title as lot_title, c.name as category, dt_end, b.price, b.dt_create, win_id as winner, l.user_id as lot_owner
+    $bidRequest = "SELECT l.image_path as image, b.lot_id, l.title as lot_title, c.name as category, dt_end, b.price, b.dt_create, win_id as winner, l.user_id as lot_owner
     FROM bids b LEFT JOIN lots l ON b.lot_id = l.id 
     JOIN categories c ON l.cat_id = c.id
     JOIN users u ON l.user_id = u.id
-    WHERE b.user_id = " . $id . " ORDER BY dt_end DESC";
-    $bids = readFromDatabase($request, $connection);
-
+    WHERE b.user_id = " . $id . " ORDER BY b.dt_create DESC";
+    $bids = readFromDatabase($bidRequest, $connection);
+    foreach ($bids as $key => $bid) {
+        if ($bids[$key]['winner'] !== NULL) {
+            $contactRequest = "SELECT contact FROM users WHERE id = " . $bids[$key]['winner'];
+            $contact = readFromDatabase($contactRequest, $connection);
+            $bids[$key]['contact'] = $contact[0]['contact'];
+        }
+    }
 
     return $bids;
 }
