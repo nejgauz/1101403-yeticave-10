@@ -38,16 +38,15 @@ function timeCounter(string $endDate): array
  * Обрабатывает ошибки подключения к БД и возвращает страницу с ее типом
  * @param string $mistake вид ошибки: 'connect' (ошибка подключения) или 'request' (ошибка запроса)
  * @param $con ресурс соединения
- * @return шаблон страницы с ошибкой
+ * @return $error шаблон страницы с ошибкой
  */
 function errorFilter(string $mistake, $con = null)
 {
+    $error = '';
     if ($mistake === 'connect') {
         $error = mysqli_connect_error();
-    } else {
-        if ($mistake === 'request') {
-            $error = mysqli_error($con);
-        }
+    } elseif ($mistake === 'request') {
+        $error = mysqli_error($con);
     }
     return $error;
 }
@@ -91,7 +90,7 @@ function getCards($connection): array
     LEFT JOIN categories AS c
     ON c.id = l.cat_id
     WHERE win_id IS NULL AND dt_end > NOW()
-    ORDER BY l.dt_create DESC LIMIT 9";
+    ORDER BY l.dt_create DESC";
     $cards = readFromDatabase($request, $connection);
 
     return $cards;
@@ -106,6 +105,7 @@ function getCards($connection): array
  */
 function getCard($connection, $id): array
 {
+    $id = mysqli_real_escape_string($connection, $id);
     $request = "SELECT l.id, title AS `name`, image_path AS url, c.name AS category, descr AS description, dt_end AS `time`, step, st_price, user_id
     FROM lots AS l
     LEFT JOIN categories AS c ON c.id = l.cat_id
@@ -124,6 +124,7 @@ function getCard($connection, $id): array
  */
 function getMaxBid($connection, $id)
 {
+    $id = mysqli_real_escape_string($connection, $id);
     $request = "SELECT MAX(price) as max_price FROM bids WHERE lot_id = " . $id;
     $bidArray = mysqli_query($connection, $request);
     $maxBid = mysqli_fetch_assoc($bidArray);
@@ -139,8 +140,14 @@ function getMaxBid($connection, $id)
  */
 function insertLotInDb($connection, array $lot)
 {
+    $category = mysqli_real_escape_string($connection, $lot['category']);
+    $title = mysqli_real_escape_string($connection, $lot['lot-name']);
+    $message = mysqli_real_escape_string($connection, $lot['message']);
+    $rate = mysqli_real_escape_string($connection, $lot['lot-rate']);
+    $date = mysqli_real_escape_string($connection, $lot['lot-date']);
+    $step = mysqli_real_escape_string($connection, $lot['lot-step']);
     $request = "INSERT INTO lots (user_id, dt_create, cat_id, title, descr, image_path, st_price, dt_end, step)
-    VALUES (1, NOW(), '" . $lot['category'] . "', '" . $lot['lot-name'] . "', '" . $lot['message'] . "', '" . $lot['path'] . "', '" . $lot['lot-rate'] . "', '" . $lot['lot-date'] . "', '" . $lot['lot-step'] . "')";
+    VALUES (1, NOW(), '" . $category . "', '" . $title . "', '" . $message . "', '" . $lot['path'] . "', '" . $rate . "', '" . $date . "', '" . $step . "')";
     $result = mysqli_query($connection, $request);
 
     return $result;
@@ -302,7 +309,6 @@ function validateLotForm(array $lot): array
  */
 function validateUser(array $errors, array $user): array
 {
-    $errors = $errors;
     if (!filter_var($user['email'], FILTER_VALIDATE_EMAIL)) {
         $errors['email'] = 'Пожалуйста, введите корректный адрес почты';
         $errors['password'] = 'Пароль неверный';
@@ -324,8 +330,12 @@ function validateUser(array $errors, array $user): array
  */
 function insertUserInDb($connection, array $user): bool
 {
+    $email = mysqli_real_escape_string($connection, $user['email']);
+    $name = mysqli_real_escape_string($connection, $user['name']);
+    $password = mysqli_real_escape_string($connection, $user['password']);
+    $message = mysqli_real_escape_string($connection, $user['message']);
     $request = "INSERT INTO users (dt_reg, email, `name`, password, avat_path, `contact`)
-    VALUES (NOW(), '" . $user['email'] . "', '" . $user['name'] . "', '" . $user['password'] . "', NULL, '" . $user['message'] . "')";
+    VALUES (NOW(), '" . $email . "', '" . $name . "', '" . $password . "', NULL, '" . $message . "')";
     $result = mysqli_query($connection, $request);
 
     return $result;
@@ -339,6 +349,7 @@ function insertUserInDb($connection, array $user): bool
  */
 function isEmailExist($connection, $email): bool
 {
+    $email = mysqli_real_escape_string($connection, $email);
     $request = "SELECT * FROM users WHERE email = '" . $email . "'";
     $result = readFromDatabase($request, $connection);
     if ($result) {
@@ -358,6 +369,7 @@ function isEmailExist($connection, $email): bool
  */
 function getUserInfo($connection, string $email): array
 {
+    $email = mysqli_real_escape_string($connection, $email);
     $request = "SELECT * FROM users WHERE email = '" . $email . "'";
     $result = readFromDatabase($request, $connection);
     $result = $result[0];
@@ -376,7 +388,8 @@ function getUserInfo($connection, string $email): array
  */
 function getSearchResults($connection, string $word, string $fields, int $limit = 9, int $offset = 0): array
 {
-
+    $fields = mysqli_real_escape_string($connection, $fields);
+    $word = mysqli_real_escape_string($connection, $word);
     $request = "SELECT title, st_price, image_path, dt_end, c.name AS category_name, l.id
     FROM lots AS l
     LEFT JOIN categories AS c
@@ -395,12 +408,18 @@ function getSearchResults($connection, string $word, string $fields, int $limit 
  */
 function validateBid($bid, $minBid): array
 {
-    $errors['cost'] = isFieldEmpty($bid);
-    if (!intval($bid['cost']) or $bid['cost'] < 0) {
+    $errors = [];
+    $value = $bid['cost'];
+    if (isFieldEmpty($value)) {
+        $errors['cost'] = isFieldEmpty($value);
+        return $errors;
+    }
+    $cost = ($value == (int) $value) ? (int) $value : (float) $value;
+    if (!is_int($cost) or $cost < 0 or !is_numeric($bid['cost'])) {
         $errors['cost'] = 'Ставка должна быть целым положительным числом';
         return $errors;
     }
-    if ($bid['cost'] < $minBid) {
+    if ($cost < $minBid) {
         $errors['cost'] = 'Ставка должна быть не меньше минимальной';
     }
     $errors = array_filter($errors);
@@ -416,8 +435,10 @@ function validateBid($bid, $minBid): array
  */
 function insertBidInDb($connection, $bid)
 {
+    $lotId = mysqli_real_escape_string($connection, $bid['lot_id']);
+    $cost = mysqli_real_escape_string($connection, $bid['cost']);
     $request = "INSERT INTO bids (dt_create, user_id, lot_id, price)
-    VALUES (NOW(), " . $bid['user_id'] . ", " . $bid['lot_id'] . ", " . $bid['cost'] . ")";
+    VALUES (NOW(), " . $bid['user_id'] . ", " . $lotId . ", " . $cost . ")";
     $result = mysqli_query($connection, $request);
 
     return $result;
@@ -448,6 +469,7 @@ function getMaxPrice($curPrice, $maxBid)
  */
 function getBids($connection, $id): array
 {
+    $id = mysqli_real_escape_string($connection, $id);
     $request = "SELECT u.name as user_name, lot_id, dt_create, price FROM bids as b 
     LEFT JOIN users as u ON b.user_id = u.id WHERE lot_id = " . $id . " ORDER BY dt_create DESC";
     $bids = readFromDatabase($request, $connection);
@@ -496,6 +518,7 @@ function bidTime($time): string
  */
 function getUserBids($connection, $id): array
 {
+    $id = mysqli_real_escape_string($connection, $id);
     $bidRequest = "SELECT l.image_path as image, b.lot_id, l.title as lot_title, c.name as category, dt_end, b.price, b.dt_create, win_id as winner, l.user_id as lot_owner
     FROM bids b LEFT JOIN lots l ON b.lot_id = l.id 
     JOIN categories c ON l.cat_id = c.id
@@ -573,6 +596,7 @@ function getLotsWithoutWinner($connection): array
  */
 function getLastBid($connection, $id)
 {
+    $id = mysqli_real_escape_string($connection, $id);
     $request = "SELECT user_id FROM bids WHERE lot_id = " . $id . " ORDER BY dt_create DESC LIMIT 1";
     $winner = readFromDatabase($request, $connection);
     if (!empty($winner[0])) {
@@ -593,6 +617,8 @@ function getLastBid($connection, $id)
  */
 function insertWinnerInDB($connection, $lot, $winner)
 {
+    $winner = mysqli_real_escape_string($connection, $winner);
+    $lot = mysqli_real_escape_string($connection, $lot);
     $request = "UPDATE lots SET win_id = " . $winner . " WHERE id = " . $lot;
     $result = mysqli_query($connection, $request);
 
@@ -610,6 +636,7 @@ function insertWinnerInDB($connection, $lot, $winner)
  */
 function getWinData($connection, $winner): array
 {
+    $winner = mysqli_real_escape_string($connection, $winner);
     $request = "SELECT email, u.name, l.id as lot_id, l.title FROM users u
     JOIN lots l ON l.win_id = u.id
     WHERE u.id = " . $winner;

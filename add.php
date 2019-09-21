@@ -64,7 +64,6 @@ if (empty($errors)) {
     ]);
     echo $layoutContent;
 } else {
-    $categories = getCategories($con);
     $pageContent = include_template('add_lot.php',
         ['categories' => $categories, 'connection' => $con, 'errors' => $errors]);
     $layoutContent = include_template('layout.php', [
