@@ -6,7 +6,7 @@
         <?php foreach ($categories as $value): ?>
             <li class="promo__item promo__item--<?= $value['symb_code']; ?>">
                 <a class="promo__link"
-                   href="search_category.php?category=<?= $value['name']; ?>"><?= strip_tags($value['name']); ?></a>
+                   href="search_category.php?category=<?= $value['id']; ?>"><?= strip_tags($value['name']); ?></a>
             </li>
         <?php endforeach; ?>
     </ul>

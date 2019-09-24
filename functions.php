@@ -413,14 +413,14 @@ function getUserInfo($connection, string $email): array
 }
 
 /**
- * Функция возвращает из БД массив с карточками, в которых описание или название подходит поисковому запросу
+ * Функция возвращает из БД массив с карточками лотов, в которых описание или название подходит поисковому запросу
  *
  * @param resource $connection ресурс соединения
  * @param string $word слово, по которому производится поиск
  * @param string $fields поле или поля, по которым искать
  * @param int $limit по сколько карточек результатов запрашивать из БД
  * @param int $offset нужно ли смещение в выборке результатов
- * @return array $cards массив с карточками лотов
+ * @return array $cards
  */
 function getSearchResults($connection, string $word, string $fields, int $limit = 9, int $offset = 0): array
 {
@@ -431,6 +431,28 @@ function getSearchResults($connection, string $word, string $fields, int $limit 
     LEFT JOIN categories AS c
     ON c.id = l.cat_id WHERE win_id IS NULL AND dt_end > NOW()
     AND MATCH (" . $fields . ") AGAINST ('" . $word . "') ORDER BY l.dt_create DESC LIMIT " . $limit . " OFFSET " . $offset;
+    $cards = readFromDatabase($request, $connection);
+
+    return $cards;
+}
+
+/**
+ * Функция возвращает из БД массив с карточками лотов, в которых описание или название подходит поисковому запросу
+ *
+ * @param resource $connection ресурс соединения
+ * @param string $id категории
+ * @param int $limit по сколько карточек результатов запрашивать из БД
+ * @param int $offset нужно ли смещение в выборке результатов
+ * @return array $cards
+ */
+function getSearchCategory($connection, string $id, int $limit = 9, int $offset = 0): array
+{
+    $id = mysqli_real_escape_string($connection, $id);
+    $request = "SELECT title, st_price, image_path, dt_end, c.name AS category_name, l.id
+    FROM lots AS l
+    LEFT JOIN categories AS c
+    ON c.id = l.cat_id WHERE win_id IS NULL AND dt_end > NOW()
+    AND c.id = '" . $id . "' ORDER BY l.dt_create DESC LIMIT " . $limit . " OFFSET " . $offset;
     $cards = readFromDatabase($request, $connection);
 
     return $cards;
