@@ -132,7 +132,7 @@ function getCard($connection, $id): array
  * @param resource $connection
  * @return int $maxBid
  */
-function getMaxBid($connection, $id): int
+function getMaxBid($connection, $id):?int
 {
     $id = mysqli_real_escape_string($connection, $id);
     $request = "SELECT MAX(price) as max_price FROM bids WHERE lot_id = " . $id;
