@@ -29,7 +29,10 @@ if (isEmailExist($con, $user['email'])) {
         $errors['password'] = 'Вы ввели неверный пароль';
     }
 } else {
-    $errors['email'] = 'Адрес почты не зарегистрирован';
+    $errors['email'] = 'Вы ввели неверный email';
+    if (!empty($user['password'])) {
+        $errors['password'] = 'Вы ввели неверный пароль';
+    }
 }
 $errors = validateUser($errors, $user);
 
@@ -43,10 +46,10 @@ if (!empty($errors)) {
     ]);
     echo $layoutContent;
     exit();
-} else {
-    $_SESSION['id'] = $regUser['id'];
-    $_SESSION['email'] = $regUser['email'];
-    $_SESSION['name'] = $regUser['name'];
-    header("Location:/");
-    exit();
 }
+$_SESSION['id'] = $regUser['id'];
+$_SESSION['email'] = $regUser['email'];
+$_SESSION['name'] = $regUser['name'];
+header("Location:/");
+exit();
+

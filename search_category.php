@@ -10,15 +10,21 @@ if (!$con) {
 
 $categories = getCategories($con);
 if (isset($_GET['category']) && $_SERVER['REQUEST_METHOD'] == 'GET') {
-    $request = strip_tags($_GET['category']);
-    $allCards = getSearchResults($con, $request, '`name`');
+    $id = strip_tags($_GET['category']);
+    $allCards = getSearchCategory($con, $id);
+    $request = '';
+    foreach ($categories as $category) {
+        if ($category['id'] === $id) {
+            $request = $category['name'];
+        }
+    }
     if ($allCards) {
         $itemsNumber = count($allCards);
         $curPage = $_GET['page'] ?? 1;
         $itemsLimit = 9;
-        $pagesNumber = ceil($itemsNumber/$itemsLimit);
+        $pagesNumber = ceil($itemsNumber / $itemsLimit);
         $offset = ($curPage - 1) * $itemsLimit;
-        $cards = getSearchResults($con, $request, '`name`', $itemsLimit, $offset);
+        $cards = getSearchCategory($con, $id, $itemsLimit, $offset);
         $items = include_template('items.php', ['cards' => $cards]);
         $pageContent = include_template('search_result.php', [
             'categories' => $categories,
@@ -35,6 +41,19 @@ if (isset($_GET['category']) && $_SERVER['REQUEST_METHOD'] == 'GET') {
             'title' => 'Все лоты'
         ]);
         echo $layoutContent;
+    } elseif ($request === '') {
+        http_response_code(404);
+        $pageContent = include_template('http_error.php', [
+            'categories' => $categories,
+            'error' => '404 Страница не найдена',
+            'text' => 'Данной страницы не существует на сайте.'
+        ]);
+        $layoutContent = include_template('layout.php', [
+            'content' => $pageContent,
+            'categories' => $categories,
+            'title' => 'Ошибка 404'
+        ]);
+        echo $layoutContent;
     } else {
         $pageContent = include_template('search_none.php', ['text' => 'В данной категории лотов нет']);
         $layoutContent = include_template('layout.php', [
@@ -44,5 +63,4 @@ if (isset($_GET['category']) && $_SERVER['REQUEST_METHOD'] == 'GET') {
         ]);
         echo $layoutContent;
     }
-
 }

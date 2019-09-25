@@ -17,7 +17,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET') {
             $itemsNumber = count($allCards);
             $curPage = $_GET['page'] ?? 1;
             $itemsLimit = 9;
-            $pagesNumber = ceil($itemsNumber/$itemsLimit);
+            $pagesNumber = ceil($itemsNumber / $itemsLimit);
             $offset = ($curPage - 1) * $itemsLimit;
             $cards = getSearchResults($con, $request, 'title, descr', $itemsLimit, $offset);
             $items = include_template('items.php', ['cards' => $cards]);

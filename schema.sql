@@ -28,7 +28,6 @@ CREATE TABLE users (
     email      CHAR(255) UNIQUE,
     name       CHAR(255),
     password   CHAR(255),
-    avat_path  CHAR(255),
     contact    CHAR(255)
 );
 CREATE TABLE categories (
@@ -46,4 +45,3 @@ CREATE INDEX title ON lots(title);
 CREATE INDEX step ON lots(step);
 CREATE INDEX descr ON lots(descr);
 CREATE FULLTEXT INDEX lot_search ON lots(title, descr);
-CREATE FULLTEXT INDEX category ON categories(`name`);

@@ -1,9 +1,10 @@
 <?php
 
 /**
- * Принимает цену, форматирует и возвращает в нужном формате.
- * @param float $price цена в виде дробного или целого числа
- * @return string отформатированная цена в виде "15 000 ₽"
+ * Принимает цену в виде дробного или целого числа, форматирует и возвращает в формате "15 000 ₽".
+ *
+ * @param float $price
+ * @return string $resultPrice
  */
 function priceFormat(float $price): string
 {
@@ -15,9 +16,10 @@ function priceFormat(float $price): string
 }
 
 /**
- * Принимает дату в будущем в формате "ГГГГ-ММ-ДД" и возвращает время до этой даты в виде ассициативного массива
- * @param string $endDate будущая дата в формате "ГГГГ-ММ-ДД"
- * @return array массив вида ['ЧЧ','ММ']
+ * Принимает дату в будущем в формате "ГГГГ-ММ-ДД" и возвращает время до этой даты массивом вида ['ЧЧ','ММ']
+ *
+ * @param string $endDate
+ * @return array
  */
 function timeCounter(string $endDate): array
 {
@@ -35,26 +37,31 @@ function timeCounter(string $endDate): array
 }
 
 /**
- * Обрабатывает ошибки подключения к БД и возвращает страницу с ее типом
- * @param string $mistake вид ошибки: 'connect' (ошибка подключения) или 'request' (ошибка запроса)
- * @param $con ресурс соединения
- * @return шаблон страницы с ошибкой
+ * Обрабатывает ошибки подключения к БД, принимая вид ошибки 'connect' (ошибка подключения) или 'request' (ошибка запроса)
+ * и возвращает строку с описанием ошибки
+ *
+ * @param string $mistake
+ * @param resource $con
+ * @return string $error
  */
-function errorFilter(string $mistake, $con = null)
+function errorFilter(string $mistake, $con = null): string
 {
+    $error = '';
     if ($mistake === 'connect') {
         $error = mysqli_connect_error();
-    } else if ($mistake === 'request') {
+    } elseif ($mistake === 'request') {
         $error = mysqli_error($con);
     }
     return $error;
 }
 
 /**
- * Обрабатывает запросы на чтение из БД
- * @param string $sql текст запроса к БД
- * @param $con ресурс соединения
- * @return array двумерный ассоциативный массив с результатами запроса к БД
+ * Обрабатывает запросы на чтение из БД, принимая текст запроса и ресурс соединения,
+ * и возвращая двумерный ассоциативный массив с результатами запроса к БД
+ *
+ * @param string $sql
+ * @param resource $con
+ * @return array $data
  */
 function readFromDatabase(string $sql, $con): array
 {
@@ -65,9 +72,10 @@ function readFromDatabase(string $sql, $con): array
 }
 
 /**
- * Возвращает список категорий по запросу
- * @param $connection ресурс соединения
- * @return array возвращает двумерный массив категорий
+ * Принимает ресурс соединения и возвращает список категорий в виде двумерного массива
+ *
+ * @param resource $connection
+ * @return array $categories
  */
 function getCategories($connection): array
 {
@@ -78,9 +86,10 @@ function getCategories($connection): array
 }
 
 /**
- * Возвращает список лотов по запросу
- * @param $connection ресурс соединения
- * @return array возвращает двумерный массив лотов
+ * Принимает ресурс соединения и возвращает список лотов в виде двумерного массива
+ *
+ * @param resource $connection
+ * @return array
  */
 function getCards($connection): array
 {
@@ -89,7 +98,7 @@ function getCards($connection): array
     LEFT JOIN categories AS c
     ON c.id = l.cat_id
     WHERE win_id IS NULL AND dt_end > NOW()
-    ORDER BY l.dt_create DESC LIMIT 9";
+    ORDER BY l.dt_create DESC";
     $cards = readFromDatabase($request, $connection);
 
     return $cards;
@@ -97,31 +106,35 @@ function getCards($connection): array
 
 
 /**
- * Возвращает данные по id запрашиваемого лота
- * @param $id - id необходимого лота
- * @param $connection ресурс соединения
- * @return array ассоциативный массив с данными лота
+ * Возвращает ассоциативный массив с данными запрашиваемого лота по его id
+ *
+ * @param $id
+ * @param resource $connection
+ * @return array $card
  */
 function getCard($connection, $id): array
 {
-    $request = "SELECT l.id, title AS `name`, image_path AS url, c.name AS category, descr AS description, dt_end AS `time`, step, st_price
+    $id = mysqli_real_escape_string($connection, $id);
+    $request = "SELECT l.id, title AS `name`, image_path AS url, c.name AS category, descr AS description, dt_end AS `time`, step, st_price, user_id
     FROM lots AS l
     LEFT JOIN categories AS c ON c.id = l.cat_id
     WHERE l.id = " . $id;
     $card = readFromDatabase($request, $connection);
-    $card = $card[0];
+
 
     return $card;
 }
 
 /**
- * Возвращает максимальную ставку, если она есть
- * @param $id - id необходимого лота
- * @param $connection ресурс соединения
- * @return $maxBid возвращает максимальную ставку
+ * Принимает id необходимого лота и возвращает максимальную ставку по нему, если она есть
+ *
+ * @param $id
+ * @param resource $connection
+ * @return int $maxBid
  */
-function getMaxBid($connection, $id)
+function getMaxBid($connection, $id):?int
 {
+    $id = mysqli_real_escape_string($connection, $id);
     $request = "SELECT MAX(price) as max_price FROM bids WHERE lot_id = " . $id;
     $bidArray = mysqli_query($connection, $request);
     $maxBid = mysqli_fetch_assoc($bidArray);
@@ -131,23 +144,32 @@ function getMaxBid($connection, $id)
 }
 
 /**
- * Добавляет новый лот в БД
- * @param $connection ресурс соединения
- * @param array $lot массив с данными лота
+ * Принимает массив с данными лота и добавляет новый лот в БД
+ *
+ * @param resource $connection
+ * @param array $lot
+ * @return bool|mysqli_result $result
  */
 function insertLotInDb($connection, array $lot)
 {
+    $category = mysqli_real_escape_string($connection, $lot['category']);
+    $title = mysqli_real_escape_string($connection, $lot['lot-name']);
+    $message = mysqli_real_escape_string($connection, $lot['message']);
+    $rate = mysqli_real_escape_string($connection, $lot['lot-rate']);
+    $date = mysqli_real_escape_string($connection, $lot['lot-date']);
+    $step = mysqli_real_escape_string($connection, $lot['lot-step']);
     $request = "INSERT INTO lots (user_id, dt_create, cat_id, title, descr, image_path, st_price, dt_end, step)
-    VALUES (1, NOW(), '" . $lot['category'] . "', '" . $lot['lot-name'] . "', '" . $lot['message'] . "', '" . $lot['path'] . "', '" .  $lot['lot-rate'] . "', '" . $lot['lot-date'] . "', '" . $lot['lot-step'] . "')";
+    VALUES (1, NOW(), '" . $category . "', '" . $title . "', '" . $message . "', '" . $lot['path'] . "', '" . $rate . "', '" . $date . "', '" . $step . "')";
     $result = mysqli_query($connection, $request);
 
     return $result;
 }
 
 /**
- * Подставляет в форму значения, которые уже были заполнены юзером
- * @param $name имя поля в форме
- * @return возвращает заполненные значения либо пустые строки, если поля не были заполнены
+ * Принимает название поля в форме и подставляет в нее значения, которые уже были заполнены юзером либо пустую строку
+ *
+ * @param string $name
+ * @return string
  */
 function getPostVal(string $name): string
 {
@@ -155,9 +177,10 @@ function getPostVal(string $name): string
 }
 
 /**
- * Проверяет, заполнено ли поле
- * @param $field имя поля, которое нужно проверить на заполненность
- * @return string $result возвращает текст ошибки или пустую строку
+ * Принимает название поля, проверяет, заполнено ли оно, и возвращает текст ошибки или пустую строку
+ *
+ * @param $field
+ * @return string $result
  */
 function isFieldEmpty($field): string
 {
@@ -170,9 +193,11 @@ function isFieldEmpty($field): string
 }
 
 /**
- * Проверяет, правильно ли указана цена
- * @param $price цена лота
- * @return string $result возвращает текст ошибки или пустую строку
+ * Принимает цену, проверяет, правильно ли она указана,
+ * и возвращает текст ошибки или пустую строку
+ *
+ * @param $price
+ * @return string $result
  */
 function validatePrice($price): string
 {
@@ -188,14 +213,16 @@ function validatePrice($price): string
 }
 
 /**
- * Проверяет, является ли тип файла подходящим для формы лота
- * @param $path путь к файлу
- * @return string $result возвращает текст ошибки или пустую строку
+ * Принимает путь к файлу, проверяет, является ли тип файла подходящим для формы лота
+ * и возвращает текст ошибки или пустую строку
+ *
+ * @param string $path
+ * @return string $result
  */
 function validateImg($path): string
 {
     if (!empty($path)) {
-        if (mime_content_type($path) !='image/png' && mime_content_type($path) !='image/jpeg') {
+        if (mime_content_type($path) != 'image/png' && mime_content_type($path) != 'image/jpeg') {
             $result = 'Загрузите, пожалуйста, файл в формате jpg, jpeg или png';
         } else {
             $result = '';
@@ -208,9 +235,10 @@ function validateImg($path): string
 }
 
 /**
- * Проверяет формат даты и что она не в прошлом
- * @param $name название поля даты
- * @return string $result возвращает текст ошибки или пустую строку
+ * Принимает дату, проверяет ее формат и что она не прошла, и возвращает текст ошибки или пустую строку
+ *
+ * @param string $date
+ * @return string $result
  */
 function validateData($date): string
 {
@@ -225,9 +253,11 @@ function validateData($date): string
 }
 
 /**
- * Проверяет, чтобы шаг ставки был больше нуля и целое число
- * @step название поля шага ставки
- * @return string $result возвращает текст ошибки или пустую строку
+ * Принимает шаг ставки, проверяет, чтобы он был больше нуля и целым числом,
+ * и возвращает текст ошибки или пустую строку
+ *
+ * @param $step
+ * @return string $result
  */
 function validateStep($step): string
 {
@@ -242,22 +272,30 @@ function validateStep($step): string
 }
 
 /**
- * Возвращает строку с классом ошибки, если ошибки есть в массиве
- * @param array $errors массив с ошибками
- * @param string $name название тега, по которому нужно искать ошибки
+ * Принимает массив с ошибками и название тега, по которому их искать.
+ * Возвращает строку с классом ошибки или пустую.
+ *
+ * @param array $errors
+ * @param string $name
+ * @return string
  */
-function errorClass(array $errors, string $name) {
+function errorClass(array $errors, string $name)
+{
     if (isset($errors[$name])) {
-        echo 'form__item--invalid';
-    } else {
-        echo '';
+        return 'form__item--invalid';
     }
+
+    return '';
+
 }
 
 /**
- * Функция проводит необходимые проверки для валидации формы добавления лота
- * @param array $lot массив с данными из отправленной формы
- * @return array $errors - массив с ошибками
+ * Функция принимает массив с данными из отправленной формы
+ * и проводит необходимые проверки для валидации формы добавления лота.
+ * Возвращает массив с ошибками или пустой.
+ *
+ * @param array $lot
+ * @return array $errors
  */
 function validateLotForm(array $lot): array
 {
@@ -292,14 +330,16 @@ function validateLotForm(array $lot): array
 }
 
 /**
- * Функция проводит необходимые проверки для валидации формы регистрации юзера
- * @param array $errors массив с ошибками
- * @param array $user массив с данными из отправленной формы
- * @return array $errors - массив с ошибками
+ * Функция принимает массив с ошибками и массив с данными из отправленной формы.
+ * Проводит необходимые проверки для валидации формы регистрации юзера.
+ * Возвращает массив с ошибками или пустой
+ *
+ * @param array $errors
+ * @param array $user
+ * @return array $errors
  */
 function validateUser(array $errors, array $user): array
 {
-    $errors = $errors;
     if (!filter_var($user['email'], FILTER_VALIDATE_EMAIL)) {
         $errors['email'] = 'Пожалуйста, введите корректный адрес почты';
         $errors['password'] = 'Пароль неверный';
@@ -315,27 +355,35 @@ function validateUser(array $errors, array $user): array
 }
 
 /**
- * Вносит данные юзера в базу данных
- * @connection ресурс соединения
- * @param array $user массив с данными юзера
+ * Принимает массив с данными юзера и вносит их в базу данных
+ *
+ * @param resource $connection
+ * @param array $user
+ * @return bool|mysqli_result $result
  */
 function insertUserInDb($connection, array $user): bool
 {
+    $email = mysqli_real_escape_string($connection, $user['email']);
+    $name = mysqli_real_escape_string($connection, $user['name']);
+    $password = mysqli_real_escape_string($connection, $user['password']);
+    $message = mysqli_real_escape_string($connection, $user['message']);
     $request = "INSERT INTO users (dt_reg, email, `name`, password, avat_path, `contact`)
-    VALUES (NOW(), '" . $user['email'] . "', '" . $user['name'] . "', '" . $user['password'] . "', NULL, '" . $user['message'] . "')";
+    VALUES (NOW(), '" . $email . "', '" . $name . "', '" . $password . "', NULL, '" . $message . "')";
     $result = mysqli_query($connection, $request);
 
     return $result;
 }
 
 /**
- * Функция проверяет, есть ли в БД пользователь с указанным имейлом
- * @param $connection ресурс соединения
- * @param $email имейл пользователя
- * @return bool $answer нашелся или нет пользователь с таким адресом
+ * Функция по имейлу проверяет, есть ли в БД пользователь с указанным имейлом
+ *
+ * @param resource $connection
+ * @param string $email
+ * @return bool $answer
  */
 function isEmailExist($connection, $email): bool
 {
+    $email = mysqli_real_escape_string($connection, $email);
     $request = "SELECT * FROM users WHERE email = '" . $email . "'";
     $result = readFromDatabase($request, $connection);
     if ($result) {
@@ -348,14 +396,16 @@ function isEmailExist($connection, $email): bool
 }
 
 /**
- * Функция возвращает из БД информацию о пользователе
- * @param $connection ресурс соединения
- * @param string $email имейл пользователя
- * @return array $result массив с информацией о пользователе
+ * Функция по имейлу возвращает из БД массив с информацией о пользователе
+ *
+ * @param resource $connection
+ * @param string $email
+ * @return array $result
  */
 function getUserInfo($connection, string $email): array
 {
-    $request = "SELECT * FROM users WHERE email = '" . $email. "'";
+    $email = mysqli_real_escape_string($connection, $email);
+    $request = "SELECT * FROM users WHERE email = '" . $email . "'";
     $result = readFromDatabase($request, $connection);
     $result = $result[0];
 
@@ -363,17 +413,19 @@ function getUserInfo($connection, string $email): array
 }
 
 /**
- * Функция возвращает из БД массив с карточками, в которых описание или название подходит поисковому запросу
- * @param $connection ресурс соединения
+ * Функция возвращает из БД массив с карточками лотов, в которых описание или название подходит поисковому запросу
+ *
+ * @param resource $connection ресурс соединения
  * @param string $word слово, по которому производится поиск
  * @param string $fields поле или поля, по которым искать
  * @param int $limit по сколько карточек результатов запрашивать из БД
  * @param int $offset нужно ли смещение в выборке результатов
- * @return array $cards массив с карточками лотов
+ * @return array $cards
  */
 function getSearchResults($connection, string $word, string $fields, int $limit = 9, int $offset = 0): array
 {
-
+    $fields = mysqli_real_escape_string($connection, $fields);
+    $word = mysqli_real_escape_string($connection, $word);
     $request = "SELECT title, st_price, image_path, dt_end, c.name AS category_name, l.id
     FROM lots AS l
     LEFT JOIN categories AS c
@@ -385,19 +437,49 @@ function getSearchResults($connection, string $word, string $fields, int $limit 
 }
 
 /**
- * Функция проверяет заполнение формы ставки и возвращает массив с ошибками
- * @param array $bid массив ставки
- * @param $minBid минимальная возможная ставка
- * @return array $errors массив с ошибками
+ * Функция возвращает из БД массив с карточками лотов, в которых описание или название подходит поисковому запросу
+ *
+ * @param resource $connection ресурс соединения
+ * @param string $id категории
+ * @param int $limit по сколько карточек результатов запрашивать из БД
+ * @param int $offset нужно ли смещение в выборке результатов
+ * @return array $cards
+ */
+function getSearchCategory($connection, string $id, int $limit = 9, int $offset = 0): array
+{
+    $id = mysqli_real_escape_string($connection, $id);
+    $request = "SELECT title, st_price, image_path, dt_end, c.name AS category_name, l.id
+    FROM lots AS l
+    LEFT JOIN categories AS c
+    ON c.id = l.cat_id WHERE win_id IS NULL AND dt_end > NOW()
+    AND c.id = '" . $id . "' ORDER BY l.dt_create DESC LIMIT " . $limit . " OFFSET " . $offset;
+    $cards = readFromDatabase($request, $connection);
+
+    return $cards;
+}
+
+/**
+ * Функция принимает массив с данными ставки и минимальную возможную ставку.
+ * Затем проверяет заполнение формы ставки и возвращает массив с ошибками или пустой
+ *
+ * @param array $bid
+ * @param $minBid
+ * @return array $errors
  */
 function validateBid($bid, $minBid): array
 {
-    $errors['cost'] = isFieldEmpty($bid);
-    if (!intval($bid['cost']) or $bid['cost'] < 0) {
+    $errors = [];
+    $value = $bid['cost'];
+    if (isFieldEmpty($value)) {
+        $errors['cost'] = isFieldEmpty($value);
+        return $errors;
+    }
+    $cost = ($value == (int) $value) ? (int) $value : (float) $value;
+    if (!is_int($cost) or $cost < 0 or !is_numeric($bid['cost'])) {
         $errors['cost'] = 'Ставка должна быть целым положительным числом';
         return $errors;
     }
-    if ($bid['cost'] < $minBid) {
+    if ($cost < $minBid) {
         $errors['cost'] = 'Ставка должна быть не меньше минимальной';
     }
     $errors = array_filter($errors);
@@ -406,25 +488,29 @@ function validateBid($bid, $minBid): array
 }
 
 /**
- * Функция вносит данные о сделанной ставке
- * @param $connection ресурс соединения
- * @param $bid ставка
- * @return bool $result получилось или нет внести в базу
+ * Функция принимает ресурс соединения, массив ставки и вносит данные о сделанной ставке
+ *
+ * @param resource $connection
+ * @param array $bid
+ * @return bool|mysqli_result $result
  */
-function insertBidInDb($connection, $bid)
+function insertBidInDb($connection, array $bid)
 {
+    $lotId = mysqli_real_escape_string($connection, $bid['lot_id']);
+    $cost = mysqli_real_escape_string($connection, $bid['cost']);
     $request = "INSERT INTO bids (dt_create, user_id, lot_id, price)
-    VALUES (NOW(), " . $bid['user_id'] . ", " . $bid['lot_id'] . ", " . $bid['cost'] . ")";
+    VALUES (NOW(), " . $bid['user_id'] . ", " . $lotId . ", " . $cost . ")";
     $result = mysqli_query($connection, $request);
 
     return $result;
 }
 
 /**
- * Функция возвращает максимальную цену
- * @param $curPrice текущая цена
- * @param $maxBid максимальная ставка
- * @return $maxPrice максимальная цена
+ * Функция принимает текущую цену, максимальную ставку и возвращает максимальную цену
+ *
+ * @param $curPrice
+ * @param $maxBid
+ * @return string $maxPrice
  */
 function getMaxPrice($curPrice, $maxBid)
 {
@@ -438,13 +524,15 @@ function getMaxPrice($curPrice, $maxBid)
 }
 
 /**
- * Функция возвращает массив со всеми ставками по данному лоту
- * @param $connection ресурс соединения
- * @param $id id лота
- * @return array $bids двумерный массив со всеми ставками
+ * Функция возвращает двумерный массив со всеми ставками по id лота
+ *
+ * @param resource $connection
+ * @param $id
+ * @return array $bids
  */
 function getBids($connection, $id): array
 {
+    $id = mysqli_real_escape_string($connection, $id);
     $request = "SELECT u.name as user_name, lot_id, dt_create, price FROM bids as b 
     LEFT JOIN users as u ON b.user_id = u.id WHERE lot_id = " . $id . " ORDER BY dt_create DESC";
     $bids = readFromDatabase($request, $connection);
@@ -453,9 +541,10 @@ function getBids($connection, $id): array
 }
 
 /**
- * Функция, возвращающая время, когда была сделана ставка в человеческом виде
- * @param $time время для преобразования
- * @return $result строка с отформатированным временем
+ * Функция принимает время, когда была сделана ставка, для преобразования и возвращает его в человеческом виде
+ *
+ * @param $time
+ * @return string $result
  */
 function bidTime($time): string
 {
@@ -468,7 +557,7 @@ function bidTime($time): string
     $mins = date_interval_format($timeInterval, '%i');
     $days = date_interval_format($timeInterval, '%d');
 
-    if ($days >=1 && $days < 2) {
+    if ($days >= 1 && $days < 2) {
         $result = 'Вчера, в ' . date('H:i', strtotime($time));
     } elseif ($days >= 2) {
         $result = date('d.m.Y', strtotime($time)) . ' в ' . date('H:i', strtotime($time));
@@ -486,28 +575,37 @@ function bidTime($time): string
 }
 
 /**
- * Функция, по id юзера возвращает массив с данными по всем его ставкам
- * @param $connection ресурс соединения
- * @param $id id пользователя
- * @return array $bids двумерный массив со ставками
+ * Функция по id юзера возвращает массив с данными по всем его ставкам
+ *
+ * @param resource $connection
+ * @param $id
+ * @return array $bids
  */
 function getUserBids($connection, $id): array
 {
-    $request = "SELECT l.image_path as image, b.lot_id, l.title as lot_title, c.name as category, dt_end, b.price, b.dt_create, win_id as winner, l.user_id as lot_owner
+    $id = mysqli_real_escape_string($connection, $id);
+    $bidRequest = "SELECT l.image_path as image, b.lot_id, l.title as lot_title, c.name as category, dt_end, b.price, b.dt_create, win_id as winner, l.user_id as lot_owner
     FROM bids b LEFT JOIN lots l ON b.lot_id = l.id 
     JOIN categories c ON l.cat_id = c.id
     JOIN users u ON l.user_id = u.id
-    WHERE b.user_id = " . $id . " ORDER BY dt_end DESC";
-    $bids = readFromDatabase($request, $connection);
-
+    WHERE b.user_id = " . $id . " ORDER BY b.dt_create DESC";
+    $bids = readFromDatabase($bidRequest, $connection);
+    foreach ($bids as $key => $bid) {
+        if ($bids[$key]['winner'] !== NULL) {
+            $contactRequest = "SELECT contact FROM users WHERE id = " . $bids[$key]['winner'];
+            $contact = readFromDatabase($contactRequest, $connection);
+            $bids[$key]['contact'] = $contact[0]['contact'];
+        }
+    }
 
     return $bids;
 }
 
 /**
- * Функция проверяет, нужен ли класс окончания времени
- * @param array $time массив времени окончания ставки
- * @return string строку с классом или пустую строку
+ * Функция принимает массив времени окончания ставки, и возвращает строку с классом окончания времени или пустую
+ *
+ * @param array $time
+ * @return string
  */
 function timeClass(array $time): string
 {
@@ -519,10 +617,11 @@ function timeClass(array $time): string
 }
 
 /**
- * Функция возвращает класс для ставки
- * @param array $bid массив с данными ставки
- * @para, $user_id
- * @return array $class массив с классами
+ * Функция принимает массив с данными ставки, id юзера и возвращает массив с классами для ставки
+ *
+ * @param array $bid
+ * @param $user_id
+ * @return array $class
  */
 function bidClass(array $bid, $user_id): array
 {
@@ -532,7 +631,7 @@ function bidClass(array $bid, $user_id): array
         $class['item'] = 'rates__item--win';
         $class['timer'] = 'timer--win';
         $class['text'] = 'Ставка выиграла';
-    } elseif (strtotime($bid['dt_end']) < strtotime('today') ) {
+    } elseif (strtotime($bid['dt_end']) < strtotime('today')) {
         $class['item'] = 'rates__item--end';
         $class['timer'] = 'timer--end';
         $class['text'] = 'Торги окончены';
@@ -545,8 +644,9 @@ function bidClass(array $bid, $user_id): array
 
 /**
  * Функция находит в БД все лоты без победителя, дата истечения которых меньше или равна текущей дате
- * @param $connection ресурс соединения
- * @return array $lots id лотов без победителя
+ *
+ * @param resource $connection
+ * @return array $lots
  */
 function getLotsWithoutWinner($connection): array
 {
@@ -558,12 +658,14 @@ function getLotsWithoutWinner($connection): array
 
 /**
  * Функция возвращает id владельца последней ставки по id лота
- * @param $connection ресурс соединения
- * @param $id id лота
- * @return int $winner id юзера, который сделал последнюю ставку по данному лоту
+ *
+ * @param resource $connection
+ * @param $id
+ * @return int $winner
  */
 function getLastBid($connection, $id)
 {
+    $id = mysqli_real_escape_string($connection, $id);
     $request = "SELECT user_id FROM bids WHERE lot_id = " . $id . " ORDER BY dt_create DESC LIMIT 1";
     $winner = readFromDatabase($request, $connection);
     if (!empty($winner[0])) {
@@ -576,14 +678,17 @@ function getLastBid($connection, $id)
 }
 
 /**
- * Функция записывает в БД id победителя
- * @param $connection ресурс соединения
- * @param $lot id лота
- * @param $winner id победителя
- * @return $result получилось или нет обновить информацию в БД
+ * Функция записывает в таблицу лотов id победителя
+ *
+ * @param resource $connection
+ * @param $lot
+ * @param $winner
+ * @return bool|mysqli_result $result
  */
 function insertWinnerInDB($connection, $lot, $winner)
 {
+    $winner = mysqli_real_escape_string($connection, $winner);
+    $lot = mysqli_real_escape_string($connection, $lot);
     $request = "UPDATE lots SET win_id = " . $winner . " WHERE id = " . $lot;
     $result = mysqli_query($connection, $request);
 
@@ -591,14 +696,16 @@ function insertWinnerInDB($connection, $lot, $winner)
 }
 
 /**
- * Функция возвращает массив с данными о победителе торгов
- * @param $connection ресурс соединения
- * @param $winner id победителя
- * @return $winData ассоциативный массив, содеражащий: `name` - имя победителя, email - почту победителя, lot_id - id лота, который он выиграл,
- * title - название выигранного лота
+ * Функция по id юзера возвращает массив с данными о победителе торгов, содержащий:
+ * `name` - имя победителя, email - почту победителя, lot_id - id лота, который он выиграл, title - название выигранного лота
+ *
+ * @param resource $connection
+ * @param $winner
+ * @return array $winData
  */
 function getWinData($connection, $winner): array
 {
+    $winner = mysqli_real_escape_string($connection, $winner);
     $request = "SELECT email, u.name, l.id as lot_id, l.title FROM users u
     JOIN lots l ON l.win_id = u.id
     WHERE u.id = " . $winner;
@@ -608,19 +715,20 @@ function getWinData($connection, $winner): array
 }
 
 /**
- * Функция отправляет письмо победителю
- * @param $winData ассоциативный массив, где name - имя победителя, email - почта, $lot_id - id выигранного лота, title - название выигранного лота
- * @param $email - почта победителя
- * @param $lot_id - id выигранного лота
- * @param $title - название выигранного лота
- * @return true или false получилось или нет отправить письмо
+ * Функция принимает ассоциативный массив, где name - имя победителя,
+ * email - почта, $lot_id - id выигранного лота, title - название выигранного лота,
+ * и отправляет письмо победителю
+ *
+ * @param array $winData
+ * @return void
  */
-function sendWinEmail(array $winData): bool
+function sendWinEmail(array $winData): void
 {
-    $userName = $winData[0]['name'];
-    $email = $winData[0]['email'];
-    $lot = $winData[0]['lot_id'];
-    $title = $winData[0]['title'];
+    $winData = $winData[0];
+    $userName = $winData['name'];
+    $email = $winData['email'];
+    $lot = $winData['lot_id'];
+    $title = $winData['title'];
 
     $transport = new Swift_SmtpTransport('smtp.mailtrap.io', 25);
     $transport->setUsername('832f83bcd7e474');
@@ -637,8 +745,6 @@ function sendWinEmail(array $winData): bool
     $message->setFrom(['keks@phpdemo.ru' => 'Yeticave']);
 
     $mailer = new Swift_Mailer($transport);
-    if ($mailer->send($message)) {
-        return true;
-    }
-    return false;
+    $mailer->send($message);
+    return;
 }
