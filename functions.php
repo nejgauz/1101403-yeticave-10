@@ -89,9 +89,12 @@ function getCategories($connection): array
  * Принимает ресурс соединения и возвращает список лотов в виде двумерного массива
  *
  * @param resource $connection
+ * @param bool $isLimit нужны ли ограничения в показе результатов
+ * @param int $limit по сколько карточек результатов запрашивать из БД
+ * @param int $offset нужно ли смещение в выборке результатов
  * @return array
  */
-function getCards($connection): array
+function getCards($connection, $isLimit = false, $limit = 9, $offset = 0): array
 {
     $request = "SELECT l.id, title, st_price, image_path, dt_end, c.name AS category_name 
     FROM lots AS l
@@ -99,6 +102,9 @@ function getCards($connection): array
     ON c.id = l.cat_id
     WHERE win_id IS NULL AND dt_end > NOW()
     ORDER BY l.dt_create DESC";
+    if ($isLimit) {
+        $request .= " LIMIT " . $limit . " OFFSET " . $offset;
+    }
     $cards = readFromDatabase($request, $connection);
 
     return $cards;
@@ -367,8 +373,8 @@ function insertUserInDb($connection, array $user): bool
     $name = mysqli_real_escape_string($connection, $user['name']);
     $password = mysqli_real_escape_string($connection, $user['password']);
     $message = mysqli_real_escape_string($connection, $user['message']);
-    $request = "INSERT INTO users (dt_reg, email, `name`, password, avat_path, `contact`)
-    VALUES (NOW(), '" . $email . "', '" . $name . "', '" . $password . "', NULL, '" . $message . "')";
+    $request = "INSERT INTO users (dt_reg, email, `name`, password, `contact`)
+    VALUES (NOW(), '" . $email . "', '" . $name . "', '" . $password . "', '" . $message . "')";
     $result = mysqli_query($connection, $request);
 
     return $result;
@@ -418,11 +424,12 @@ function getUserInfo($connection, string $email): array
  * @param resource $connection ресурс соединения
  * @param string $word слово, по которому производится поиск
  * @param string $fields поле или поля, по которым искать
+ * @param bool $isLimit нужны ли ограничения в показе результатов
  * @param int $limit по сколько карточек результатов запрашивать из БД
  * @param int $offset нужно ли смещение в выборке результатов
  * @return array $cards
  */
-function getSearchResults($connection, string $word, string $fields, int $limit = 9, int $offset = 0): array
+function getSearchResults($connection, string $word, string $fields, bool $isLimit = false, int $limit = 9, int $offset = 0): array
 {
     $fields = mysqli_real_escape_string($connection, $fields);
     $word = mysqli_real_escape_string($connection, $word);
@@ -430,7 +437,10 @@ function getSearchResults($connection, string $word, string $fields, int $limit 
     FROM lots AS l
     LEFT JOIN categories AS c
     ON c.id = l.cat_id WHERE win_id IS NULL AND dt_end > NOW()
-    AND MATCH (" . $fields . ") AGAINST ('" . $word . "') ORDER BY l.dt_create DESC LIMIT " . $limit . " OFFSET " . $offset;
+    AND MATCH (" . $fields . ") AGAINST ('" . $word . "') ORDER BY l.dt_create DESC";
+    if ($isLimit) {
+        $request .= " LIMIT " . $limit . " OFFSET " . $offset;
+    }
     $cards = readFromDatabase($request, $connection);
 
     return $cards;
@@ -441,18 +451,22 @@ function getSearchResults($connection, string $word, string $fields, int $limit 
  *
  * @param resource $connection ресурс соединения
  * @param string $id категории
+ * @param bool $isLimit нужны ли ограничения в показе результатов
  * @param int $limit по сколько карточек результатов запрашивать из БД
  * @param int $offset нужно ли смещение в выборке результатов
  * @return array $cards
  */
-function getSearchCategory($connection, string $id, int $limit = 9, int $offset = 0): array
+function getSearchCategory($connection, string $id, bool $isLimit = false, int $limit = 9, int $offset = 0): array
 {
     $id = mysqli_real_escape_string($connection, $id);
     $request = "SELECT title, st_price, image_path, dt_end, c.name AS category_name, l.id
     FROM lots AS l
     LEFT JOIN categories AS c
     ON c.id = l.cat_id WHERE win_id IS NULL AND dt_end > NOW()
-    AND c.id = '" . $id . "' ORDER BY l.dt_create DESC LIMIT " . $limit . " OFFSET " . $offset;
+    AND c.id = '" . $id . "' ORDER BY l.dt_create DESC";
+    if ($isLimit) {
+        $request .= " LIMIT " . $limit . " OFFSET " . $offset;
+    }
     $cards = readFromDatabase($request, $connection);
 
     return $cards;

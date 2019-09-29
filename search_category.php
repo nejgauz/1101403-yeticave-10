@@ -24,13 +24,15 @@ if (isset($_GET['category']) && $_SERVER['REQUEST_METHOD'] == 'GET') {
         $itemsLimit = 9;
         $pagesNumber = ceil($itemsNumber / $itemsLimit);
         $offset = ($curPage - 1) * $itemsLimit;
-        $cards = getSearchCategory($con, $id, $itemsLimit, $offset);
+        $cards = getSearchCategory($con, $id, true, $itemsLimit, $offset);
+        $link = "search_category.php?category=" . strip_tags($id);
         $items = include_template('items.php', ['cards' => $cards]);
         $pageContent = include_template('search_result.php', [
             'categories' => $categories,
             'connection' => $con,
             'items' => $items,
             'request' => $request,
+            'link' => $link,
             'pagesNumber' => $pagesNumber,
             'curPage' => $curPage,
             'header' => 'Все лоты в категории '
