@@ -58,11 +58,16 @@ if (isset($_GET['category']) && $_SERVER['REQUEST_METHOD'] == 'GET') {
         ]);
         echo $layoutContent;
     } else {
-        $pageContent = include_template('search_none.php', ['text' => 'В данной категории лотов нет']);
+        $pageContent = include_template('search_none.php', [
+            'text' => 'В данной категории лотов нет',
+            'categories' => $categories,
+            'request' => $request
+        ]);
         $layoutContent = include_template('layout.php', [
             'content' => $pageContent,
             'categories' => $categories,
-            'title' => 'Результаты поиска'
+            'title' => 'Результаты поиска',
+            'request' => $request
         ]);
         echo $layoutContent;
     }
