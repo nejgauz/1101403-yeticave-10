@@ -520,23 +520,6 @@ function insertBidInDb($connection, array $bid)
     return $result;
 }
 
-/**
- * Функция принимает текущую цену, максимальную ставку и возвращает максимальную цену
- *
- * @param $curPrice
- * @param $maxBid
- * @return string $maxPrice
- */
-function getMaxPrice($curPrice, $maxBid)
-{
-    if ($curPrice > $maxBid) {
-        $maxPrice = $curPrice;
-    } else {
-        $maxPrice = $maxBid;
-    }
-
-    return $maxPrice;
-}
 
 /**
  * Функция возвращает двумерный массив со всеми ставками по id лота
@@ -645,7 +628,7 @@ function bidClass(array $bid, $user_id): array
         $class['item'] = 'rates__item--win';
         $class['timer'] = 'timer--win';
         $class['text'] = 'Ставка выиграла';
-    } elseif (strtotime($bid['dt_end']) < strtotime('today')) {
+    } elseif (strtotime($bid['dt_end']) < strtotime('now')) {
         $class['item'] = 'rates__item--end';
         $class['timer'] = 'timer--end';
         $class['text'] = 'Торги окончены';
