@@ -1,7 +1,7 @@
 <nav class="nav">
     <ul class="nav__list container">
         <?php foreach ($categories as $value): ?>
-            <li class="nav__item">
+            <li class="nav__item<?php if ($value['name'] === $request): echo " nav__item--current"; endif; ?>">
                 <a href="search_category.php?category=<?= $value['id']; ?>"><?= strip_tags($value['name']); ?></a>
             </li>
         <? endforeach; ?>

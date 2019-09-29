@@ -40,7 +40,8 @@ if (isset($_GET['category']) && $_SERVER['REQUEST_METHOD'] == 'GET') {
         $layoutContent = include_template('layout.php', [
             'content' => $pageContent,
             'categories' => $categories,
-            'title' => 'Все лоты'
+            'title' => 'Все лоты',
+            'request' => $request
         ]);
         echo $layoutContent;
     } elseif ($request === '') {
