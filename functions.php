@@ -164,8 +164,9 @@ function insertLotInDb($connection, array $lot)
     $rate = mysqli_real_escape_string($connection, $lot['lot-rate']);
     $date = mysqli_real_escape_string($connection, $lot['lot-date']);
     $step = mysqli_real_escape_string($connection, $lot['lot-step']);
+    $userId = mysqli_real_escape_string($connection, $lot['user_id']);
     $request = "INSERT INTO lots (user_id, dt_create, cat_id, title, descr, image_path, st_price, dt_end, step)
-    VALUES (1, NOW(), '" . $category . "', '" . $title . "', '" . $message . "', '" . $lot['path'] . "', '" . $rate . "', '" . $date . "', '" . $step . "')";
+    VALUES (" . $userId . ", NOW(), '" . $category . "', '" . $title . "', '" . $message . "', '" . $lot['path'] . "', '" . $rate . "', '" . $date . "', '" . $step . "')";
     $result = mysqli_query($connection, $request);
 
     return $result;

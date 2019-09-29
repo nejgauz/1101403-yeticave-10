@@ -37,7 +37,7 @@
                         </span>
                     </div>
                 </div>
-                <?php if (isset($_SESSION['name']) && (strtotime($card['time']) > strtotime('now')) && ($card['user_id'] !== $_SESSION['id']) && (getLastBid($con, $card['id']) !== $_SESSION['id'])): ?>
+                <?php  if (isset($_SESSION['name']) && (strtotime($card['time']) > strtotime('now')) && ($card['user_id'] !== $_SESSION['id']) && (getLastBid($con, $card['id']) !== $_SESSION['id'])): ?>
                     <form class="lot-item__form" action="<?php echo 'lot.php?lot_id=' . $_GET['lot_id']; ?>"
                           method="post" autocomplete="off">
                         <p class="lot-item__form-item form__item <?= errorClass($errors, 'cost'); ?>">
