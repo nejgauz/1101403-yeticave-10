@@ -12,7 +12,7 @@ $categories = getCategories($con);
 if (isset($_GET['lot_id']) && is_numeric($_GET['lot_id']) && !empty($card = getCard($con, $_GET['lot_id']))) {
     $card = $card[0];
     $maxBid = getMaxBid($con, $card['id']) ?? 0;
-    $curPrice = $card['st_price'];
+    $curPrice = $card['st_price'] ?? 0;
     $maxPrice = max($curPrice, $maxBid);
     $minBid = $maxPrice + $card['step'];
     $bids = getBids($con, $_GET['lot_id']);
@@ -29,7 +29,7 @@ if (isset($_GET['lot_id']) && is_numeric($_GET['lot_id']) && !empty($card = getC
         $layoutContent = include_template('layout.php', [
             'content' => $pageContent,
             'categories' => $categories,
-            'title' => $card['name']
+            'title' => $card['name'] ?? ''
         ]);
         echo $layoutContent;
         exit();
@@ -49,7 +49,7 @@ if (isset($_GET['lot_id']) && is_numeric($_GET['lot_id']) && !empty($card = getC
         $layoutContent = include_template('layout.php', [
             'content' => $pageContent,
             'categories' => $categories,
-            'title' => $card['name']
+            'title' => $card['name'] ?? ''
         ]);
         echo $layoutContent;
         exit();

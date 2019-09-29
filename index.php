@@ -10,7 +10,8 @@ if (!$con) {
 }
 
 $categories = getCategories($con);
-$allCards = getCards($con);$itemsNumber = count($allCards);
+$allCards = getCards($con);
+$itemsNumber = count($allCards);
 $curPage = $_GET['page'] ?? 1;
 $itemsLimit = 9;
 $pagesNumber = ceil($itemsNumber / $itemsLimit);
