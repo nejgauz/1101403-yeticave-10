@@ -12,7 +12,7 @@
     <table class="rates__list">
         <?php foreach ($bids as $bid): ; ?>
             <?php $class = bidClass($bid, $_SESSION['id']); ?>
-            <tr class="rates__item <?= $class['item']; ?>">
+            <tr class="rates__item <?= isset($class['item']) ? $class['item'] : ''; ?>">
                 <td class="rates__info">
                     <div class="rates__img">
                         <img src="<?= $bid['image']; ?>" width="54" height="40" alt="<?= strip_tags($bid['lot_title']); ?>">

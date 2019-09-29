@@ -13,7 +13,7 @@ if (isset($_GET['lot_id']) && is_numeric($_GET['lot_id']) && !empty($card = getC
     $card = $card[0];
     $maxBid = getMaxBid($con, $card['id']) ?? 0;
     $curPrice = $card['st_price'];
-    $maxPrice = getMaxPrice($curPrice, $maxBid);
+    $maxPrice = max($curPrice, $maxBid);
     $minBid = $maxPrice + $card['step'];
     $bids = getBids($con, $_GET['lot_id']);
     if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
