@@ -599,10 +599,9 @@ function bidTime($time): string
 function getUserBids($connection, $id): array
 {
     $id = mysqli_real_escape_string($connection, $id);
-    $bidRequest = "SELECT l.image_path as image, b.lot_id, l.title as lot_title, c.name as category, dt_end, b.price, b.dt_create, win_id as winner, l.user_id as lot_owner
+    $bidRequest = "SELECT l.image_path as image, l.title as lot_title, c.name as category, l.dt_end, b.price, b.lot_id, b.dt_create, l.win_id as winner, l.user_id as lot_owner
     FROM bids b LEFT JOIN lots l ON b.lot_id = l.id 
     JOIN categories c ON l.cat_id = c.id
-    JOIN users u ON l.user_id = u.id
     WHERE b.user_id = " . $id . " ORDER BY b.dt_create DESC";
     $bids = readFromDatabase($bidRequest, $connection);
     foreach ($bids as $key => $bid) {
