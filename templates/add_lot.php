@@ -2,7 +2,7 @@
     <ul class="nav__list container">
         <?php foreach ($categories as $value): ?>
             <li class="nav__item">
-                <a href="search_category.php?category=<?= $value['id']; ?>"><?= strip_tags($value['name']); ?></a>
+                <a href="search_category.php?category=<?= ($value['id']) ?? ''; ?>"><?= strip_tags($value['name']) ?? ''; ?></a>
             </li>
         <?php endforeach; ?>
     </ul>
@@ -22,7 +22,7 @@
             <select id="category" name="category">
                 <option>Выберите категорию</option>
                 <?php foreach ($categories as $value): ?>
-                    <option value="<?= strip_tags($value['id']); ?>" <?php if ($value['id'] == getPostVal('category')): echo 'selected'; endif; ?>><?= strip_tags($value['name']); ?></option>
+                    <option value="<?= strip_tags($value['id']) ?? ''; ?>" <?php if ($value['id'] === getPostVal('category')): echo 'selected'; endif; ?>><?= strip_tags($value['name']) ?? ''; ?></option>
                 <?php endforeach; ?>
             </select>
             <span class="form__error"><?= $errors['category'] ?? ''; ?></span>
