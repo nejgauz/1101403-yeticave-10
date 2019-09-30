@@ -2,13 +2,6 @@
 require_once('init.php');
 require_once('getwinner.php');
 
-if (!$con) {
-    $error = errorFilter('connect', $con);
-    $pageContent = include_template('error.php', ['error' => $error]);
-    echo $pageContent;
-    exit();
-}
-
 $categories = getCategories($con);
 $allCards = getCards($con);
 $itemsNumber = count($allCards);
