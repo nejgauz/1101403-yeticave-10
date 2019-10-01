@@ -89,9 +89,12 @@ function getCategories($connection): array
  * Принимает ресурс соединения и возвращает список лотов в виде двумерного массива
  *
  * @param resource $connection
+ * @param bool $isLimit нужны ли ограничения в показе результатов
+ * @param int $limit по сколько карточек результатов запрашивать из БД
+ * @param int $offset нужно ли смещение в выборке результатов
  * @return array
  */
-function getCards($connection): array
+function getCards($connection, $isLimit = false, $limit = 9, $offset = 0): array
 {
     $request = "SELECT l.id, title, st_price, image_path, dt_end, c.name AS category_name 
     FROM lots AS l
@@ -99,6 +102,9 @@ function getCards($connection): array
     ON c.id = l.cat_id
     WHERE win_id IS NULL AND dt_end > NOW()
     ORDER BY l.dt_create DESC";
+    if ($isLimit) {
+        $request .= " LIMIT " . $limit . " OFFSET " . $offset;
+    }
     $cards = readFromDatabase($request, $connection);
 
     return $cards;
@@ -158,8 +164,9 @@ function insertLotInDb($connection, array $lot)
     $rate = mysqli_real_escape_string($connection, $lot['lot-rate']);
     $date = mysqli_real_escape_string($connection, $lot['lot-date']);
     $step = mysqli_real_escape_string($connection, $lot['lot-step']);
+    $userId = mysqli_real_escape_string($connection, $lot['user_id']);
     $request = "INSERT INTO lots (user_id, dt_create, cat_id, title, descr, image_path, st_price, dt_end, step)
-    VALUES (1, NOW(), '" . $category . "', '" . $title . "', '" . $message . "', '" . $lot['path'] . "', '" . $rate . "', '" . $date . "', '" . $step . "')";
+    VALUES (" . $userId . ", NOW(), '" . $category . "', '" . $title . "', '" . $message . "', '" . $lot['path'] . "', '" . $rate . "', '" . $date . "', '" . $step . "')";
     $result = mysqli_query($connection, $request);
 
     return $result;
@@ -367,8 +374,8 @@ function insertUserInDb($connection, array $user): bool
     $name = mysqli_real_escape_string($connection, $user['name']);
     $password = mysqli_real_escape_string($connection, $user['password']);
     $message = mysqli_real_escape_string($connection, $user['message']);
-    $request = "INSERT INTO users (dt_reg, email, `name`, password, avat_path, `contact`)
-    VALUES (NOW(), '" . $email . "', '" . $name . "', '" . $password . "', NULL, '" . $message . "')";
+    $request = "INSERT INTO users (dt_reg, email, `name`, password, `contact`)
+    VALUES (NOW(), '" . $email . "', '" . $name . "', '" . $password . "', '" . $message . "')";
     $result = mysqli_query($connection, $request);
 
     return $result;
@@ -418,11 +425,12 @@ function getUserInfo($connection, string $email): array
  * @param resource $connection ресурс соединения
  * @param string $word слово, по которому производится поиск
  * @param string $fields поле или поля, по которым искать
+ * @param bool $isLimit нужны ли ограничения в показе результатов
  * @param int $limit по сколько карточек результатов запрашивать из БД
  * @param int $offset нужно ли смещение в выборке результатов
  * @return array $cards
  */
-function getSearchResults($connection, string $word, string $fields, int $limit = 9, int $offset = 0): array
+function getSearchResults($connection, string $word, string $fields, bool $isLimit = false, int $limit = 9, int $offset = 0): array
 {
     $fields = mysqli_real_escape_string($connection, $fields);
     $word = mysqli_real_escape_string($connection, $word);
@@ -430,7 +438,10 @@ function getSearchResults($connection, string $word, string $fields, int $limit 
     FROM lots AS l
     LEFT JOIN categories AS c
     ON c.id = l.cat_id WHERE win_id IS NULL AND dt_end > NOW()
-    AND MATCH (" . $fields . ") AGAINST ('" . $word . "') ORDER BY l.dt_create DESC LIMIT " . $limit . " OFFSET " . $offset;
+    AND MATCH (" . $fields . ") AGAINST ('" . $word . "') ORDER BY l.dt_create DESC";
+    if ($isLimit) {
+        $request .= " LIMIT " . $limit . " OFFSET " . $offset;
+    }
     $cards = readFromDatabase($request, $connection);
 
     return $cards;
@@ -441,18 +452,22 @@ function getSearchResults($connection, string $word, string $fields, int $limit 
  *
  * @param resource $connection ресурс соединения
  * @param string $id категории
+ * @param bool $isLimit нужны ли ограничения в показе результатов
  * @param int $limit по сколько карточек результатов запрашивать из БД
  * @param int $offset нужно ли смещение в выборке результатов
  * @return array $cards
  */
-function getSearchCategory($connection, string $id, int $limit = 9, int $offset = 0): array
+function getSearchCategory($connection, string $id, bool $isLimit = false, int $limit = 9, int $offset = 0): array
 {
     $id = mysqli_real_escape_string($connection, $id);
     $request = "SELECT title, st_price, image_path, dt_end, c.name AS category_name, l.id
     FROM lots AS l
     LEFT JOIN categories AS c
     ON c.id = l.cat_id WHERE win_id IS NULL AND dt_end > NOW()
-    AND c.id = '" . $id . "' ORDER BY l.dt_create DESC LIMIT " . $limit . " OFFSET " . $offset;
+    AND c.id = '" . $id . "' ORDER BY l.dt_create DESC";
+    if ($isLimit) {
+        $request .= " LIMIT " . $limit . " OFFSET " . $offset;
+    }
     $cards = readFromDatabase($request, $connection);
 
     return $cards;
@@ -505,23 +520,6 @@ function insertBidInDb($connection, array $bid)
     return $result;
 }
 
-/**
- * Функция принимает текущую цену, максимальную ставку и возвращает максимальную цену
- *
- * @param $curPrice
- * @param $maxBid
- * @return string $maxPrice
- */
-function getMaxPrice($curPrice, $maxBid)
-{
-    if ($curPrice > $maxBid) {
-        $maxPrice = $curPrice;
-    } else {
-        $maxPrice = $maxBid;
-    }
-
-    return $maxPrice;
-}
 
 /**
  * Функция возвращает двумерный массив со всеми ставками по id лота
@@ -584,10 +582,9 @@ function bidTime($time): string
 function getUserBids($connection, $id): array
 {
     $id = mysqli_real_escape_string($connection, $id);
-    $bidRequest = "SELECT l.image_path as image, b.lot_id, l.title as lot_title, c.name as category, dt_end, b.price, b.dt_create, win_id as winner, l.user_id as lot_owner
+    $bidRequest = "SELECT l.image_path as image, l.title as lot_title, c.name as category, l.dt_end, b.price, b.lot_id, b.dt_create, l.win_id as winner, l.user_id as lot_owner
     FROM bids b LEFT JOIN lots l ON b.lot_id = l.id 
     JOIN categories c ON l.cat_id = c.id
-    JOIN users u ON l.user_id = u.id
     WHERE b.user_id = " . $id . " ORDER BY b.dt_create DESC";
     $bids = readFromDatabase($bidRequest, $connection);
     foreach ($bids as $key => $bid) {
@@ -631,7 +628,7 @@ function bidClass(array $bid, $user_id): array
         $class['item'] = 'rates__item--win';
         $class['timer'] = 'timer--win';
         $class['text'] = 'Ставка выиграла';
-    } elseif (strtotime($bid['dt_end']) < strtotime('today')) {
+    } elseif (strtotime($bid['dt_end']) < strtotime('now')) {
         $class['item'] = 'rates__item--end';
         $class['timer'] = 'timer--end';
         $class['text'] = 'Торги окончены';

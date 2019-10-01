@@ -2,20 +2,20 @@
     <ul class="nav__list container">
         <?php foreach ($categories as $value): ?>
             <li class="nav__item">
-                <a href="search_category.php?category=<?= $value['id']; ?>"><?= strip_tags($value['name']); ?></a>
+                <a href="search_category.php?category=<?= $value['id'] ?? ''; ?>"><?= strip_tags($value['name']) ?? ''; ?></a>
             </li>
         <?php endforeach; ?>
     </ul>
 </nav>
 <section class="lot-item container">
-    <h2><?= strip_tags($card['name']); ?></h2>
+    <h2><?= strip_tags($card['name']) ?? ''; ?></h2>
     <div class="lot-item__content">
         <div class="lot-item__left">
             <div class="lot-item__image">
-                <img src="../<?= $card['url']; ?>" width="730" height="548" alt="<?= strip_tags($card['name']); ?>">
+                <img src="../<?= $card['url'] ?? ''; ?>" width="730" height="548" alt="<?= strip_tags($card['name']) ?? ''; ?>">
             </div>
-            <p class="lot-item__category">Категория: <span><?= strip_tags($card['category']); ?></span></p>
-            <p class="lot-item__description"><?= strip_tags($card['description']); ?></p>
+            <p class="lot-item__category">Категория: <span><?= strip_tags($card['category']) ?? ''; ?></span></p>
+            <p class="lot-item__description"><?= strip_tags($card['description']) ?? ''; ?></p>
         </div>
         <div class="lot-item__right">
             <div class="lot-item__state">
@@ -37,7 +37,7 @@
                         </span>
                     </div>
                 </div>
-                <?php if (isset($_SESSION['name']) && (strtotime($card['time']) > strtotime('now')) && ($card['user_id'] !== $_SESSION['id']) && (getLastBid($con, $card['id']) !== $_SESSION['id'])): ?>
+                <?php  if (isset($_SESSION['name']) && (strtotime($card['time']) > strtotime('now')) && ($card['user_id'] !== $_SESSION['id']) && (getLastBid($con, $card['id']) !== $_SESSION['id'])): ?>
                     <form class="lot-item__form" action="<?php echo 'lot.php?lot_id=' . $_GET['lot_id']; ?>"
                           method="post" autocomplete="off">
                         <p class="lot-item__form-item form__item <?= errorClass($errors, 'cost'); ?>">
@@ -56,9 +56,9 @@
                 <table class="history__list">
                     <?php foreach ($bids as $bid): ?>
                         <tr class="history__item">
-                            <td class="history__name"><?= strip_tags($bid['user_name']); ?></td>
-                            <td class="history__price"><?= priceFormat($bid['price']); ?></td>
-                            <td class="history__time"><?= bidTime($bid['dt_create']); ?></td>
+                            <td class="history__name"><?= strip_tags($bid['user_name']) ?? ''; ?></td>
+                            <td class="history__price"><?= priceFormat($bid['price']) ?? ''; ?></td>
+                            <td class="history__time"><?= bidTime($bid['dt_create']) ?? ''; ?></td>
                         </tr>
                     <?php endforeach; ?>
                 </table>

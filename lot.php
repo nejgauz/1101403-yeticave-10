@@ -1,19 +1,12 @@
 <?php
 require_once('init.php');
 
-if (!$con) {
-    $error = errorFilter('connect', $con);
-    $pageContent = include_template('error.php', ['error' => $error]);
-    echo $pageContent;
-    exit();
-}
-
 $categories = getCategories($con);
 if (isset($_GET['lot_id']) && is_numeric($_GET['lot_id']) && !empty($card = getCard($con, $_GET['lot_id']))) {
     $card = $card[0];
     $maxBid = getMaxBid($con, $card['id']) ?? 0;
-    $curPrice = $card['st_price'];
-    $maxPrice = getMaxPrice($curPrice, $maxBid);
+    $curPrice = $card['st_price'] ?? 0;
+    $maxPrice = max($curPrice, $maxBid);
     $minBid = $maxPrice + $card['step'];
     $bids = getBids($con, $_GET['lot_id']);
     if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
@@ -29,7 +22,7 @@ if (isset($_GET['lot_id']) && is_numeric($_GET['lot_id']) && !empty($card = getC
         $layoutContent = include_template('layout.php', [
             'content' => $pageContent,
             'categories' => $categories,
-            'title' => $card['name']
+            'title' => $card['name'] ?? ''
         ]);
         echo $layoutContent;
         exit();
@@ -49,7 +42,7 @@ if (isset($_GET['lot_id']) && is_numeric($_GET['lot_id']) && !empty($card = getC
         $layoutContent = include_template('layout.php', [
             'content' => $pageContent,
             'categories' => $categories,
-            'title' => $card['name']
+            'title' => $card['name'] ?? ''
         ]);
         echo $layoutContent;
         exit();

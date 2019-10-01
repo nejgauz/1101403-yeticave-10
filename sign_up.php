@@ -6,13 +6,6 @@ if (isset($_SESSION['name'])) {
     exit();
 }
 
-if (!$con) {
-    $error = errorFilter('connect', $con);
-    $pageContent = include_template('error.php', ['error' => $error]);
-    echo $pageContent;
-    exit();
-}
-
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     $categories = getCategories($con);
     $pageContent = include_template('sign_up_page.php',

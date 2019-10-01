@@ -1,13 +1,6 @@
 <?php
 require_once('init.php');
 
-if (!$con) {
-    $error = errorFilter('connect', $con);
-    $pageContent = include_template('error.php', ['error' => $error]);
-    echo $pageContent;
-    exit();
-}
-
 $categories = getCategories($con);
 if (isset($_GET['category']) && $_SERVER['REQUEST_METHOD'] == 'GET') {
     $id = strip_tags($_GET['category']);
@@ -24,13 +17,15 @@ if (isset($_GET['category']) && $_SERVER['REQUEST_METHOD'] == 'GET') {
         $itemsLimit = 9;
         $pagesNumber = ceil($itemsNumber / $itemsLimit);
         $offset = ($curPage - 1) * $itemsLimit;
-        $cards = getSearchCategory($con, $id, $itemsLimit, $offset);
+        $cards = getSearchCategory($con, $id, true, $itemsLimit, $offset);
+        $link = "search_category.php?category=" . strip_tags($id);
         $items = include_template('items.php', ['cards' => $cards]);
         $pageContent = include_template('search_result.php', [
             'categories' => $categories,
             'connection' => $con,
             'items' => $items,
             'request' => $request,
+            'link' => $link,
             'pagesNumber' => $pagesNumber,
             'curPage' => $curPage,
             'header' => 'Все лоты в категории '
@@ -38,7 +33,8 @@ if (isset($_GET['category']) && $_SERVER['REQUEST_METHOD'] == 'GET') {
         $layoutContent = include_template('layout.php', [
             'content' => $pageContent,
             'categories' => $categories,
-            'title' => 'Все лоты'
+            'title' => 'Все лоты',
+            'request' => $request
         ]);
         echo $layoutContent;
     } elseif ($request === '') {
@@ -55,11 +51,16 @@ if (isset($_GET['category']) && $_SERVER['REQUEST_METHOD'] == 'GET') {
         ]);
         echo $layoutContent;
     } else {
-        $pageContent = include_template('search_none.php', ['text' => 'В данной категории лотов нет']);
+        $pageContent = include_template('search_none.php', [
+            'text' => 'В данной категории лотов нет',
+            'categories' => $categories,
+            'request' => $request
+        ]);
         $layoutContent = include_template('layout.php', [
             'content' => $pageContent,
             'categories' => $categories,
-            'title' => 'Результаты поиска'
+            'title' => 'Результаты поиска',
+            'request' => $request
         ]);
         echo $layoutContent;
     }

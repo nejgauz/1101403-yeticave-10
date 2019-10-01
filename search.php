@@ -1,13 +1,6 @@
 <?php
 require_once('init.php');
 
-if (!$con) {
-    $error = errorFilter('connect', $con);
-    $pageContent = include_template('error.php', ['error' => $error]);
-    echo $pageContent;
-    exit();
-}
-
 $categories = getCategories($con);
 if ($_SERVER['REQUEST_METHOD'] == 'GET') {
     $request = trim($_GET['search']);
@@ -19,13 +12,15 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET') {
             $itemsLimit = 9;
             $pagesNumber = ceil($itemsNumber / $itemsLimit);
             $offset = ($curPage - 1) * $itemsLimit;
-            $cards = getSearchResults($con, $request, 'title, descr', $itemsLimit, $offset);
+            $cards = getSearchResults($con, $request, 'title, descr', true, $itemsLimit, $offset);
+            $link = "search.php?search=" . strip_tags($request);
             $items = include_template('items.php', ['cards' => $cards]);
             $pageContent = include_template('search_result.php', [
                 'categories' => $categories,
                 'connection' => $con,
                 'items' => $items,
                 'request' => $request,
+                'link' => $link,
                 'pagesNumber' => $pagesNumber,
                 'curPage' => $curPage,
                 'header' => 'Результаты поиска по запросу '

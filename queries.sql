@@ -20,13 +20,13 @@ INSERT INTO users (dt_reg, email, name, password, contact)
 VALUES ('2019-06-18', 'meloman@mail.com', 'Игорь', 'туса', 'тел. 89203872416');
 
 INSERT INTO lots (user_id, cat_id, win_id, dt_create, title, descr, image_path, st_price, dt_end, step)
-VALUES (5, 1, NULL, '2019-08-10', '2014 Rossignol District Snowboard', 'Прекрасная доска для трюков. Яркий дизайн и надежность.', 'img/lot-1.jpg', 10999, '2019-08-16', 500);
+VALUES (5, 1, NULL, '2019-08-10', '2014 Rossignol District Snowboard', 'Прекрасная доска для трюков. Яркий дизайн и надежность.', 'img/lot-1.jpg', 10999, '2019-10-16', 500);
 INSERT INTO lots (user_id, cat_id, win_id, dt_create, title, descr, image_path, st_price, dt_end, step)
-VALUES (6, 1, NULL, '2019-07-30', 'DC Ply Mens 2016/2017 Snowboard', 'Сноуборд для настоящих любителей экстрима.', 'img/lot-2.jpg', 159999, '2019-08-25', 1000);
+VALUES (6, 1, NULL, '2019-07-30', 'DC Ply Mens 2016/2017 Snowboard', 'Сноуборд для настоящих любителей экстрима.', 'img/lot-2.jpg', 159999, '2019-11-25', 1000);
 INSERT INTO lots (user_id, cat_id, win_id, dt_create, title, descr, image_path, st_price, dt_end, step)
-VALUES (5, 2, NULL, '2019-06-21', 'Крепления Union Contact Pro 2015 года размер L/XL', 'Надежные и прочные крепления, немного маломерят.', 'img/lot-3.jpg', 8000, '2019-08-30', 700);
+VALUES (5, 2, NULL, '2019-06-21', 'Крепления Union Contact Pro 2015 года размер L/XL', 'Надежные и прочные крепления, немного маломерят.', 'img/lot-3.jpg', 8000, '2019-10-30', 700);
 INSERT INTO lots (user_id, cat_id, win_id, dt_create, title, descr, image_path, st_price, dt_end, step)
-VALUES (5, 3, NULL, '2019-08-01', 'Ботинки для сноуборда DC Mutiny Charocal', 'Крепкие ботинки, прослужат не один сезон.', 'img/lot-4.jpg', 10999, '2019-09-21', 400);
+VALUES (5, 3, NULL, '2019-08-01', 'Ботинки для сноуборда DC Mutiny Charocal', 'Крепкие ботинки, прослужат не один сезон.', 'img/lot-4.jpg', 10999, '2019-10-21', 400);
 INSERT INTO lots (user_id, cat_id, win_id, dt_create, title, descr, image_path, st_price, dt_end, step)
 VALUES (6, 4, NULL, '2019-08-06', 'Куртка для сноуборда DC Mutiny Charocal', 'Теплая куртка с хорошей терморегуляцией. Поддерживает комфортную температуту тела.', 'img/lot-5.jpg', 7500, '2019-10-10', 100);
 INSERT INTO lots (user_id, cat_id, win_id, dt_create, title, descr, image_path, st_price, dt_end, step)
