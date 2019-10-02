@@ -592,6 +592,9 @@ function getUserBids($connection, $id): array
             $contactRequest = "SELECT contact FROM users WHERE id = " . $bids[$key]['lot_owner'];
             $contact = readFromDatabase($contactRequest, $connection);
             $bids[$key]['contact'] = $contact[0]['contact'];
+            if ($bids[$key]['price'] == getMaxBid($connection, $bids[$key]['lot_id'])) {
+                $bids[$key]['isMax'] = true;
+            }
         }
     }
 
@@ -624,7 +627,7 @@ function bidClass(array $bid, $user_id): array
 {
     $class = [];
     $time = timeCounter($bid['dt_end']);
-    if ($bid['winner'] === $user_id) {
+    if ($bid['winner'] === $user_id && isset($bid['isMax'])) {
         $class['item'] = 'rates__item--win';
         $class['timer'] = 'timer--win';
         $class['text'] = 'Ставка выиграла';
