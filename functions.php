@@ -251,7 +251,7 @@ function validateData($date): string
 {
     if (!is_date_valid($date)) {
         $result = 'Неправильный формат даты. Введите в формате \'ГГГГ-ММ-ДД\'';
-    } elseif (strtotime($date) < strtotime('+1 day')) {
+    } elseif (strtotime($date) < strtotime('tomorrow')) {
         $result = 'Дата окончания торгов должна быть больше текущей хотя бы на один день';
     } else {
         $result = '';

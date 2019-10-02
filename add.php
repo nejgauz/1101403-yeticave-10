@@ -20,8 +20,10 @@ if (!isset($_SESSION['name'])) {
 }
 
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-    $pageContent = include_template('add_lot.php',
-        ['categories' => $categories, 'connection' => $con, 'errors' => $errors]);
+    $pageContent = include_template('add_lot.php', [
+        'categories' => $categories,
+        'connection' => $con,
+        'errors' => $errors]);
     $layoutContent = include_template('layout.php', [
         'content' => $pageContent,
         'categories' => $categories,
