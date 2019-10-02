@@ -35,7 +35,7 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
 }
 $lot = $_POST;
 $errors = validateLotForm($lot);
-if (!validateImg($_FILES['image']['tmp_name'])) {
+if (!validateImg($_FILES['image']['tmp_name']) && empty($errors)) {
     $extension = pathinfo($_FILES['image']['tmp_name'], PATHINFO_EXTENSION);
     $filename = 'uploads/' . uniqid() . $extension;
     move_uploaded_file($_FILES['image']['tmp_name'], $filename);
