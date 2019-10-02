@@ -349,7 +349,6 @@ function validateUser(array $errors, array $user): array
 {
     if (!filter_var($user['email'], FILTER_VALIDATE_EMAIL)) {
         $errors['email'] = 'Пожалуйста, введите корректный адрес почты';
-        $errors['password'] = 'Пароль неверный';
     }
     foreach ($user as $key => $value) {
         if (isFieldEmpty($value)) {

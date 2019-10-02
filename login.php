@@ -23,9 +23,6 @@ if (isEmailExist($con, $user['email'])) {
     }
 } else {
     $errors['email'] = 'Вы ввели неверный email';
-    if (!empty($user['password'])) {
-        $errors['password'] = 'Вы ввели неверный пароль';
-    }
 }
 $errors = validateUser($errors, $user);
 
