@@ -2,7 +2,7 @@
     <ul class="nav__list container">
         <?php foreach ($categories as $value): ?>
             <li class="nav__item">
-                <a href="search_category.php?category=<?= $value['id'] ?? ''; ?>"><?= strip_tags($value['name']) ?? ''; ?></a>
+                <a href="search_category.php?category=<?php echo $value['id'] ?? ''; ?>"><?php echo strip_tags($value['name']) ?? ''; ?></a>
             </li>
         <?php endforeach; ?>
     </ul>
@@ -12,29 +12,29 @@
     <table class="rates__list">
         <?php foreach ($bids as $bid): ; ?>
             <?php $class = bidClass($bid, $_SESSION['id']); ?>
-            <tr class="rates__item <?= isset($class['item']) ? $class['item'] : ''; ?>">
+            <tr class="rates__item <?php echo isset($class['item']) ? $class['item'] : ''; ?>">
                 <td class="rates__info">
                     <div class="rates__img">
-                        <img src="<?= $bid['image'] ?? ''; ?>" width="54" height="40" alt="<?= strip_tags($bid['lot_title']) ?? ''; ?>">
+                        <img src="<?php echo $bid['image'] ?? ''; ?>" width="54" height="40" alt="<?php echo strip_tags($bid['lot_title']) ?? ''; ?>">
                     </div>
                     <div>
                         <h3 class="rates__title"><a
-                                    href="lot.php?lot_id=<?= $bid['lot_id'] ?? ''; ?>"><?= strip_tags($bid['lot_title']) ?? ''; ?></a></h3>
+                                    href="lot.php?lot_id=<?php echo $bid['lot_id'] ?? ''; ?>"><?php echo strip_tags($bid['lot_title']) ?? ''; ?></a></h3>
                         <?php if ($class['timer'] === 'timer--win' && isset($bid['contact'])): echo "<p>" . strip_tags($bid['contact']) . "<p>"; endif; ?>
                     </div>
                 </td>
                 <td class="rates__category">
-                    <?= $bid['category'] ?? ''; ?>
+                    <?php echo $bid['category'] ?? ''; ?>
                 </td>
                 <td class="rates__timer">
-                    <div class="timer <?= $class['timer'] ?? ''; ?>"><?php if (isset($class['text'])): echo $class['text']; else: $time = timeCounter($bid['dt_end']);
+                    <div class="timer <?php echo $class['timer'] ?? ''; ?>"><?php if (isset($class['text'])): echo $class['text']; else: $time = timeCounter($bid['dt_end']);
                             echo $time['days'] . ':' . $time['hours'] . ':' . $time['mins']; endif; ?></div>
                 </td>
                 <td class="rates__price">
-                    <?= priceFormat($bid['price']); ?>
+                    <?php echo priceFormat($bid['price']); ?>
                 </td>
                 <td class="rates__time">
-                    <?= bidTime($bid['dt_create']); ?>
+                    <?php echo bidTime($bid['dt_create']); ?>
                 </td>
             </tr>
         <?php endforeach; ?>

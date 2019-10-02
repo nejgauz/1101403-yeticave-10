@@ -2,7 +2,7 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <title><?= $title; ?></title>
+    <title><?php echo $title; ?></title>
     <link href="../css/normalize.min.css" rel="stylesheet">
     <link href="../css/style.css" rel="stylesheet">
     <?php if (isset($isAdd)): echo '<link href="../css/flatpickr.min.css" rel="stylesheet">'; endif; ?>
@@ -26,7 +26,7 @@
 
                 <?php if (isset($_SESSION['name'])): ?>
                     <div class="user-menu__logged">
-                        <p><?= strip_tags($_SESSION['name']); ?></p>
+                        <p><?php echo strip_tags($_SESSION['name']); ?></p>
                         <a class="user-menu__bets" href="bets.php">Мои ставки</a>
                         <a class="user-menu__logout" href="logout.php">Выход</a>
                     </div>
@@ -46,7 +46,7 @@
     </header>
 
     <main class=<?php if (isset($isMain)): echo 'container'; endif; ?>>
-        <?= $content; ?>
+        <?php echo $content; ?>
     </main>
 </div>
 
@@ -55,7 +55,7 @@
         <ul class="nav__list container">
             <?php foreach ($categories as $value): ?>
                 <li class="nav__item <?php if (isset($request) && $value['name'] === $request): echo " nav__item--current"; endif; ?>">
-                    <a href="search_category.php?category=<?= $value['id'] ?? ''; ?>"><?= strip_tags($value['name']) ?? ''; ?></a>
+                    <a href="search_category.php?category=<?php echo $value['id'] ?? ''; ?>"><?php echo strip_tags($value['name']) ?? ''; ?></a>
                 </li>
             <?php endforeach; ?>
         </ul>
