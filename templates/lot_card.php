@@ -2,20 +2,20 @@
     <ul class="nav__list container">
         <?php foreach ($categories as $value): ?>
             <li class="nav__item">
-                <a href="search_category.php?category=<?php echo $value['id'] ?? ''; ?>"><?php echo strip_tags($value['name']) ?? ''; ?></a>
+                <a href="search_category.php?category=<?php echo $value['id'] ?? ''; ?>"><?php echo htmlspecialchars($value['name']) ?? ''; ?></a>
             </li>
         <?php endforeach; ?>
     </ul>
 </nav>
 <section class="lot-item container">
-    <h2><?php echo strip_tags($card['name']) ?? ''; ?></h2>
+    <h2><?php echo htmlspecialchars($card['name']) ?? ''; ?></h2>
     <div class="lot-item__content">
         <div class="lot-item__left">
             <div class="lot-item__image">
-                <img src="../<?php echo $card['url'] ?? ''; ?>" width="730" height="548" alt="<?php echo strip_tags($card['name']) ?? ''; ?>">
+                <img src="../<?php echo $card['url'] ?? ''; ?>" width="730" height="548" alt="<?php echo htmlspecialchars($card['name']) ?? ''; ?>">
             </div>
-            <p class="lot-item__category">Категория: <span><?php echo strip_tags($card['category']) ?? ''; ?></span></p>
-            <p class="lot-item__description"><?php echo strip_tags($card['description']) ?? ''; ?></p>
+            <p class="lot-item__category">Категория: <span><?php echo htmlspecialchars($card['category']) ?? ''; ?></span></p>
+            <p class="lot-item__description"><?php echo htmlspecialchars($card['description']) ?? ''; ?></p>
         </div>
         <div class="lot-item__right">
             <div class="lot-item__state">
@@ -44,7 +44,7 @@
                             <label for="cost">Ваша ставка</label>
                             <input id="cost" type="text" name="cost"
                                    placeholder="<?php echo substr_replace(priceFormat($minBid), '', -3); ?>"
-                                   value="<?php echo strip_tags(getPostVal('cost')); ?>">
+                                   value="<?php echo htmlspecialchars(getPostVal('cost')); ?>">
                             <span class="form__error"><?php echo $errors['cost'] ?? ''; ?></span>
                         </p>
                         <button type="submit" class="button">Сделать ставку</button>
@@ -56,7 +56,7 @@
                 <table class="history__list">
                     <?php foreach ($bids as $bid): ?>
                         <tr class="history__item">
-                            <td class="history__name"><?php echo strip_tags($bid['user_name']) ?? ''; ?></td>
+                            <td class="history__name"><?php echo htmlspecialchars($bid['user_name']) ?? ''; ?></td>
                             <td class="history__price"><?php echo priceFormat($bid['price']) ?? ''; ?></td>
                             <td class="history__time"><?php echo bidTime($bid['dt_create']) ?? ''; ?></td>
                         </tr>

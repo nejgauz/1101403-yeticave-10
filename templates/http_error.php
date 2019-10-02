@@ -2,7 +2,7 @@
     <ul class="nav__list container">
         <?php foreach ($categories as $value): ?>
             <li class="nav__item">
-                <a href="search_category.php?category=<?php echo $value['id'] ?? ''; ?>"><?php echo strip_tags($value['name']) ?? ''; ?></a>
+                <a href="search_category.php?category=<?php echo $value['id'] ?? ''; ?>"><?php echo htmlspecialchars($value['name']) ?? ''; ?></a>
             </li>
         <?php endforeach; ?>
     </ul>

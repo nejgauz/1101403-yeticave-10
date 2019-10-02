@@ -2,14 +2,14 @@
     <ul class="nav__list container">
         <?php foreach ($categories as $value): ?>
             <li class="nav__item<?php if ($value['name'] === $request): echo " nav__item--current"; endif; ?>">
-                <a href="search_category.php?category=<?php echo $value['id'] ?? ''; ?>"><?php echo strip_tags($value['name']) ?? ''; ?></a>
+                <a href="search_category.php?category=<?php echo $value['id'] ?? ''; ?>"><?php echo htmlspecialchars($value['name']) ?? ''; ?></a>
             </li>
         <? endforeach; ?>
     </ul>
 </nav>
 <div class="container">
     <section class="lots">
-        <h2><?php echo $header; ?> «<span><?php echo strip_tags($request); ?></span>»</h2>
+        <h2><?php echo $header; ?> «<span><?php echo htmlspecialchars($request); ?></span>»</h2>
         <ul class="lots__list">
             <?php echo $items; ?>
         </ul>
