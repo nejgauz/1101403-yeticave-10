@@ -588,8 +588,8 @@ function getUserBids($connection, $id): array
     WHERE b.user_id = " . $id . " ORDER BY b.dt_create DESC";
     $bids = readFromDatabase($bidRequest, $connection);
     foreach ($bids as $key => $bid) {
-        if ($bids[$key]['winner'] !== NULL) {
-            $contactRequest = "SELECT contact FROM users WHERE id = " . $bids[$key]['winner'];
+        if ($bids[$key]['winner'] !== NULL && $bids[$key]['winner'] == $id) {
+            $contactRequest = "SELECT contact FROM users WHERE id = " . $bids[$key]['lot_owner'];
             $contact = readFromDatabase($contactRequest, $connection);
             $bids[$key]['contact'] = $contact[0]['contact'];
         }
