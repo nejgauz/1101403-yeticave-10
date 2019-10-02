@@ -39,8 +39,5 @@ CREATE TABLE stop_words (
     id         INT AUTO_INCREMENT PRIMARY KEY,
     value      CHAR(255)
 );
-CREATE UNIQUE INDEX u_email ON users(email);
-CREATE INDEX bid ON bids(price);
-CREATE INDEX title ON lots(title);
-CREATE INDEX step ON lots(step);
+
 CREATE FULLTEXT INDEX lot_search ON lots(title, descr);
