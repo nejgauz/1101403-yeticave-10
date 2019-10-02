@@ -32,7 +32,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET') {
             ]);
             echo $layoutContent;
         } else {
-            $pageContent = include_template('search_none.php', ['text' => 'Ничего не найдено по вашему запросу']);
+            $pageContent = include_template('search_none.php', ['text' => 'Ничего не найдено по вашему запросу', 'categories' => $categories]);
             $layoutContent = include_template('layout.php', [
                 'content' => $pageContent,
                 'categories' => $categories,
@@ -41,7 +41,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET') {
             echo $layoutContent;
         }
     } else {
-        $pageContent = include_template('search_none.php', ['text' => 'Ничего не найдено по вашему запросу']);
+        $pageContent = include_template('search_none.php', ['text' => 'Ничего не найдено по вашему запросу', 'categories' => $categories]);
         $layoutContent = include_template('layout.php', [
             'content' => $pageContent,
             'categories' => $categories,
