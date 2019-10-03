@@ -38,17 +38,7 @@ if (isset($_GET['category']) && $_SERVER['REQUEST_METHOD'] == 'GET') {
         ]);
         echo $layoutContent;
     } elseif ($request === '') {
-        http_response_code(404);
-        $pageContent = include_template('http_error.php', [
-            'categories' => $categories,
-            'error' => '404 Страница не найдена',
-            'text' => 'Данной страницы не существует на сайте.'
-        ]);
-        $layoutContent = include_template('layout.php', [
-            'content' => $pageContent,
-            'categories' => $categories,
-            'title' => 'Ошибка 404'
-        ]);
+        $layoutContent = error404($categories);
         echo $layoutContent;
     } else {
         $pageContent = include_template('search_none.php', [

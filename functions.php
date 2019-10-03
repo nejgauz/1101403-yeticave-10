@@ -347,7 +347,7 @@ function validateLotForm(array $lot): array
  */
 function validateUser(array $errors, array $user): array
 {
-    if (!filter_var($user['email'], FILTER_VALIDATE_EMAIL)) {
+    if (isset($user['email']) && !filter_var($user['email'], FILTER_VALIDATE_EMAIL)) {
         $errors['email'] = 'Пожалуйста, введите корректный адрес почты';
     }
     foreach ($user as $key => $value) {
@@ -746,4 +746,27 @@ function sendWinEmail(array $winData): void
     $mailer = new Swift_Mailer($transport);
     $mailer->send($message);
     return;
+}
+
+/**
+ * Функция принимает массив с категориями и возвращает код страницы ошибки 404
+ *
+ * @param array $categories
+ * @return $layoutContent
+ */
+function error404($categories)
+{
+    http_response_code(404);
+    $pageContent = include_template('http_error.php', [
+        'categories' => $categories,
+        'error' => '404 Страница не найдена',
+        'text' => 'Данной страницы не существует на сайте.'
+    ]);
+    $layoutContent = include_template('layout.php', [
+        'content' => $pageContent,
+        'categories' => $categories,
+        'title' => 'Ошибка 404'
+    ]);
+
+    return $layoutContent;
 }
