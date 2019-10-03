@@ -4,7 +4,7 @@
             <li class="nav__item<?php if ($value['name'] === $request): echo " nav__item--current"; endif; ?>">
                 <a href="search_category.php?category=<?php echo $value['id'] ?? ''; ?>"><?php echo htmlspecialchars($value['name']) ?? ''; ?></a>
             </li>
-        <? endforeach; ?>
+        <?php endforeach; ?>
     </ul>
 </nav>
 <div class="container">
@@ -28,4 +28,3 @@
         </ul>
     <?php endif; ?>
 </div>
-
