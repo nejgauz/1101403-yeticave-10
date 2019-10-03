@@ -120,11 +120,10 @@ function getCards($connection, $isLimit = false, $limit = 9, $offset = 0): array
  */
 function getCard($connection, $id): array
 {
-    $id = mysqli_real_escape_string($connection, $id);
     $request = "SELECT l.id, title AS `name`, image_path AS url, c.name AS category, descr AS description, dt_end AS `time`, step, st_price, user_id
     FROM lots AS l
     LEFT JOIN categories AS c ON c.id = l.cat_id
-    WHERE l.id = " . $id;
+    WHERE l.id = " . (int)$id;
     $card = readFromDatabase($request, $connection);
 
 
@@ -140,8 +139,7 @@ function getCard($connection, $id): array
  */
 function getMaxBid($connection, $id):?int
 {
-    $id = mysqli_real_escape_string($connection, $id);
-    $request = "SELECT MAX(price) as max_price FROM bids WHERE lot_id = " . $id;
+    $request = "SELECT MAX(price) as max_price FROM bids WHERE lot_id = " . (int)$id;
     $bidArray = mysqli_query($connection, $request);
     $maxBid = mysqli_fetch_assoc($bidArray);
     $maxBid = $maxBid['max_price'];
@@ -161,12 +159,9 @@ function insertLotInDb($connection, array $lot)
     $category = mysqli_real_escape_string($connection, $lot['category']);
     $title = mysqli_real_escape_string($connection, $lot['lot-name']);
     $message = mysqli_real_escape_string($connection, $lot['message']);
-    $rate = mysqli_real_escape_string($connection, $lot['lot-rate']);
     $date = mysqli_real_escape_string($connection, $lot['lot-date']);
-    $step = mysqli_real_escape_string($connection, $lot['lot-step']);
-    $userId = mysqli_real_escape_string($connection, $lot['user_id']);
     $request = "INSERT INTO lots (user_id, dt_create, cat_id, title, descr, image_path, st_price, dt_end, step)
-    VALUES (" . $userId . ", NOW(), '" . $category . "', '" . $title . "', '" . $message . "', '" . $lot['path'] . "', '" . $rate . "', '" . $date . "', '" . $step . "')";
+    VALUES (" . (int)$lot['user_id'] . ", NOW(), '" . $category . "', '" . $title . "', '" . $message . "', '" . $lot['path'] . "', " . (int)$lot['lot-rate'] . ", '" . $date . "', " . (int)$lot['lot-step'] . ")";
     $result = mysqli_query($connection, $request);
 
     return $result;
@@ -458,12 +453,11 @@ function getSearchResults($connection, string $word, string $fields, bool $isLim
  */
 function getSearchCategory($connection, string $id, bool $isLimit = false, int $limit = 9, int $offset = 0): array
 {
-    $id = mysqli_real_escape_string($connection, $id);
     $request = "SELECT title, st_price, image_path, dt_end, c.name AS category_name, l.id
     FROM lots AS l
     LEFT JOIN categories AS c
     ON c.id = l.cat_id WHERE win_id IS NULL AND dt_end > NOW()
-    AND c.id = '" . $id . "' ORDER BY l.dt_create DESC";
+    AND c.id = " . (int)$id . " ORDER BY l.dt_create DESC";
     if ($isLimit) {
         $request .= " LIMIT " . $limit . " OFFSET " . $offset;
     }
@@ -510,10 +504,8 @@ function validateBid($bid, $minBid): array
  */
 function insertBidInDb($connection, array $bid)
 {
-    $lotId = mysqli_real_escape_string($connection, $bid['lot_id']);
-    $cost = mysqli_real_escape_string($connection, $bid['cost']);
     $request = "INSERT INTO bids (dt_create, user_id, lot_id, price)
-    VALUES (NOW(), " . $bid['user_id'] . ", " . $lotId . ", " . $cost . ")";
+    VALUES (NOW(), " . (int)$bid['user_id'] . ", " . (int)$bid['lot_id'] . ", " . (int)$bid['cost'] . ")";
     $result = mysqli_query($connection, $request);
 
     return $result;
@@ -529,9 +521,8 @@ function insertBidInDb($connection, array $bid)
  */
 function getBids($connection, $id): array
 {
-    $id = mysqli_real_escape_string($connection, $id);
     $request = "SELECT u.name as user_name, lot_id, dt_create, price FROM bids as b 
-    LEFT JOIN users as u ON b.user_id = u.id WHERE lot_id = " . $id . " ORDER BY dt_create DESC";
+    LEFT JOIN users as u ON b.user_id = u.id WHERE lot_id = " . (int)$id . " ORDER BY dt_create DESC";
     $bids = readFromDatabase($request, $connection);
 
     return $bids;
@@ -580,11 +571,10 @@ function bidTime($time): string
  */
 function getUserBids($connection, $id): array
 {
-    $id = mysqli_real_escape_string($connection, $id);
     $bidRequest = "SELECT l.image_path as image, l.title as lot_title, c.name as category, l.dt_end, b.price, b.lot_id, b.dt_create, l.win_id as winner, l.user_id as lot_owner
     FROM bids b LEFT JOIN lots l ON b.lot_id = l.id 
     JOIN categories c ON l.cat_id = c.id
-    WHERE b.user_id = " . $id . " ORDER BY b.dt_create DESC";
+    WHERE b.user_id = " . (int)$id . " ORDER BY b.dt_create DESC";
     $bids = readFromDatabase($bidRequest, $connection);
     foreach ($bids as $key => $bid) {
         if ($bids[$key]['winner'] !== NULL && $bids[$key]['winner'] == $id) {
@@ -664,8 +654,7 @@ function getLotsWithoutWinner($connection): array
  */
 function getLastBid($connection, $id)
 {
-    $id = mysqli_real_escape_string($connection, $id);
-    $request = "SELECT user_id FROM bids WHERE lot_id = " . $id . " ORDER BY dt_create DESC LIMIT 1";
+    $request = "SELECT user_id FROM bids WHERE lot_id = " . (int)$id . " ORDER BY dt_create DESC LIMIT 1";
     $winner = readFromDatabase($request, $connection);
     if (!empty($winner[0])) {
         $winner = $winner[0]['user_id'];
@@ -686,9 +675,7 @@ function getLastBid($connection, $id)
  */
 function insertWinnerInDB($connection, $lot, $winner)
 {
-    $winner = mysqli_real_escape_string($connection, $winner);
-    $lot = mysqli_real_escape_string($connection, $lot);
-    $request = "UPDATE lots SET win_id = " . $winner . " WHERE id = " . $lot;
+    $request = "UPDATE lots SET win_id = " . (int)$winner . " WHERE id = " . (int)$lot;
     $result = mysqli_query($connection, $request);
 
     return $result;
@@ -704,10 +691,9 @@ function insertWinnerInDB($connection, $lot, $winner)
  */
 function getWinData($connection, $winner): array
 {
-    $winner = mysqli_real_escape_string($connection, $winner);
     $request = "SELECT email, u.name, l.id as lot_id, l.title FROM users u
     JOIN lots l ON l.win_id = u.id
-    WHERE u.id = " . $winner;
+    WHERE u.id = " . (int)$winner;
     $winData = readFromDatabase($request, $connection);
 
     return $winData;
