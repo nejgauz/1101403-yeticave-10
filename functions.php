@@ -756,3 +756,24 @@ function error404($categories)
 
     return $layoutContent;
 }
+
+/**
+ * Функция принимает массив с категориями и возвращает код страницы поиска без результатов
+ *
+ * @param array $categories
+ * @return $layoutContent
+ */
+function searchNone($categories)
+{
+    $pageContent = include_template('search_none.php', [
+        'text' => 'Ничего не найдено по вашему запросу',
+        'categories' => $categories
+    ]);
+    $layoutContent = include_template('layout.php', [
+        'content' => $pageContent,
+        'categories' => $categories,
+        'title' => 'Результаты поиска'
+    ]);
+
+    return $layoutContent;
+}
