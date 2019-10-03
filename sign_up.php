@@ -6,48 +6,39 @@ if (isset($_SESSION['name'])) {
     exit();
 }
 
+$categories = getCategories($con);
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-    $categories = getCategories($con);
-    $pageContent = include_template('sign_up_page.php',
-        ['categories' => $categories, 'connection' => $con, 'errors' => $errors]);
-    $layoutContent = include_template('layout.php', [
-        'content' => $pageContent,
-        'categories' => $categories,
-        'title' => 'Регистрация',
-        'isSign' => true
-    ]);
+    $layoutContent = entrancePage($categories, $con, $errors);
     echo $layoutContent;
     exit();
 }
 
 $user = $_POST;
-if ($user['password']) {
+if (!empty($user['password'])) {
     $user['password'] = password_hash($user['password'], PASSWORD_DEFAULT);
 }
 $errors = validateUser($errors, $user);
-if (isEmailExist($con, $user['email'])) {
+if (isset($user['email']) && isEmailExist($con, $user['email'])) {
     $errors['email'] = 'Этот адрес почты уже занят';
 }
 if (!empty($errors)) {
-    $categories = getCategories($con);
-    $pageContent = include_template('sign_up_page.php',
-        ['categories' => $categories, 'connection' => $con, 'errors' => $errors]);
-    $layoutContent = include_template('layout.php', [
-        'content' => $pageContent,
-        'categories' => $categories,
-        'title' => 'Регистрация',
-        'isSign' => true
-    ]);
+    $layoutContent = entrancePage($categories, $con, $errors);
     echo $layoutContent;
     exit();
-} else {
-    if (insertUserInDb($con, $user)) {
-        header("Location:/");
-        exit();
-    } else {
-        $error = errorFilter('request', $con);
-        $pageContent = include_template('error.php', ['error' => $error]);
-        echo $pageContent;
-    }
 }
+if (empty($errors) && empty($user)) {
+    $layoutContent = error404($categories);
+    echo $layoutContent;
+    exit();
+}
+if (insertUserInDb($con, $user)) {
+    header("Location:/");
+    exit();
+}
+
+$error = errorFilter('request', $con);
+$pageContent = include_template('error.php', ['error' => $error]);
+echo $pageContent;
+
+
 

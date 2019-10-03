@@ -3,13 +3,7 @@ require_once('init.php');
 
 $categories = getCategories($con);
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-    $pageContent = include_template('login_page.php',
-        ['categories' => $categories, 'connection' => $con, 'errors' => $errors]);
-    $layoutContent = include_template('layout.php', [
-        'content' => $pageContent,
-        'categories' => $categories,
-        'title' => 'Вход'
-    ]);
+    $layoutContent = loginPage($categories, $con, $errors);
     echo $layoutContent;
     exit();
 }
@@ -27,13 +21,7 @@ if (isEmailExist($con, $user['email'])) {
 $errors = validateUser($errors, $user);
 
 if (!empty($errors)) {
-    $pageContent = include_template('login_page.php',
-        ['categories' => $categories, 'connection' => $con, 'errors' => $errors]);
-    $layoutContent = include_template('layout.php', [
-        'content' => $pageContent,
-        'categories' => $categories,
-        'title' => 'Вход'
-    ]);
+    $layoutContent = loginPage($categories, $con, $errors);
     echo $layoutContent;
     exit();
 }

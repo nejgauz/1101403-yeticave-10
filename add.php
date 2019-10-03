@@ -20,16 +20,7 @@ if (!isset($_SESSION['name'])) {
 }
 
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-    $pageContent = include_template('add_lot.php', [
-        'categories' => $categories,
-        'connection' => $con,
-        'errors' => $errors]);
-    $layoutContent = include_template('layout.php', [
-        'content' => $pageContent,
-        'categories' => $categories,
-        'title' => 'Добавление лота',
-        'isAdd' => true
-    ]);
+    $layoutContent = addPage($categories, $con, $errors);
     echo $layoutContent;
     exit();
 }
@@ -61,14 +52,7 @@ if (empty($errors)) {
     ]);
     echo $layoutContent;
 } else {
-    $pageContent = include_template('add_lot.php',
-        ['categories' => $categories, 'connection' => $con, 'errors' => $errors]);
-    $layoutContent = include_template('layout.php', [
-        'content' => $pageContent,
-        'categories' => $categories,
-        'title' => 'Добавление лота',
-        'isAdd' => true
-    ]);
+    $layoutContent = addPage($categories, $con, $errors);
     echo $layoutContent;
 }
 

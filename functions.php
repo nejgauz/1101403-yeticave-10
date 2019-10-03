@@ -740,7 +740,7 @@ function sendWinEmail(array $winData): void
  * @param array $categories
  * @return $layoutContent
  */
-function error404($categories)
+function error404(array $categories)
 {
     http_response_code(404);
     $pageContent = include_template('http_error.php', [
@@ -763,7 +763,7 @@ function error404($categories)
  * @param array $categories
  * @return $layoutContent
  */
-function searchNone($categories)
+function searchNone(array $categories)
 {
     $pageContent = include_template('search_none.php', [
         'text' => 'Ничего не найдено по вашему запросу',
@@ -773,6 +773,73 @@ function searchNone($categories)
         'content' => $pageContent,
         'categories' => $categories,
         'title' => 'Результаты поиска'
+    ]);
+
+    return $layoutContent;
+}
+
+/**
+ * Функция принимает массив с категориями, ресурс соединения и массив с ошибками и возвращает страницу регистрации
+ *
+ * @param array $categories
+ * @param resource $connection ресурс соединения
+ * @param array $errors
+ * @return $layoutContent
+ */
+function entrancePage(array $categories, resource $connection, array $errors)
+{
+    $pageContent = include_template('sign_up_page.php',
+        ['categories' => $categories, 'connection' => $connection, 'errors' => $errors]);
+    $layoutContent = include_template('layout.php', [
+        'content' => $pageContent,
+        'categories' => $categories,
+        'title' => 'Регистрация',
+        'isSign' => true
+    ]);
+
+    return $layoutContent;
+}
+
+/**
+ * Функция принимает массив с категориями, ресурс соединения и массив с ошибками и возвращает страницу входа
+ *
+ * @param array $categories
+ * @param resource $connection ресурс соединения
+ * @param array $errors
+ * @return $layoutContent
+ */
+function loginPage(array $categories, resource $connection, array $errors)
+{
+    $pageContent = include_template('login_page.php',
+        ['categories' => $categories, 'connection' => $connection, 'errors' => $errors]);
+    $layoutContent = include_template('layout.php', [
+        'content' => $pageContent,
+        'categories' => $categories,
+        'title' => 'Вход'
+    ]);
+
+    return $layoutContent;
+}
+
+/**
+ * Функция принимает массив с категориями, ресурс соединения и массив с ошибками и возвращает страницу добавления лота
+ *
+ * @param array $categories
+ * @param resource $connection ресурс соединения
+ * @param array $errors
+ * @return $layoutContent
+ */
+function addPage(array $categories, resource $connection, array $errors)
+{
+    $pageContent = include_template('add_lot.php', [
+        'categories' => $categories,
+        'connection' => $connection,
+        'errors' => $errors]);
+    $layoutContent = include_template('layout.php', [
+        'content' => $pageContent,
+        'categories' => $categories,
+        'title' => 'Добавление лота',
+        'isAdd' => true
     ]);
 
     return $layoutContent;
