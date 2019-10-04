@@ -259,19 +259,21 @@ function validateData($date): string
  * и возвращает текст ошибки или пустую строку
  *
  * @param $step
- * @return string $result
+ * @return string
  */
 function validateStep($step): string
 {
     if (empty($step) or $step < 0) {
-        $result = 'Шаг ставки должен быть больше нуля';
-    } elseif (!intval($step)) {
-        $result = 'Шаг ставки должен быть целым числом';
-    } else {
-        $result = '';
+        return 'Шаг ставки должен быть больше нуля';
     }
-    return $result;
+    $value = $step;
+    $cost = ($value == (int) $value) ? (int) $value : (float) $value;
+    if (!is_int($cost) or !is_numeric($step)) {
+        return 'Шаг ставки должен быть целым числом';
+    }
+    return '';
 }
+
 
 /**
  * Принимает массив с ошибками и название тега, по которому их искать.
