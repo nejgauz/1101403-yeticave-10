@@ -577,11 +577,11 @@ function getUserBids($connection, $id): array
     WHERE b.user_id = " . (int)$id . " ORDER BY b.dt_create DESC";
     $bids = readFromDatabase($bidRequest, $connection);
     foreach ($bids as $key => $bid) {
-        if ($bids[$key]['winner'] !== NULL && $bids[$key]['winner'] == $id) {
+        if ($bids[$key]['winner'] !== NULL && $bids[$key]['winner'] === $id) {
             $contactRequest = "SELECT contact FROM users WHERE id = " . $bids[$key]['lot_owner'];
             $contact = readFromDatabase($contactRequest, $connection);
             $bids[$key]['contact'] = $contact[0]['contact'];
-            if ($bids[$key]['price'] == getMaxBid($connection, $bids[$key]['lot_id'])) {
+            if ((int)$bids[$key]['price'] === getMaxBid($connection, $bids[$key]['lot_id'])) {
                 $bids[$key]['isMax'] = true;
             }
         }
@@ -598,7 +598,7 @@ function getUserBids($connection, $id): array
  */
 function timeClass(array $time): string
 {
-    if ($time['hours'] < 1 && $time['days'] == 0) {
+    if ($time['hours'] < 1 && (int)$time['days'] === 0) {
         $timeClass = ' timer--finishing';
         return $timeClass;
     }
