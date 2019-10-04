@@ -2,7 +2,7 @@
 require_once('init.php');
 
 $categories = getCategories($con);
-if ($_SERVER['REQUEST_METHOD'] == 'GET') {
+if ($_SERVER['REQUEST_METHOD'] === 'GET') {
     $request = trim($_GET['search'] ?? '');
     if (!empty($request)) {
         $allCards = getSearchResults($con, $request, 'title, descr');

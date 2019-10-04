@@ -2,7 +2,7 @@
 require_once('init.php');
 
 $categories = getCategories($con);
-if (isset($_GET['category']) && $_SERVER['REQUEST_METHOD'] == 'GET') {
+if (isset($_GET['category']) && $_SERVER['REQUEST_METHOD'] === 'GET') {
     $id = strip_tags($_GET['category']);
     $allCards = getSearchCategory($con, $id);
     $request = '';

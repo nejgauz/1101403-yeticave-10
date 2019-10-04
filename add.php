@@ -1,7 +1,6 @@
 <?php
 require_once('init.php');
 
-
 $categories = getCategories($con);
 if (!isset($_SESSION['name'])) {
     http_response_code(403);
@@ -24,6 +23,7 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     echo $layoutContent;
     exit();
 }
+
 $lot = $_POST;
 $errors = validateLotForm($lot);
 if (!validateImg($_FILES['image']['tmp_name']) && empty($errors)) {
@@ -55,6 +55,5 @@ if (empty($errors)) {
     $layoutContent = addPage($categories, $con, $errors);
     echo $layoutContent;
 }
-
 
 
