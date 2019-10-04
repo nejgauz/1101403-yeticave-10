@@ -9,25 +9,32 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
 }
 
 $user = $_POST;
-if (isEmailExist($con, $user['email'])) {
-    $regUser = getUserInfo($con, $user['email']);
-    $hash = $regUser['password'] ?? '';
-    if (!password_verify($user['password'], $hash)) {
-        $errors['password'] = 'Вы ввели неверный пароль';
+if (!empty($user)) {
+    if (isEmailExist($con, $user['email'])) {
+        $regUser = getUserInfo($con, $user['email']);
+        $hash = $regUser['password'] ?? '';
+        if (!password_verify($user['password'], $hash)) {
+            $errors['password'] = 'Вы ввели неверный пароль';
+        }
+    } else {
+        $errors['email'] = 'Вы ввели неверный email';
     }
-} else {
-    $errors['email'] = 'Вы ввели неверный email';
-}
-$errors = validateUser($errors, $user);
+    $errors = validateUser($errors, $user);
 
-if (!empty($errors)) {
-    $layoutContent = loginPage($categories, $con, $errors);
-    echo $layoutContent;
+    if (!empty($errors)) {
+        $layoutContent = loginPage($categories, $con, $errors);
+        echo $layoutContent;
+        exit();
+    }
+    $_SESSION['id'] = $regUser['id'];
+    $_SESSION['email'] = $regUser['email'];
+    $_SESSION['name'] = $regUser['name'];
+    header("Location:/");
     exit();
 }
-$_SESSION['id'] = $regUser['id'];
-$_SESSION['email'] = $regUser['email'];
-$_SESSION['name'] = $regUser['name'];
-header("Location:/");
+
+$layoutContent = error404($categories);
+echo $layoutContent;
 exit();
+
 
