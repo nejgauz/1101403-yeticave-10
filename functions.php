@@ -41,7 +41,7 @@ function timeCounter(string $endDate): array
  * и возвращает строку с описанием ошибки
  *
  * @param string $mistake
- * @param resource $con
+ * @param mysqli $con
  * @return string $error
  */
 function errorFilter(string $mistake, $con = null): string
@@ -60,7 +60,7 @@ function errorFilter(string $mistake, $con = null): string
  * и возвращая двумерный ассоциативный массив с результатами запроса к БД
  *
  * @param string $sql
- * @param resource $con
+ * @param mysqli $con
  * @return array $data
  */
 function readFromDatabase(string $sql, $con): array
@@ -74,7 +74,7 @@ function readFromDatabase(string $sql, $con): array
 /**
  * Принимает ресурс соединения и возвращает список категорий в виде двумерного массива
  *
- * @param resource $connection
+ * @param mysqli $connection
  * @return array $categories
  */
 function getCategories($connection): array
@@ -88,7 +88,7 @@ function getCategories($connection): array
 /**
  * Принимает ресурс соединения и возвращает список лотов в виде двумерного массива
  *
- * @param resource $connection
+ * @param mysqli $connection
  * @param bool $isLimit нужны ли ограничения в показе результатов
  * @param int $limit по сколько карточек результатов запрашивать из БД
  * @param int $offset нужно ли смещение в выборке результатов
@@ -115,7 +115,7 @@ function getCards($connection, $isLimit = false, $limit = 9, $offset = 0): array
  * Возвращает ассоциативный массив с данными запрашиваемого лота по его id
  *
  * @param $id
- * @param resource $connection
+ * @param mysqli $connection
  * @return array $card
  */
 function getCard($connection, $id): array
@@ -134,7 +134,7 @@ function getCard($connection, $id): array
  * Принимает id необходимого лота и возвращает максимальную ставку по нему, если она есть
  *
  * @param $id
- * @param resource $connection
+ * @param mysqli $connection
  * @return int $maxBid
  */
 function getMaxBid($connection, $id):?int
@@ -150,7 +150,7 @@ function getMaxBid($connection, $id):?int
 /**
  * Принимает массив с данными лота и добавляет новый лот в БД
  *
- * @param resource $connection
+ * @param mysqli $connection
  * @param array $lot
  * @return bool|mysqli_result $result
  */
@@ -358,7 +358,7 @@ function validateUser(array $errors, array $user): array
 /**
  * Принимает массив с данными юзера и вносит их в базу данных
  *
- * @param resource $connection
+ * @param mysqli $connection
  * @param array $user
  * @return bool|mysqli_result $result
  */
@@ -378,7 +378,7 @@ function insertUserInDb($connection, array $user): bool
 /**
  * Функция по имейлу проверяет, есть ли в БД пользователь с указанным имейлом
  *
- * @param resource $connection
+ * @param mysqli $connection
  * @param string $email
  * @return bool $answer
  */
@@ -399,7 +399,7 @@ function isEmailExist($connection, $email): bool
 /**
  * Функция по имейлу возвращает из БД массив с информацией о пользователе
  *
- * @param resource $connection
+ * @param mysqli $connection
  * @param string $email
  * @return array $result
  */
@@ -416,7 +416,7 @@ function getUserInfo($connection, string $email): array
 /**
  * Функция возвращает из БД массив с карточками лотов, в которых описание или название подходит поисковому запросу
  *
- * @param resource $connection ресурс соединения
+ * @param mysqli $connection ресурс соединения
  * @param string $word слово, по которому производится поиск
  * @param string $fields поле или поля, по которым искать
  * @param bool $isLimit нужны ли ограничения в показе результатов
@@ -444,7 +444,7 @@ function getSearchResults($connection, string $word, string $fields, bool $isLim
 /**
  * Функция возвращает из БД массив с карточками лотов, в которых описание или название подходит поисковому запросу
  *
- * @param resource $connection ресурс соединения
+ * @param mysqli $connection ресурс соединения
  * @param string $id категории
  * @param bool $isLimit нужны ли ограничения в показе результатов
  * @param int $limit по сколько карточек результатов запрашивать из БД
@@ -498,7 +498,7 @@ function validateBid($bid, $minBid): array
 /**
  * Функция принимает ресурс соединения, массив ставки и вносит данные о сделанной ставке
  *
- * @param resource $connection
+ * @param mysqli $connection
  * @param array $bid
  * @return bool|mysqli_result $result
  */
@@ -515,7 +515,7 @@ function insertBidInDb($connection, array $bid)
 /**
  * Функция возвращает двумерный массив со всеми ставками по id лота
  *
- * @param resource $connection
+ * @param mysqli $connection
  * @param $id
  * @return array $bids
  */
@@ -565,7 +565,7 @@ function bidTime($time): string
 /**
  * Функция по id юзера возвращает массив с данными по всем его ставкам
  *
- * @param resource $connection
+ * @param mysqli $connection
  * @param $id
  * @return array $bids
  */
@@ -634,7 +634,7 @@ function bidClass(array $bid, $user_id): array
 /**
  * Функция находит в БД все лоты без победителя, дата истечения которых меньше или равна текущей дате
  *
- * @param resource $connection
+ * @param mysqli $connection
  * @return array $lots
  */
 function getLotsWithoutWinner($connection): array
@@ -648,7 +648,7 @@ function getLotsWithoutWinner($connection): array
 /**
  * Функция возвращает id владельца последней ставки по id лота
  *
- * @param resource $connection
+ * @param mysqli $connection
  * @param $id
  * @return int $winner
  */
@@ -668,7 +668,7 @@ function getLastBid($connection, $id)
 /**
  * Функция записывает в таблицу лотов id победителя
  *
- * @param resource $connection
+ * @param mysqli $connection
  * @param $lot
  * @param $winner
  * @return bool|mysqli_result $result
@@ -685,7 +685,7 @@ function insertWinnerInDB($connection, $lot, $winner)
  * Функция по id юзера возвращает массив с данными о победителе торгов, содержащий:
  * `name` - имя победителя, email - почту победителя, lot_id - id лота, который он выиграл, title - название выигранного лота
  *
- * @param resource $connection
+ * @param mysqli $connection
  * @param $winner
  * @return array $winData
  */
@@ -782,11 +782,11 @@ function searchNone(array $categories)
  * Функция принимает массив с категориями, ресурс соединения и массив с ошибками и возвращает страницу регистрации
  *
  * @param array $categories
- * @param resource $connection ресурс соединения
+ * @param mysqli $connection ресурс соединения
  * @param array $errors
  * @return $layoutContent
  */
-function entrancePage(array $categories, resource $connection, array $errors)
+function entrancePage(array $categories, mysqli $connection, array $errors)
 {
     $pageContent = include_template('sign_up_page.php',
         ['categories' => $categories, 'connection' => $connection, 'errors' => $errors]);
@@ -804,11 +804,11 @@ function entrancePage(array $categories, resource $connection, array $errors)
  * Функция принимает массив с категориями, ресурс соединения и массив с ошибками и возвращает страницу входа
  *
  * @param array $categories
- * @param resource $connection ресурс соединения
+ * @param mysqli $connection ресурс соединения
  * @param array $errors
  * @return $layoutContent
  */
-function loginPage(array $categories, resource $connection, array $errors)
+function loginPage(array $categories, mysqli $connection, array $errors)
 {
     $pageContent = include_template('login_page.php',
         ['categories' => $categories, 'connection' => $connection, 'errors' => $errors]);
@@ -825,11 +825,11 @@ function loginPage(array $categories, resource $connection, array $errors)
  * Функция принимает массив с категориями, ресурс соединения и массив с ошибками и возвращает страницу добавления лота
  *
  * @param array $categories
- * @param resource $connection ресурс соединения
+ * @param mysqli $connection ресурс соединения
  * @param array $errors
  * @return $layoutContent
  */
-function addPage(array $categories, resource $connection, array $errors)
+function addPage(array $categories, mysqli $connection, array $errors)
 {
     $pageContent = include_template('add_lot.php', [
         'categories' => $categories,
