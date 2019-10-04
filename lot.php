@@ -49,6 +49,9 @@ if (isset($_GET['lot_id']) && is_numeric($_GET['lot_id']) && !empty($card = getC
     }
     $bid['user_id'] = $_SESSION['id'];
     $bid['lot_id'] = $_GET['lot_id'];
+    foreach ($bid as $key => $value) {
+        $bid[$key] = strip_tags($value);
+    }
     if (insertBidInDb($con, $bid)) {
         header("Location: lot.php?lot_id=" . $bid['lot_id']);
         exit();

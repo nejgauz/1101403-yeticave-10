@@ -10,6 +10,9 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
 
 $user = $_POST;
 if (!empty($user)) {
+    foreach ($user as $key => $value) {
+        $user[$key] = strip_tags($value);
+    }
     if (isEmailExist($con, $user['email'])) {
         $regUser = getUserInfo($con, $user['email']);
         $hash = $regUser['password'] ?? '';

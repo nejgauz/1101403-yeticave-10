@@ -37,7 +37,9 @@ if (!validateImg($_FILES['image']['tmp_name']) && empty($errors)) {
 
 if (empty($errors)) {
     $lot['user_id'] = $_SESSION['id'];
-
+    foreach ($lot as $key => $value) {
+        $lot[$key] = strip_tags($value);
+    }
     if (insertLotInDb($con, $lot)) {
         $lot_id = mysqli_insert_id($con);
         header("Location: lot.php?lot_id=" . $lot_id);

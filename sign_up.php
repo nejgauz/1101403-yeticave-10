@@ -14,6 +14,9 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
 }
 
 $user = $_POST;
+foreach ($user as $key => $value) {
+    $user[$key] = strip_tags($value);
+}
 if (!empty($user['password'])) {
     $user['password'] = password_hash($user['password'], PASSWORD_DEFAULT);
 }
