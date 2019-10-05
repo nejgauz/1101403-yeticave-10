@@ -38,8 +38,10 @@ if (isset($_GET['category']) && $_SERVER['REQUEST_METHOD'] === 'GET') {
         ]);
         echo $layoutContent;
     } elseif ($request === '') {
+        http_response_code(404);
         $layoutContent = error404($categories);
         echo $layoutContent;
+        exit();
     } else {
         $pageContent = include_template('search_none.php', [
             'text' => 'В данной категории лотов нет',
@@ -54,4 +56,9 @@ if (isset($_GET['category']) && $_SERVER['REQUEST_METHOD'] === 'GET') {
         ]);
         echo $layoutContent;
     }
+} else {
+    http_response_code(404);
+    $layoutContent = error404($categories);
+    echo $layoutContent;
+    exit();
 }

@@ -30,6 +30,7 @@ if (!empty($errors)) {
     exit();
 }
 if (empty($errors) && empty($user)) {
+    http_response_code(404);
     $layoutContent = error404($categories);
     echo $layoutContent;
     exit();

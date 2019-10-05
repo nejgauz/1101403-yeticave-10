@@ -66,8 +66,10 @@ if (isset($_GET['lot_id']) && is_numeric($_GET['lot_id']) && !empty($card = getC
     echo $layoutContent;
     exit();
 } else {
+    http_response_code(404);
     $layoutContent = error404($categories);
     echo $layoutContent;
+    exit();
 }
 
 

@@ -36,6 +36,7 @@ if (!empty($user)) {
     exit();
 }
 
+http_response_code(404);
 $layoutContent = error404($categories);
 echo $layoutContent;
 exit();
