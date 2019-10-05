@@ -2,8 +2,8 @@
 require_once('init.php');
 
 $categories = getCategories($con);
-if ($_SERVER['REQUEST_METHOD'] == 'GET') {
-    $request = trim($_GET['search']);
+if ($_SERVER['REQUEST_METHOD'] === 'GET') {
+    $request = trim($_GET['search'] ?? '');
     if (!empty($request)) {
         $allCards = getSearchResults($con, $request, 'title, descr');
         if ($allCards) {
@@ -32,21 +32,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET') {
             ]);
             echo $layoutContent;
         } else {
-            $pageContent = include_template('search_none.php', ['text' => 'Ничего не найдено по вашему запросу', 'categories' => $categories]);
-            $layoutContent = include_template('layout.php', [
-                'content' => $pageContent,
-                'categories' => $categories,
-                'title' => 'Результаты поиска'
-            ]);
+            $layoutContent = searchNone($categories);
             echo $layoutContent;
         }
     } else {
-        $pageContent = include_template('search_none.php', ['text' => 'Ничего не найдено по вашему запросу', 'categories' => $categories]);
-        $layoutContent = include_template('layout.php', [
-            'content' => $pageContent,
-            'categories' => $categories,
-            'title' => 'Результаты поиска'
-        ]);
+        $layoutContent = searchNone($categories);
         echo $layoutContent;
     }
 } else {

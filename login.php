@@ -3,43 +3,41 @@ require_once('init.php');
 
 $categories = getCategories($con);
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-    $pageContent = include_template('login_page.php',
-        ['categories' => $categories, 'connection' => $con, 'errors' => $errors]);
-    $layoutContent = include_template('layout.php', [
-        'content' => $pageContent,
-        'categories' => $categories,
-        'title' => 'Вход'
-    ]);
+    $layoutContent = loginPage($categories, $con, $errors);
     echo $layoutContent;
     exit();
 }
 
 $user = $_POST;
-if (isEmailExist($con, $user['email'])) {
-    $regUser = getUserInfo($con, $user['email']);
-    $hash = $regUser['password'] ?? '';
-    if (!password_verify($user['password'], $hash)) {
-        $errors['password'] = 'Вы ввели неверный пароль';
+if (!empty($user)) {
+    foreach ($user as $key => $value) {
+        $user[$key] = strip_tags($value);
     }
-} else {
-    $errors['email'] = 'Вы ввели неверный email';
-}
-$errors = validateUser($errors, $user);
+    if (isEmailExist($con, $user['email'])) {
+        $regUser = getUserInfo($con, $user['email']);
+        $hash = $regUser['password'] ?? '';
+        if (!password_verify($user['password'], $hash)) {
+            $errors['password'] = 'Вы ввели неверный пароль';
+        }
+    } else {
+        $errors['email'] = 'Вы ввели неверный email';
+    }
+    $errors = validateUser($errors, $user);
 
-if (!empty($errors)) {
-    $pageContent = include_template('login_page.php',
-        ['categories' => $categories, 'connection' => $con, 'errors' => $errors]);
-    $layoutContent = include_template('layout.php', [
-        'content' => $pageContent,
-        'categories' => $categories,
-        'title' => 'Вход'
-    ]);
-    echo $layoutContent;
+    if (!empty($errors)) {
+        $layoutContent = loginPage($categories, $con, $errors);
+        echo $layoutContent;
+        exit();
+    }
+    $_SESSION['id'] = $regUser['id'];
+    $_SESSION['email'] = $regUser['email'];
+    $_SESSION['name'] = $regUser['name'];
+    header("Location:/");
     exit();
 }
-$_SESSION['id'] = $regUser['id'];
-$_SESSION['email'] = $regUser['email'];
-$_SESSION['name'] = $regUser['name'];
-header("Location:/");
+
+$layoutContent = error404($categories);
+echo $layoutContent;
 exit();
+
 

@@ -49,6 +49,9 @@ if (isset($_GET['lot_id']) && is_numeric($_GET['lot_id']) && !empty($card = getC
     }
     $bid['user_id'] = $_SESSION['id'];
     $bid['lot_id'] = $_GET['lot_id'];
+    foreach ($bid as $key => $value) {
+        $bid[$key] = strip_tags($value);
+    }
     if (insertBidInDb($con, $bid)) {
         header("Location: lot.php?lot_id=" . $bid['lot_id']);
         exit();
@@ -63,17 +66,7 @@ if (isset($_GET['lot_id']) && is_numeric($_GET['lot_id']) && !empty($card = getC
     echo $layoutContent;
     exit();
 } else {
-    http_response_code(404);
-    $pageContent = include_template('http_error.php', [
-        'categories' => $categories,
-        'error' => '404 Страница не найдена',
-        'text' => 'Данной страницы не существует на сайте.'
-    ]);
-    $layoutContent = include_template('layout.php', [
-        'content' => $pageContent,
-        'categories' => $categories,
-        'title' => 'Ошибка 404'
-    ]);
+    $layoutContent = error404($categories);
     echo $layoutContent;
 }
 
