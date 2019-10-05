@@ -1,6 +1,6 @@
 <section class="lot-item container">
     <h2>Ошибка:</h2>
     <article>
-        <p><?= $error; ?></p>
+        <p><?php echo $error; ?></p>
     </article>
 </section>

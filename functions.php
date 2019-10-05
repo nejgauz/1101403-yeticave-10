@@ -251,7 +251,7 @@ function validateData($date): string
 {
     if (!is_date_valid($date)) {
         $result = 'Неправильный формат даты. Введите в формате \'ГГГГ-ММ-ДД\'';
-    } elseif (strtotime($date) < strtotime('+1 day')) {
+    } elseif (strtotime($date) < strtotime('tomorrow')) {
         $result = 'Дата окончания торгов должна быть больше текущей хотя бы на один день';
     } else {
         $result = '';
@@ -349,7 +349,6 @@ function validateUser(array $errors, array $user): array
 {
     if (!filter_var($user['email'], FILTER_VALIDATE_EMAIL)) {
         $errors['email'] = 'Пожалуйста, введите корректный адрес почты';
-        $errors['password'] = 'Пароль неверный';
     }
     foreach ($user as $key => $value) {
         if (isFieldEmpty($value)) {
@@ -588,10 +587,13 @@ function getUserBids($connection, $id): array
     WHERE b.user_id = " . $id . " ORDER BY b.dt_create DESC";
     $bids = readFromDatabase($bidRequest, $connection);
     foreach ($bids as $key => $bid) {
-        if ($bids[$key]['winner'] !== NULL) {
-            $contactRequest = "SELECT contact FROM users WHERE id = " . $bids[$key]['winner'];
+        if ($bids[$key]['winner'] !== NULL && $bids[$key]['winner'] == $id) {
+            $contactRequest = "SELECT contact FROM users WHERE id = " . $bids[$key]['lot_owner'];
             $contact = readFromDatabase($contactRequest, $connection);
             $bids[$key]['contact'] = $contact[0]['contact'];
+            if ($bids[$key]['price'] == getMaxBid($connection, $bids[$key]['lot_id'])) {
+                $bids[$key]['isMax'] = true;
+            }
         }
     }
 
@@ -624,7 +626,7 @@ function bidClass(array $bid, $user_id): array
 {
     $class = [];
     $time = timeCounter($bid['dt_end']);
-    if ($bid['winner'] === $user_id) {
+    if ($bid['winner'] === $user_id && isset($bid['isMax'])) {
         $class['item'] = 'rates__item--win';
         $class['timer'] = 'timer--win';
         $class['text'] = 'Ставка выиграла';

@@ -2,16 +2,16 @@
     <ul class="nav__list container">
         <?php foreach ($categories as $value): ?>
             <li class="nav__item<?php if ($value['name'] === $request): echo " nav__item--current"; endif; ?>">
-                <a href="search_category.php?category=<?= $value['id'] ?? ''; ?>"><?= strip_tags($value['name']) ?? ''; ?></a>
+                <a href="search_category.php?category=<?php echo $value['id'] ?? ''; ?>"><?php echo htmlspecialchars($value['name']) ?? ''; ?></a>
             </li>
         <? endforeach; ?>
     </ul>
 </nav>
 <div class="container">
     <section class="lots">
-        <h2><?= $header; ?> «<span><?= strip_tags($request); ?></span>»</h2>
+        <h2><?php echo $header; ?> «<span><?php echo htmlspecialchars($request); ?></span>»</h2>
         <ul class="lots__list">
-            <?= $items; ?>
+            <?php echo $items; ?>
         </ul>
     </section>
     <?php if ($pagesNumber > 1): ?>
@@ -20,7 +20,7 @@
                     echo $link . "&page=" . $prevPage; endif; ?>">Назад</a></li>
             <?php for ($i = 1; $i <= $pagesNumber; $i++): ?>
                 <li class="pagination-item <?php if ($i == $curPage): echo "pagination-item-active"; endif; ?>"><a
-                            href="<?php echo $link . "&page=" . $i; ?>"><?= $i; ?></a></li>
+                            href="<?php echo $link . "&page=" . $i; ?>"><?php echo $i; ?></a></li>
             <?php endfor; ?>
             <li class="pagination-item pagination-item-next"><a
                         href="<?php if ($curPage < $pagesNumber): $nextPage = $curPage + 1;
