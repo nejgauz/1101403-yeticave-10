@@ -573,19 +573,15 @@ function bidTime($time): string
  */
 function getUserBids($connection, $id): array
 {
-    $bidRequest = "SELECT l.image_path as image, l.title as lot_title, c.name as category, l.dt_end, b.price, b.lot_id, b.dt_create, l.win_id as winner, l.user_id as lot_owner
-    FROM bids b LEFT JOIN lots l ON b.lot_id = l.id 
+    $bidRequest = "SELECT l.image_path as image, l.title as lot_title, c.name as category, l.dt_end, b.price, b.lot_id, b.dt_create, l.win_id as winner, l.user_id as lot_owner, u.contact
+    FROM bids b LEFT JOIN lots l ON b.lot_id = l.id
+    LEFT JOIN users u ON u.id = l.user_id 
     JOIN categories c ON l.cat_id = c.id
     WHERE b.user_id = " . (int)$id . " ORDER BY b.dt_create DESC";
     $bids = readFromDatabase($bidRequest, $connection);
     foreach ($bids as $key => $bid) {
-        if ($bids[$key]['winner'] !== NULL && $bids[$key]['winner'] === $id) {
-            $contactRequest = "SELECT contact FROM users WHERE id = " . $bids[$key]['lot_owner'];
-            $contact = readFromDatabase($contactRequest, $connection);
-            $bids[$key]['contact'] = $contact[0]['contact'];
-            if ((int)$bids[$key]['price'] === getMaxBid($connection, $bids[$key]['lot_id'])) {
-                $bids[$key]['isMax'] = true;
-            }
+        if ((int)$bids[$key]['price'] === getMaxBid($connection, $bids[$key]['lot_id'])) {
+            $bids[$key]['isMax'] = true;
         }
     }
 
