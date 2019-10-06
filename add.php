@@ -25,7 +25,7 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
 }
 
 $lot = $_POST;
-if (!empty($lot)) {
+if (isset($lot['category']) && isset($lot['lot-name']) && isset($lot['message']) && isset($lot['lot-date']) && isset($lot['lot-rate']) && isset($lot['lot-step'])) {
     $errors = validateLotForm($lot);
     if (!validateImg($_FILES['image']['tmp_name']) && empty($errors)) {
         $extension = pathinfo($_FILES['image']['tmp_name'], PATHINFO_EXTENSION);
@@ -35,9 +35,8 @@ if (!empty($lot)) {
     } else {
         $errors['image'] = validateImg($_FILES['image']['tmp_name']);
     }
-
     if (empty($errors)) {
-        $lot['user_id'] = $_SESSION['id'];
+        $lot['user_id'] = $_SESSION['id'] ?? '';
         foreach ($lot as $key => $value) {
             $lot[$key] = strip_tags($value);
         }
@@ -54,11 +53,21 @@ if (!empty($lot)) {
             'title' => 'Ошибка',
         ]);
         echo $layoutContent;
+        exit();
     } else {
         $layoutContent = addPage($categories, $con, $errors);
         echo $layoutContent;
     }
+} else {
+    http_response_code(404);
+    $layoutContent = error404($categories);
+    echo $layoutContent;
+    exit();
 }
+
+
+
+
 
 
 
