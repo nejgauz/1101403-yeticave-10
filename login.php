@@ -9,35 +9,36 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
 }
 
 $user = $_POST;
-if (!empty($user)) {
-    foreach ($user as $key => $value) {
-        $user[$key] = strip_tags($value);
-    }
+foreach ($user as $key => $value) {
+    $user[$key] = strip_tags($value);
+}
+if (isset($user['email']) && isset($user['password'])) {
     if (isEmailExist($con, $user['email'])) {
         $regUser = getUserInfo($con, $user['email']);
         $hash = $regUser['password'] ?? '';
-        if (!password_verify($user['password'], $hash)) {
+        if (isset($user['password']) && !password_verify($user['password'], $hash)) {
             $errors['password'] = 'Вы ввели неверный пароль';
         }
     } else {
         $errors['email'] = 'Вы ввели неверный email';
     }
     $errors = validateUser($errors, $user);
-
-    if (!empty($errors)) {
-        $layoutContent = loginPage($categories, $con, $errors);
-        echo $layoutContent;
-        exit();
-    }
-    $_SESSION['id'] = $regUser['id'];
-    $_SESSION['email'] = $regUser['email'];
-    $_SESSION['name'] = $regUser['name'];
-    header("Location:/");
-    exit();
+} else {
+    $errors['email'] = 'Это поле должно быть заполнено';
+    $errors['password'] = 'Это поле должно быть заполнено';
 }
 
-$layoutContent = error404($categories);
-echo $layoutContent;
+if (!empty($errors)) {
+    $layoutContent = loginPage($categories, $con, $errors);
+    echo $layoutContent;
+    exit();
+}
+$_SESSION['id'] = $regUser['id'];
+$_SESSION['email'] = $regUser['email'];
+$_SESSION['name'] = $regUser['name'];
+header("Location:/");
 exit();
+
+
 
 

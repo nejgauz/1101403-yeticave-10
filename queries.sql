@@ -67,14 +67,6 @@ INSERT INTO stop_words SET value = 'что';
 
 SELECT name FROM categories;
 
-SELECT l.id, title, st_price, image_path, categories.name as category_name, max_bid.max_price as curren_price
-FROM lots as l
-LEFT JOIN categories
-ON categories.id = l.cat_id
-JOIN
-(SELECT lot_id, MAX(price) as max_price FROM bids GROUP BY lot_id) as max_bid
-ON max_bid.lot_id = l.id
-WHERE win_id is NULL;
 
 SELECT title, st_price, image_path, c.name AS category_name
 FROM lots AS l
