@@ -11,6 +11,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
             $curPage = $_GET['page'] ?? 1;
             $itemsLimit = 9;
             $pagesNumber = ceil($itemsNumber / $itemsLimit);
+            if (!is_numeric($curPage) or $curPage > $pagesNumber or $curPage < 0) {
+                http_response_code(404);
+                $layoutContent = error404($categories);
+                echo $layoutContent;
+                exit();
+            }
             $offset = ($curPage - 1) * $itemsLimit;
             $cards = getSearchResults($con, $request, 'title, descr', true, $itemsLimit, $offset);
             $link = "search.php?search=" . strip_tags($request);
