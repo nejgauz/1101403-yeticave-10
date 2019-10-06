@@ -14,6 +14,13 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
 }
 
 $user = $_POST;
+if (!isset($user['password']) or !isset($user['email'])) {
+    http_response_code(404);
+    $layoutContent = error404($categories);
+    echo $layoutContent;
+    exit();
+}
+
 foreach ($user as $key => $value) {
     $user[$key] = strip_tags($value);
 }
@@ -24,17 +31,13 @@ $errors = validateUser($errors, $user);
 if (isset($user['email']) && isEmailExist($con, $user['email'])) {
     $errors['email'] = 'Этот адрес почты уже занят';
 }
+
 if (!empty($errors)) {
     $layoutContent = entrancePage($categories, $con, $errors);
     echo $layoutContent;
     exit();
 }
-if (empty($errors) && empty($user)) {
-    http_response_code(404);
-    $layoutContent = error404($categories);
-    echo $layoutContent;
-    exit();
-}
+
 if (insertUserInDb($con, $user)) {
     header("Location:/");
     exit();
