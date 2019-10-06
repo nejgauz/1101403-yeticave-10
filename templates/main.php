@@ -22,13 +22,13 @@
 <?php if ($pagesNumber > 1): ?>
     <ul class="pagination-list">
         <li class="pagination-item pagination-item-prev"><a href="<?php if ($curPage > 1): $prevPage = $curPage - 1;
-                echo $link . "&page=" . $prevPage; endif; ?>">Назад</a></li>
+                echo $link . "page=" . $prevPage; endif; ?>">Назад</a></li>
         <?php for ($i = 1; $i <= $pagesNumber; $i++): ?>
             <li class="pagination-item <?php if ($i === (int)$curPage): echo "pagination-item-active"; endif; ?>"><a
-                        href="<?php echo $link . "&page=" . $i; ?>"><?php echo $i; ?></a></li>
+                        href="<?php echo $link . "page=" . $i; ?>"><?php echo $i; ?></a></li>
         <?php endfor; ?>
         <li class="pagination-item pagination-item-next"><a
                     href="<?php if ($curPage < $pagesNumber): $nextPage = $curPage + 1;
-                        echo $link . "&page=" . $nextPage; endif; ?>">Вперед</a></li>
+                        echo $link . "page=" . $nextPage; endif; ?>">Вперед</a></li>
     </ul>
 <?php endif; ?>
