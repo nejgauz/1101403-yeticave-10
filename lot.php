@@ -3,11 +3,10 @@ require_once('init.php');
 
 $categories = getCategories($con);
 if (isset($_GET['lot_id']) && is_numeric($_GET['lot_id']) && !empty($card = getCard($con, $_GET['lot_id']))) {
-    $card = $card[0];
     $maxBid = getMaxBid($con, $card['id']) ?? 0;
     $curPrice = $card['st_price'] ?? 0;
     $maxPrice = max($curPrice, $maxBid);
-    $minBid = $maxPrice + $card['step'];
+    $minBid = $maxPrice + ($card['step'] ?? 0);
     $bids = getBids($con, $_GET['lot_id']);
     if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
         $pageContent = include_template('lot_card.php', [

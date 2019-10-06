@@ -118,14 +118,14 @@ function getCards($connection, $isLimit = false, $limit = 9, $offset = 0): array
  * @param mysqli $connection
  * @return array $card
  */
-function getCard($connection, $id): array
+function getCard($connection, $id):? array
 {
     $request = "SELECT l.id, title AS `name`, image_path AS url, c.name AS category, descr AS description, dt_end AS `time`, step, st_price, user_id
     FROM lots AS l
     LEFT JOIN categories AS c ON c.id = l.cat_id
     WHERE l.id = " . (int)$id;
     $card = readFromDatabase($request, $connection);
-
+    $card = $card[0] ?? null;
 
     return $card;
 }
@@ -344,7 +344,7 @@ function validateLotForm(array $lot): array
  */
 function validateUser(array $errors, array $user): array
 {
-    if (isset($user['email']) && !filter_var($user['email'], FILTER_VALIDATE_EMAIL)) {
+    if (!filter_var($user['email'], FILTER_VALIDATE_EMAIL)) {
         $errors['email'] = 'Пожалуйста, введите корректный адрес почты';
     }
     foreach ($user as $key => $value) {
@@ -479,7 +479,7 @@ function getSearchCategory($connection, string $id, bool $isLimit = false, int $
 function validateBid($bid, $minBid): array
 {
     $errors = [];
-    $value = $bid['cost'];
+    $value = $bid['cost'] ?? '';
     if (isFieldEmpty($value)) {
         $errors['cost'] = isFieldEmpty($value);
         return $errors;
