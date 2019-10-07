@@ -2,7 +2,7 @@
 require_once('init.php');
 
 $categories = getCategories($con);
-if (!isset($_SESSION['name'])) {
+if (!isset($_SESSION['id'])) {
     http_response_code(403);
     $pageContent = include_template('http_error.php', [
         'categories' => $categories,
@@ -36,7 +36,7 @@ if (isset($lot['category']) && isset($lot['lot-name']) && isset($lot['message'])
         $errors['image'] = validateImg($_FILES['image']['tmp_name']);
     }
     if (empty($errors)) {
-        $lot['user_id'] = $_SESSION['id'] ?? '';
+        $lot['user_id'] = $_SESSION['id'];
         foreach ($lot as $key => $value) {
             $lot[$key] = strip_tags($value);
         }
