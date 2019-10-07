@@ -14,7 +14,6 @@ if (!is_numeric($curPage) or $curPage > $pagesNumber or $curPage < 0) {
     echo $layoutContent;
     exit();
 }
-
 $offset = ($curPage - 1) * $itemsLimit;
 $cards = getCards($con,true, $itemsLimit, $offset);
 $link = "index.php?";
